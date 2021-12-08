@@ -1,4 +1,4 @@
-package registerSystem
+package global
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-func registerSystem(url string, data *registration.RegisterRequest) (BaseID string, ServiceID uint32) {
+func RegisterSystem(url string, data *registration.RegisterRequest) (BaseID string, ServiceID uint32) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 

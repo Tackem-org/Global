@@ -1,4 +1,4 @@
-package indocker
+package global
 
 import (
 	"fmt"
