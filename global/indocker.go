@@ -17,7 +17,7 @@ func hasCGroup() bool {
 	return strings.Contains(string(f), "docker")
 }
 
-func Check() bool {
+func InDockerCheck() bool {
 	if hasEnv() || hasCGroup() {
 		return true
 	}
