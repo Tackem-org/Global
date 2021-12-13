@@ -18,7 +18,7 @@ import (
 )
 
 type RemoteWebSystem struct {
-	pages *map[string]func(in *WebRequest) *WebReturn
+	pages *map[string]func(in *WebRequest) (*WebReturn, error)
 	fs    *embed.FS
 	pb.UnimplementedRemoteWebServer
 }
@@ -55,27 +55,48 @@ func (r *RemoteWebSystem) Page(ctx context.Context, in *pb.PageRequest) (*pb.Pag
 	webRequest := WebRequest{
 		FullPath:  in.GetPath(),
 		CleanPath: cleanPath,
+		Method:    in.GetMethod(),
 	}
 
 	json.Unmarshal([]byte(in.GetQueryParamsJson()), &webRequest.QueryParams)
 	json.Unmarshal([]byte(in.GetPostJson()), &webRequest.Post)
 
 	pagesKey, pathVariables := GetPathVariables(cleanPath)
+	if pagesKey == "" {
+		return &pb.PageResponse{
+			StatusCode:   http.StatusNotFound,
+			ErrorMessage: "Page Not Found",
+		}, nil
+	}
 	webRequest.PathVariables = *pathVariables
 
 	if call, exists := (*r.pages)[pagesKey]; exists {
-		returnData := call(&webRequest)
+		returnData, err := call(&webRequest)
+		if err != nil {
+			logging.Error("[GPRC Remote Web System Page Request] " + in.GetPath() + ":" + err.Error())
+			return &pb.PageResponse{
+				StatusCode:   http.StatusInternalServerError,
+				ErrorMessage: "ERROR WITH THE SYSTEM",
+			}, nil
+		}
 
 		templateHtml, err := r.fs.ReadFile("pages/" + returnData.FilePath + ".html")
 		if err != nil {
 			logging.Error("[GPRC Remote Web System Page Request] " + in.GetPath() + ":" + err.Error())
-
+			return &pb.PageResponse{
+				StatusCode:   http.StatusInternalServerError,
+				ErrorMessage: "ERROR WITH THE SYSTEM",
+			}, nil
 		}
 
 		var pageData []byte
 		pageData, err = json.Marshal(returnData.PageData)
 		if err != nil {
-			logging.Fatal(err)
+			logging.Error("[GPRC Remote Web System Page Request] " + in.GetPath() + ":" + err.Error())
+			return &pb.PageResponse{
+				StatusCode:   http.StatusInternalServerError,
+				ErrorMessage: "ERROR WITH THE SYSTEM",
+			}, nil
 		}
 
 		return &pb.PageResponse{
@@ -85,6 +106,7 @@ func (r *RemoteWebSystem) Page(ctx context.Context, in *pb.PageRequest) (*pb.Pag
 		}, nil
 	}
 
+	logging.Warning("[GPRC Remote Web System Page Request] " + in.GetPath() + ": Not found")
 	return &pb.PageResponse{
 		StatusCode:   http.StatusNotFound,
 		ErrorMessage: "Page Not Found",

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net"
 	"os"
 	"regexp"
@@ -84,7 +83,7 @@ func (r *Register) Connect() bool {
 	url := masterUrl + ":" + masterPort
 	conn, err := grpc.Dial(url, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalln(err)
+		logging.Fatal(err)
 	}
 	defer conn.Close()
 
@@ -116,7 +115,7 @@ func (r *Register) Disconnect() {
 	url := masterUrl + ":" + masterPort
 	conn, err := grpc.Dial(url, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
-		log.Fatalln(err)
+		logging.Fatal(err)
 	}
 	defer conn.Close()
 

@@ -2,27 +2,56 @@ package checker
 
 import (
 	"context"
-	"sync"
+	"time"
 
 	pb "github.com/Tackem-org/Proto/pb/checker"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
-type CheckerServer struct {
-	mu sync.RWMutex
-	pb.UnimplementedCheckerServer
+type HealthCheckReturn struct {
+	running bool
+	healthy bool
+	errors  *[]string
 }
 
-func NewCheckerServer() *CheckerServer {
-	return &CheckerServer{}
-}
+func HealthCheck(address string, port string) HealthCheckReturn {
+	url := address + ":" + port
+	conn, err := grpc.Dial(url, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		return HealthCheckReturn{
+			running: false,
+			healthy: false,
+			errors: &[]string{
+				"Not Running",
+			},
+		}
+	}
+	defer conn.Close()
 
-func (c *CheckerServer) PingPong(ctx context.Context, in *pb.Empty) (*pb.Empty, error) {
-	return &pb.Empty{}, nil
-}
+	client := pb.NewCheckerClient(conn)
 
-func (c *CheckerServer) HealthCheck(ctx context.Context, in *pb.Empty) (*pb.HealthCheckResponse, error) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	md := metadata.New(map[string]string{})
+	ctx = metadata.NewOutgoingContext(ctx, md)
 
-	return &pb.HealthCheckResponse{Healthy: true}, nil
+	var header metadata.MD
+
+	response, err := client.HealthCheck(ctx, &pb.Empty{}, grpc.Header(&header))
+	if err != nil {
+		return HealthCheckReturn{
+			running: true,
+			healthy: response.GetHealthy(),
+			errors: &[]string{
+				"Issue With Health Check function on Server End",
+				err.Error(),
+			},
+		}
+	}
+	return HealthCheckReturn{
+		running: true,
+		healthy: response.GetHealthy(),
+		errors:  &[]string{},
+	}
 }
