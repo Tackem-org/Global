@@ -30,7 +30,7 @@ type Register struct {
 }
 
 func NewRegister() *Register {
-	GetMasterURL()
+	getMasterURL()
 	return &Register{}
 }
 
@@ -80,7 +80,7 @@ func (r *Register) Setup(serviceName string, serviceType string, multi bool, web
 
 func (r *Register) Connect() bool {
 
-	url := masterUrl + ":" + masterPort
+	url := MakeMasterURL()
 	conn, err := grpc.Dial(url, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		logging.Fatal(err)
@@ -153,11 +153,15 @@ func FreePort() (port uint32) {
 	return
 }
 
-func GetMasterURL() {
+func getMasterURL() {
 	if val, present := os.LookupEnv("MASTERURL"); present {
 		masterUrl = val
 	}
 	if val, present := os.LookupEnv("MASTERPORT"); present {
 		masterPort = val
 	}
+}
+
+func MakeMasterURL() string {
+	return masterUrl + ":" + masterPort
 }
