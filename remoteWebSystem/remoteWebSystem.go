@@ -19,7 +19,7 @@ var (
 type WebRequest struct {
 	FullPath      string
 	CleanPath     string
-	UserID        uint32
+	UserID        uint64
 	SessionToken  string
 	Method        string
 	QueryParams   map[string]interface{}

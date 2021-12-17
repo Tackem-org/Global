@@ -52,11 +52,10 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 	}
 
 	webRequest := WebRequest{
-		FullPath:     in.GetPath(),
-		CleanPath:    cleanPath,
-		UserID:       in.GetUserId(),
-		SessionToken: in.GetSessionToken(),
-		Method:       in.GetMethod(),
+		FullPath:  in.GetPath(),
+		CleanPath: cleanPath,
+		UserID:    in.GetUserId(),
+		Method:    in.GetMethod(),
 	}
 
 	json.Unmarshal([]byte(in.GetQueryParamsJson()), &webRequest.QueryParams)

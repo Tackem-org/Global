@@ -91,12 +91,9 @@ func (r *Register) Connect() bool {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	md := metadata.New(map[string]string{})
-	ctx = metadata.NewOutgoingContext(ctx, md)
+	ctx = metadata.NewOutgoingContext(ctx, metadata.MD{})
 
-	var header metadata.MD
-
-	response, err := client.Register(ctx, &r.data, grpc.Header(&header))
+	response, err := client.Register(ctx, &r.data)
 	if err != nil {
 		logging.Fatal(err)
 	}
@@ -123,12 +120,9 @@ func (r *Register) Disconnect() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	md := metadata.New(map[string]string{})
-	ctx = metadata.NewOutgoingContext(ctx, md)
+	ctx = metadata.NewOutgoingContext(ctx, metadata.MD{})
 
-	var header metadata.MD
-
-	response, err := client.Disconnect(ctx, &pb.IDRequest{BaseId: r.baseID}, grpc.Header(&header))
+	response, err := client.Disconnect(ctx, &pb.IDRequest{BaseId: r.baseID}, grpc.Header(&metadata.MD{}))
 	if err != nil {
 		logging.Fatal(err)
 	}

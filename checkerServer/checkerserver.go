@@ -12,7 +12,7 @@ type CheckerServer struct {
 	pb.UnimplementedCheckerServer
 }
 
-func NewCheckerServer() *CheckerServer {
+func NewServer() *CheckerServer {
 	return &CheckerServer{}
 }
 

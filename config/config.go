@@ -30,12 +30,9 @@ func get(key string) (*pb.ConfigResponse, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	md := metadata.New(map[string]string{})
-	ctx = metadata.NewOutgoingContext(ctx, md)
+	ctx = metadata.NewOutgoingContext(ctx, metadata.MD{})
 
-	var header metadata.MD
-
-	response, err := client.Get(ctx, &pb.GetConfigRequest{Key: key}, grpc.Header(&header))
+	response, err := client.Get(ctx, &pb.GetConfigRequest{Key: key}, grpc.Header(&metadata.MD{}))
 	if err != nil {
 		logging.Error("[Remote Config Get] Error with the Servers Get: " + err.Error())
 		return nil, err
@@ -245,12 +242,9 @@ func set(key string, value string) (bool, error) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	md := metadata.New(map[string]string{})
-	ctx = metadata.NewOutgoingContext(ctx, md)
+	ctx = metadata.NewOutgoingContext(ctx, metadata.MD{})
 
-	var header metadata.MD
-
-	response, err := client.Set(ctx, &pb.SetConfigRequest{Key: key, Value: value}, grpc.Header(&header))
+	response, err := client.Set(ctx, &pb.SetConfigRequest{Key: key, Value: value}, grpc.Header(&metadata.MD{}))
 	if err != nil {
 		logging.Error("[Remote Config Set] Error with the Servers Set: " + err.Error())
 		return false, err
@@ -330,103 +324,4 @@ func SetTime(key string, value time.Time) (bool, error) {
 
 func SetDuration(key string, value time.Duration) (bool, error) {
 	return set(key, value.String())
-}
-
-func create(key string, varType pb.ValueType, value string) (bool, error) {
-	url := registerService.MakeMasterURL()
-	conn, err := grpc.Dial(url, grpc.WithInsecure(), grpc.WithBlock())
-	if err != nil {
-		logging.Error("[Remote Config Create] Cannot Connect to the Server: " + err.Error())
-		return false, err
-	}
-	defer conn.Close()
-
-	client := pb.NewConfigClient(conn)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	md := metadata.New(map[string]string{})
-	ctx = metadata.NewOutgoingContext(ctx, md)
-
-	var header metadata.MD
-
-	response, err := client.Create(ctx, &pb.CreateConfigRequest{Key: key, Type: varType, DefaultValue: value}, grpc.Header(&header))
-	if err != nil {
-		logging.Error("[Remote Config Create] Error with the Servers Create: " + err.Error())
-		return false, err
-	}
-	return response.GetSuccess(), errors.New(response.GetErrorMessage())
-}
-
-func CreateBool(key string, value bool) (bool, error) {
-	return create(key, pb.ValueType_Bool, fmt.Sprintf("%t", value))
-}
-
-func CreateFloat64(key string, value float64) (bool, error) {
-	return create(key, pb.ValueType_Float64, fmt.Sprintf("%f", value))
-}
-
-func CreateInt(key string, value int) (bool, error) {
-	return create(key, pb.ValueType_Int, fmt.Sprintf("%d", value))
-}
-
-func CreateInt32(key string, value int32) (bool, error) {
-	return create(key, pb.ValueType_Int32, fmt.Sprintf("%d", value))
-}
-
-func CreateInt64(key string, value int64) (bool, error) {
-	return create(key, pb.ValueType_Int64, fmt.Sprintf("%d", value))
-}
-
-func CreateUint(key string, value uint) (bool, error) {
-	return create(key, pb.ValueType_Uint, fmt.Sprintf("%d", value))
-}
-
-func CreateUint32(key string, value uint32) (bool, error) {
-	return create(key, pb.ValueType_Uint32, fmt.Sprintf("%d", value))
-}
-
-func CreateUint64(key string, value uint64) (bool, error) {
-	return create(key, pb.ValueType_Uint64, fmt.Sprintf("%d", value))
-}
-
-func CreateIntSlice(key string, value []int) (bool, error) {
-	valuesText := []string{}
-	var s string
-	for _, i := range value {
-		s = fmt.Sprintf("%d", i)
-		valuesText = append(valuesText, s)
-	}
-	return create(key, pb.ValueType_IntSlice, strings.Join(valuesText, "+"))
-}
-
-func CreateString(key string, value string) (bool, error) {
-	return create(key, pb.ValueType_String, value)
-}
-
-func CreateStringMap(key string, value map[string]interface{}) (bool, error) {
-	stringValueJson, _ := json.Marshal(value)
-	return create(key, pb.ValueType_StringMap, string(stringValueJson))
-}
-
-func CreateStringMapString(key string, value map[string]string) (bool, error) {
-	stringValueJson, _ := json.Marshal(value)
-	return create(key, pb.ValueType_StringMapString, string(stringValueJson))
-}
-
-func CreateStringMapStringSlice(key string, value map[string][]string) (bool, error) {
-	stringValueJson, _ := json.Marshal(value)
-	return create(key, pb.ValueType_StringMapStringSlice, string(stringValueJson))
-}
-
-func CreateStringSlice(key string, value []string) (bool, error) {
-	return create(key, pb.ValueType_StringSlice, strings.Join(value, ","))
-}
-
-func CreateTime(key string, value time.Time) (bool, error) {
-	return create(key, pb.ValueType_Time, strconv.FormatInt(value.Unix(), 10))
-}
-
-func CreateDuration(key string, value time.Duration) (bool, error) {
-	return create(key, pb.ValueType_Duration, value.String())
 }

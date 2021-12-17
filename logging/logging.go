@@ -42,8 +42,13 @@ func Shutdown() {
 
 }
 
+func CustomLogger(prefix string) *log.Logger {
+	return log.New(mw, prefix+": ", logSettings)
+}
+
 func Custom(prefix string, message string) {
-	i = log.New(mw, prefix+": ", logSettings)
+	t := log.New(mw, prefix+": ", logSettings)
+	t.Println(message)
 }
 
 func Info(message string) {

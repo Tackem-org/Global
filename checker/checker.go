@@ -33,12 +33,9 @@ func HealthCheck(address string, port string) HealthCheckReturn {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	md := metadata.New(map[string]string{})
-	ctx = metadata.NewOutgoingContext(ctx, md)
+	ctx = metadata.NewOutgoingContext(ctx, metadata.MD{})
 
-	var header metadata.MD
-
-	response, err := client.HealthCheck(ctx, &pb.Empty{}, grpc.Header(&header))
+	response, err := client.HealthCheck(ctx, &pb.Empty{}, grpc.Header(&metadata.MD{}))
 	if err != nil {
 		return HealthCheckReturn{
 			running: true,
