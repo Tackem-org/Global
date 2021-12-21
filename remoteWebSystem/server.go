@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/registerService"
+	"github.com/Tackem-org/Global/system"
 	pb "github.com/Tackem-org/Proto/pb/remoteweb"
 )
 
@@ -36,13 +36,13 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 		cleanPath = strings.Replace(cleanPath, "admin/", "", 1)
 	}
 
-	serviceType := registerService.Data.GetServiceType()
+	serviceType := system.RegData().GetServiceType()
 	if serviceType != "service" {
 		if strings.HasPrefix(cleanPath, serviceType+"/") {
 			cleanPath = strings.Replace(cleanPath, serviceType+"/", "", 1)
 		}
 	}
-	serviceName := registerService.Data.GetServiceName()
+	serviceName := system.RegData().GetServiceName()
 	if strings.HasPrefix(cleanPath, serviceName+"/") {
 		cleanPath = strings.Replace(cleanPath, serviceName+"/", "", 1)
 	}

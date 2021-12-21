@@ -17,10 +17,17 @@ import (
 )
 
 var (
-	Data       *Register
 	masterUrl  = "127.0.0.1" //"tackem_master"
 	masterPort = "50001"
 )
+
+type BaseData struct {
+	ServiceName string
+	ServiceType string
+	Multi       bool
+	WebAccess   bool
+	NavItems    []*pb.NavItem
+}
 
 type Register struct {
 	baseID    string
@@ -54,7 +61,7 @@ func (r *Register) GetServiceType() string {
 	return r.data.ServiceType
 }
 
-func (r *Register) Setup(serviceName string, serviceType string, multi bool, webAccess bool, navItems []*pb.NavItem) {
+func (r *Register) Setup(baseData BaseData) {
 
 	rawHostname, err := ioutil.ReadFile("/etc/hostname")
 	if err != nil {
@@ -68,13 +75,13 @@ func (r *Register) Setup(serviceName string, serviceType string, multi bool, web
 	hostname := reg.ReplaceAllString(string(rawHostname), "")
 	port := FreePort()
 	r.data = pb.RegisterRequest{
-		ServiceName: serviceName,
-		ServiceType: serviceType,
+		ServiceName: baseData.ServiceName,
+		ServiceType: baseData.ServiceType,
 		Hostname:    hostname,
 		Hostport:    port,
-		Multi:       multi,
-		Webaccess:   webAccess,
-		NavItems:    navItems,
+		Multi:       baseData.Multi,
+		Webaccess:   baseData.WebAccess,
+		NavItems:    baseData.NavItems,
 	}
 }
 
