@@ -1,56 +1,42 @@
 package system
 
 import (
-	"sync"
+	"os"
 
-	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/registerService"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
-
-var (
-	Data       SetupData
-	regData    *registerService.Register
-	grpcServer *grpc.Server
-	WG         *sync.WaitGroup
-	MasterUp   bool
-)
-
-type SetupData struct {
-	BaseData    registerService.BaseData
-	LogFile     string
-	VerboseLog  bool
-	GPRCSystems func(server *grpc.Server)
-	WebSystems  func()
-	MainSystem  func()
-}
-
-func Shutdown(registered bool) {
-
-	if registered {
-		regData.Disconnect()
-		logging.Info("DeRegistration Done")
-	}
-
-	grpcServer.Stop()
-	WG.Done()
-	logging.Info("Shutdown gRPC Server")
-
-	logging.Info("Closing Logger")
-	logging.Shutdown()
-
-}
-
-func RegData() *registerService.Register {
-	if regData == nil {
-		regData = registerService.NewRegister()
-	}
-	return regData
-}
 
 func GRPCServer() *grpc.Server {
 	if grpcServer == nil {
 		grpcServer = grpc.NewServer()
 	}
 	return grpcServer
+}
+
+func GetMasterConnection(force bool) (*grpc.ClientConn, error) {
+	if !force {
+		MasterUpLock.Lock()
+		defer MasterUpLock.Unlock()
+	}
+	url := masterUrl + ":" + masterPort
+	return grpc.Dial(url, grpc.WithInsecure(), grpc.WithBlock())
+}
+
+func GetHeader() metadata.MD {
+	return metadata.New(map[string]string{
+		"baseID": regData.baseID,
+	})
+
+}
+
+func GetFirstHeader() metadata.MD {
+	var key string
+	if val, present := os.LookupEnv("MASTERKEY"); present {
+		key = val
+	}
+
+	return metadata.New(map[string]string{
+		"masterkey": key,
+	})
 }

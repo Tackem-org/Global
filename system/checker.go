@@ -1,4 +1,4 @@
-package checkerServer
+package system
 
 import (
 	"context"
@@ -12,7 +12,7 @@ type CheckerServer struct {
 	pb.UnimplementedCheckerServer
 }
 
-func NewServer() *CheckerServer {
+func NewCheckerServer() *CheckerServer {
 	return &CheckerServer{}
 }
 

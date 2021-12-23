@@ -1,10 +1,9 @@
-package regClientServer
+package system
 
 import (
 	"context"
 	"sync"
 
-	"github.com/Tackem-org/Global/system"
 	pb "github.com/Tackem-org/Proto/pb/regclient"
 )
 
@@ -13,13 +12,13 @@ type RegClientServer struct {
 	pb.UnimplementedRegClientServer
 }
 
-func NewServer() *RegClientServer {
+func NewRegClientServer() *RegClientServer {
 	return &RegClientServer{}
 }
 
-func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.Empty) (*pb.Empty, error) {
+func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.GoingDownRequest) (*pb.Empty, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	system.MasterUp = false
+	MasterUpLock.Lock()
 	return &pb.Empty{}, nil
 }

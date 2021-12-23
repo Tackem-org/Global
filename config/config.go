@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/registerService"
+	"github.com/Tackem-org/Global/system"
 	pb "github.com/Tackem-org/Proto/pb/config"
 
 	"google.golang.org/grpc"
@@ -18,8 +18,7 @@ import (
 )
 
 func get(key string) (*pb.ConfigResponse, error) {
-	url := registerService.MakeMasterURL()
-	conn, err := grpc.Dial(url, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := system.GetMasterConnection(false)
 	if err != nil {
 		logging.Error("[Remote Config Get] Cannot Connect to the Server: " + err.Error())
 		return nil, err
@@ -230,8 +229,8 @@ func GetDuration(key string) (time.Duration, error) {
 }
 
 func set(key string, value string) (bool, error) {
-	url := registerService.MakeMasterURL()
-	conn, err := grpc.Dial(url, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := system.GetMasterConnection(false)
+
 	if err != nil {
 		logging.Error("[Remote Config Set] Cannot Connect to the Server: " + err.Error())
 		return false, err

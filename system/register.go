@@ -1,4 +1,4 @@
-package registerService
+package system
 
 import (
 	"context"
@@ -11,33 +11,34 @@ import (
 	"time"
 
 	"github.com/Tackem-org/Global/logging"
+
 	pb "github.com/Tackem-org/Proto/pb/registration"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
 
-var (
-	masterUrl  = "127.0.0.1" //"tackem_master"
-	masterPort = "50001"
-)
-
-type BaseData struct {
-	ServiceName string
-	ServiceType string
-	Multi       bool
-	WebAccess   bool
-	NavItems    []*pb.NavItem
-}
-
 type Register struct {
 	baseID    string
 	serviceID uint32
+	key       string
 
 	data pb.RegisterRequest
 }
 
+func RegData() *Register {
+	if regData == nil {
+		regData = NewRegister()
+	}
+	return regData
+}
+
 func NewRegister() *Register {
-	getMasterURL()
+	if val, present := os.LookupEnv("MASTERURL"); present {
+		masterUrl = val
+	}
+	if val, present := os.LookupEnv("MASTERPORT"); present {
+		masterPort = val
+	}
 	return &Register{}
 }
 
@@ -47,6 +48,10 @@ func (r *Register) GetBaseID() string {
 
 func (r *Register) GetServiceID() uint32 {
 	return r.serviceID
+}
+
+func (r *Register) GetKey() string {
+	return r.key
 }
 
 func (r *Register) GetPort() uint32 {
@@ -72,13 +77,11 @@ func (r *Register) Setup(baseData BaseData) {
 	if err != nil {
 		logging.Fatal(err)
 	}
-	hostname := reg.ReplaceAllString(string(rawHostname), "")
-	port := FreePort()
 	r.data = pb.RegisterRequest{
 		ServiceName: baseData.ServiceName,
 		ServiceType: baseData.ServiceType,
-		Hostname:    hostname,
-		Hostport:    port,
+		Hostname:    reg.ReplaceAllString(string(rawHostname), ""),
+		Hostport:    freePort(),
 		Multi:       baseData.Multi,
 		Webaccess:   baseData.WebAccess,
 		NavItems:    baseData.NavItems,
@@ -87,7 +90,7 @@ func (r *Register) Setup(baseData BaseData) {
 
 func (r *Register) Connect() bool {
 
-	url := MakeMasterURL()
+	url := masterUrl + ":" + masterPort
 	conn, err := grpc.Dial(url, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		logging.Fatal(err)
@@ -96,17 +99,19 @@ func (r *Register) Connect() bool {
 
 	client := pb.NewRegistrationClient(conn)
 
+	header := GetFirstHeader()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	ctx = metadata.NewOutgoingContext(ctx, metadata.MD{})
+	ctx = metadata.NewOutgoingContext(ctx, header)
 
-	response, err := client.Register(ctx, &r.data)
+	response, err := client.Register(ctx, &r.data, grpc.Header(&header))
 	if err != nil {
 		logging.Fatal(err)
 	}
 	if response.GetSuccess() {
 		r.baseID = response.GetBaseId()
 		r.serviceID = response.GetServiceId()
+		r.key = response.GetKey()
 		return true
 	}
 	logging.Error(response.GetErrorMessage())
@@ -125,11 +130,12 @@ func (r *Register) Disconnect() {
 
 	client := pb.NewRegistrationClient(conn)
 
+	header := GetHeader()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	ctx = metadata.NewOutgoingContext(ctx, metadata.MD{})
+	ctx = metadata.NewOutgoingContext(ctx, header)
 
-	response, err := client.Disconnect(ctx, &pb.IDRequest{BaseId: r.baseID}, grpc.Header(&metadata.MD{}))
+	response, err := client.Disconnect(ctx, &pb.IDRequest{BaseId: r.baseID}, grpc.Header(&header))
 	if err != nil {
 		logging.Fatal(err)
 	}
@@ -140,7 +146,7 @@ func (r *Register) Disconnect() {
 	logging.Fatal(errors.New("failed to disconnect system from master"))
 }
 
-func FreePort() (port uint32) {
+func freePort() (port uint32) {
 	port = 50001
 	ln, err := net.Listen("tcp", ":"+fmt.Sprint(port))
 	for {
@@ -152,17 +158,4 @@ func FreePort() (port uint32) {
 	}
 	ln.Close()
 	return
-}
-
-func getMasterURL() {
-	if val, present := os.LookupEnv("MASTERURL"); present {
-		masterUrl = val
-	}
-	if val, present := os.LookupEnv("MASTERPORT"); present {
-		masterPort = val
-	}
-}
-
-func MakeMasterURL() string {
-	return masterUrl + ":" + masterPort
 }

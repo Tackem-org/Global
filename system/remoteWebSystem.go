@@ -1,4 +1,4 @@
-package remoteWebSystem
+package system
 
 import (
 	"embed"
@@ -10,45 +10,13 @@ import (
 	"github.com/Tackem-org/Global/logging"
 )
 
-var (
-	pagesData      map[string]func(in *WebRequest) (*WebReturn, error)
-	adminPagesData map[string]func(in *WebRequest) (*WebReturn, error)
-	fs             *embed.FS
-)
-
-type WebRequest struct {
-	FullPath      string
-	CleanPath     string
-	UserID        uint64
-	SessionToken  string
-	Method        string
-	QueryParams   map[string]interface{}
-	Post          map[string]interface{}
-	PathVariables map[string]interface{}
-}
-
-type WebReturn struct {
-	FilePath   string
-	PageString string
-	PageData   map[string]interface{}
-}
-
-func Setup(fsIn *embed.FS) {
+func WebSetup(fileSystemIn *embed.FS) {
 	pagesData = make(map[string]func(in *WebRequest) (*WebReturn, error))
 	adminPagesData = make(map[string]func(in *WebRequest) (*WebReturn, error))
-	fs = fsIn
+	fileSystem = fileSystemIn
 }
 
-func NewServer() *RemoteWebSystem {
-	return &RemoteWebSystem{
-		pages:      &pagesData,
-		adminPages: &adminPagesData,
-		fs:         fs,
-	}
-}
-
-//TODO NEED TO MAKE A SEPERATE FUNCTION FOR ADDING AN ADMIN SECTION
-func AddPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool {
+func WebAddPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool {
 	logging.Info(fmt.Sprintf("Adding %s to remoteWeb", path))
 	if strings.Contains(path, "static") {
 		logging.Warning(fmt.Sprintf("Adding %s to remoteWeb Failed - cannot use static in the name", path))
@@ -70,7 +38,7 @@ func AddPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool {
 	return true
 }
 
-func AddAdminPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool {
+func WebAddAdminPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool {
 	logging.Info(fmt.Sprintf("Adding %s to remoteWeb [Admin]", path))
 	if strings.Contains(path, "static") {
 		logging.Warning(fmt.Sprintf("Adding %s to remoteWeb Failed - cannot use static in the name", path))
@@ -92,7 +60,7 @@ func AddAdminPath(path string, call func(in *WebRequest) (*WebReturn, error)) bo
 	return true
 }
 
-func RemovePath(path string) bool {
+func WebRemovePath(path string) bool {
 	logging.Info(fmt.Sprintf("Removing %s from remoteWeb", path))
 	if _, exists := pagesData[path]; !exists {
 		logging.Warning(fmt.Sprintf("Removing %s from remoteWeb Failed - path not found", path))
@@ -103,7 +71,7 @@ func RemovePath(path string) bool {
 	return true
 }
 
-func RemoveAdminPath(path string) bool {
+func WebRemoveAdminPath(path string) bool {
 	logging.Info(fmt.Sprintf("Removing %s from remoteWeb [Admin]", path))
 	if _, exists := adminPagesData[path]; !exists {
 		logging.Warning(fmt.Sprintf("Removing %s from remoteWeb Failed - path not found", path))
@@ -159,7 +127,7 @@ func checkPathPart(part string) bool {
 	return true
 }
 
-func GetPathVariables(path string) (string, *map[string]interface{}) {
+func getPathVariables(path string) (string, *map[string]interface{}) {
 	returnData := make(map[string]interface{})
 	reString := regexp.MustCompile(`^[a-zA-Z0-9]`)
 	for key := range pagesData {
@@ -188,7 +156,6 @@ func GetPathVariables(path string) (string, *map[string]interface{}) {
 						} else {
 							match = false
 							break
-							// return "Bad Request Variable", http.StatusBadRequest, nil
 						}
 					} else if splitPart[0] == "string" {
 						if matched := reString.MatchString(pathPart); matched {
@@ -196,7 +163,6 @@ func GetPathVariables(path string) (string, *map[string]interface{}) {
 						} else {
 							match = false
 							break
-							// return "Bad Request Variable", http.StatusBadRequest, nil
 						}
 					}
 				} else {
