@@ -17,7 +17,7 @@ import (
 func Run(data SetupData) {
 	Data = data
 	fmt.Printf("Starting Tackem %s System\n", Data.BaseData.ServiceName)
-	MasterUpLock.Lock()
+	MUp.StartDown()
 	if !helpers.InDockerCheck() {
 		return
 	}
@@ -65,7 +65,7 @@ func Run(data SetupData) {
 	if !RegData().Connect() {
 		Shutdown(false)
 	} else {
-		MasterUpLock.Unlock()
+		MUp.Up()
 		logging.Info("Registration Done")
 		captureInterupt()
 		WG.Wait()

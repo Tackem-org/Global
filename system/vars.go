@@ -4,6 +4,7 @@ import (
 	"embed"
 	"sync"
 
+	"github.com/Tackem-org/Global/helpers"
 	"google.golang.org/grpc"
 )
 
@@ -12,7 +13,7 @@ var (
 	regData        *Register
 	grpcServer     *grpc.Server
 	WG             *sync.WaitGroup
-	MasterUpLock   sync.Mutex
+	MUp            helpers.Locker
 	masterUrl      = "127.0.0.1" //"tackem_master"
 	masterPort     = "50001"
 	pagesData      map[string]func(in *WebRequest) (*WebReturn, error)

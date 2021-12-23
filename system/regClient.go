@@ -19,6 +19,6 @@ func NewRegClientServer() *RegClientServer {
 func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.GoingDownRequest) (*pb.Empty, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	MasterUpLock.Lock()
+	MUp.Down()
 	return &pb.Empty{}, nil
 }

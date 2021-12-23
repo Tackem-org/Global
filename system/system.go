@@ -16,8 +16,7 @@ func GRPCServer() *grpc.Server {
 
 func GetMasterConnection(force bool) (*grpc.ClientConn, error) {
 	if !force {
-		MasterUpLock.Lock()
-		defer MasterUpLock.Unlock()
+		MUp.Wait()
 	}
 	url := masterUrl + ":" + masterPort
 	return grpc.Dial(url, grpc.WithInsecure(), grpc.WithBlock())
@@ -26,6 +25,7 @@ func GetMasterConnection(force bool) (*grpc.ClientConn, error) {
 func GetHeader() metadata.MD {
 	return metadata.New(map[string]string{
 		"baseID": regData.baseID,
+		"key":    regData.key,
 	})
 
 }

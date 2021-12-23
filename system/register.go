@@ -14,6 +14,7 @@ import (
 
 	pb "github.com/Tackem-org/Proto/pb/registration"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -91,7 +92,7 @@ func (r *Register) Setup(baseData BaseData) {
 func (r *Register) Connect() bool {
 
 	url := masterUrl + ":" + masterPort
-	conn, err := grpc.Dial(url, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(url, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 	if err != nil {
 		logging.Fatal(err)
 	}
@@ -122,7 +123,7 @@ func (r *Register) Disconnect() {
 	logging.Info("DISCONNECT CALLED")
 
 	url := masterUrl + ":" + masterPort
-	conn, err := grpc.Dial(url, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(url, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 	if err != nil {
 		logging.Fatal(err)
 	}
