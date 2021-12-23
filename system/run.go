@@ -63,7 +63,7 @@ func Run(data SetupData) {
 	logging.Info("Starting gRPC server")
 
 	if !RegData().Connect() {
-		Shutdown(false)
+		Shutdown(false, false)
 	} else {
 		MUp.Up()
 		logging.Info("Registration Done")

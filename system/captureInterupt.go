@@ -14,6 +14,6 @@ func captureInterupt() {
 	go func() {
 		<-termChan
 		fmt.Print("\nSIGTERM received. Shutdown process initiated\n")
-		Shutdown(true)
+		Shutdown(true, false)
 	}()
 }

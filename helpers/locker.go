@@ -1,6 +1,8 @@
 package helpers
 
-import "sync"
+import (
+	"sync"
+)
 
 type Locker struct {
 	b bool

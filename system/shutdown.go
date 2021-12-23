@@ -6,11 +6,11 @@ import (
 	"github.com/Tackem-org/Global/logging"
 )
 
-func Shutdown(registered bool) {
+func Shutdown(registered bool, fullShutdown bool) {
 
 	if registered && MUp.Check() {
 		logging.Info("DeRegistration:" + fmt.Sprintf("%t", MUp.Check()))
-		RegData().Disconnect()
+		RegData().Disconnect(fullShutdown)
 		logging.Info("DeRegistration Done")
 	}
 

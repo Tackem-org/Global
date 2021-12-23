@@ -11,6 +11,7 @@ var (
 	e    *log.Logger
 	w    *log.Logger
 	f    *log.Logger
+	t    *log.Logger
 	file *os.File
 	mw   io.Writer
 
@@ -35,6 +36,7 @@ func Setup(logFile string, verbose bool) {
 	e = log.New(mw, "ERROR: ", logSettings)
 	w = log.New(mw, "WARNING: ", logSettings)
 	f = log.New(mw, "FATAL: ", logSettings)
+	t = log.New(mw, "TODO: ", logSettings)
 }
 
 func Shutdown() {
@@ -66,4 +68,8 @@ func Error(message string) {
 func Fatal(err error) {
 	f.Println(err.Error())
 	panic(err)
+}
+
+func Todo(message string) {
+	t.Println(message)
 }

@@ -16,7 +16,7 @@ func NewCheckerServer() *CheckerServer {
 	return &CheckerServer{}
 }
 
-func (c *CheckerServer) HealthCheck(ctx context.Context, in *pb.Empty) (*pb.HealthCheckResponse, error) {
+func (c *CheckerServer) HealthCheck(ctx context.Context, in *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 

@@ -92,7 +92,9 @@ func (r *Register) Setup(baseData BaseData) {
 func (r *Register) Connect() bool {
 
 	url := masterUrl + ":" + masterPort
-	conn, err := grpc.Dial(url, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	connctx, conncancel := context.WithTimeout(context.Background(), time.Second)
+	defer conncancel()
+	conn, err := grpc.DialContext(connctx, url, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 	if err != nil {
 		logging.Fatal(err)
 	}
@@ -119,11 +121,14 @@ func (r *Register) Connect() bool {
 	return false
 }
 
-func (r *Register) Disconnect() {
+func (r *Register) Disconnect(fullRemove bool) {
 	logging.Info("DISCONNECT CALLED")
 
 	url := masterUrl + ":" + masterPort
-	conn, err := grpc.Dial(url, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+
+	connctx, conncancel := context.WithTimeout(context.Background(), time.Second)
+	defer conncancel()
+	conn, err := grpc.DialContext(connctx, url, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 	if err != nil {
 		logging.Fatal(err)
 	}
@@ -135,8 +140,10 @@ func (r *Register) Disconnect() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 	ctx = metadata.NewOutgoingContext(ctx, header)
-
-	response, err := client.Disconnect(ctx, &pb.IDRequest{BaseId: r.baseID}, grpc.Header(&header))
+	response, err := client.Disconnect(ctx, &pb.DisconnectRequest{
+		BaseId:      r.baseID,
+		FullRemoval: fullRemove,
+	}, grpc.Header(&header))
 	if err != nil {
 		logging.Fatal(err)
 	}
@@ -144,7 +151,7 @@ func (r *Register) Disconnect() {
 		logging.Info("DISCONNECT FINISHED")
 		return
 	}
-	logging.Fatal(errors.New("failed to disconnect system from master"))
+	logging.Fatal(errors.New("failed to disconnect system from master:" + response.GetErrorMessage()))
 }
 
 func freePort() (port uint32) {

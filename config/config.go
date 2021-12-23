@@ -17,7 +17,7 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-func get(key string) (*pb.ConfigResponse, error) {
+func get(key string) (*pb.GetConfigResponse, error) {
 	conn, err := system.GetMasterConnection(false)
 	if err != nil {
 		logging.Error("[Remote Config Get] Cannot Connect to the Server: " + err.Error())

@@ -1,7 +1,9 @@
 package system
 
 import (
+	"context"
 	"os"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
@@ -19,7 +21,9 @@ func GetMasterConnection(force bool) (*grpc.ClientConn, error) {
 		MUp.Wait()
 	}
 	url := masterUrl + ":" + masterPort
-	return grpc.Dial(url, grpc.WithInsecure(), grpc.WithBlock())
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	return grpc.DialContext(ctx, url, grpc.WithInsecure(), grpc.WithBlock())
 }
 
 func GetHeader() metadata.MD {
