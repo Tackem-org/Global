@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 
 	"github.com/Tackem-org/Global/helpers"
 	"github.com/Tackem-org/Global/logging"
-	pbchecker "github.com/Tackem-org/Proto/pb/checker"
 	pbregclient "github.com/Tackem-org/Proto/pb/regclient"
 	pbremoteweb "github.com/Tackem-org/Proto/pb/remoteweb"
 	"google.golang.org/grpc"
@@ -16,6 +17,7 @@ import (
 
 func Run(data SetupData) {
 	Data = data
+	healthcheckHealthy = true
 	fmt.Printf("Starting Tackem %s System\n", Data.BaseData.ServiceName)
 	MUp.StartDown()
 	if !helpers.InDockerCheck() {
@@ -43,9 +45,10 @@ func Run(data SetupData) {
 	logging.Info("Setup GPRC Service")
 	grpcServer = grpc.NewServer()
 
-	pbremoteweb.RegisterRemoteWebServer(grpcServer, NewRemoteWebServer())
-	pbchecker.RegisterCheckerServer(grpcServer, NewCheckerServer())
 	pbregclient.RegisterRegClientServer(grpcServer, NewRegClientServer())
+	if data.BaseData.WebAccess {
+		pbremoteweb.RegisterRemoteWebServer(grpcServer, NewRemoteWebServer())
+	}
 	Data.GPRCSystems(grpcServer)
 
 	WG.Add(1)
@@ -67,10 +70,29 @@ func Run(data SetupData) {
 	} else {
 		MUp.Up()
 		logging.Info("Registration Done")
-		captureInterupt()
+		captureInterupts()
 		WG.Wait()
 
 	}
 	fmt.Println("Shutdown Complete Exiting Cleanly")
 	os.Exit(0)
+}
+
+func captureInterupts() {
+	termChan := make(chan os.Signal)
+	ShutdownCommand = make(chan bool)
+	signal.Notify(termChan, syscall.SIGTERM, syscall.SIGINT)
+
+	go func() {
+		<-termChan
+		fmt.Print("\n")
+		logging.Warning("SIGTERM received. Shutdown process initiated")
+		Shutdown(true, false)
+	}()
+
+	go func() {
+		<-ShutdownCommand
+		logging.Warning("Shutdown Command received. Shutdown process initiated")
+		Shutdown(true, false)
+	}()
 }
