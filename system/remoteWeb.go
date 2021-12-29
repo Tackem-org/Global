@@ -54,7 +54,7 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 	if cleanPath == "" {
 		cleanPath = "/"
 	}
-
+	logging.Info(cleanPath)
 	webRequest := WebRequest{
 		FullPath:  in.GetPath(),
 		CleanPath: cleanPath,
