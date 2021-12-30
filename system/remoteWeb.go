@@ -120,6 +120,7 @@ func (r *RemoteWebSystem) pageString(returnData *WebReturn, in *pb.PageRequest) 
 		StatusCode:        http.StatusOK,
 		TemplateHtml:      returnData.PageString,
 		PageVariablesJson: string(pageData),
+		CustomPageName:    returnData.CustomPageName,
 	}, nil
 
 }
@@ -148,6 +149,7 @@ func (r *RemoteWebSystem) pageFile(returnData *WebReturn, in *pb.PageRequest) (*
 		StatusCode:        http.StatusOK,
 		TemplateHtml:      string(templateHtml),
 		PageVariablesJson: string(pageData),
+		CustomPageName:    returnData.CustomPageName,
 	}, nil
 }
 

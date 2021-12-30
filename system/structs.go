@@ -34,7 +34,8 @@ type WebRequest struct {
 }
 
 type WebReturn struct {
-	FilePath   string
-	PageString string
-	PageData   map[string]interface{}
+	FilePath       string
+	PageString     string
+	PageData       map[string]interface{}
+	CustomPageName string
 }
