@@ -49,6 +49,8 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 	serviceName := RegData().GetServiceName()
 	if strings.HasPrefix(cleanPath, serviceName+"/") {
 		cleanPath = strings.Replace(cleanPath, serviceName+"/", "", 1)
+	} else if strings.HasPrefix(cleanPath, serviceName) {
+		cleanPath = strings.Replace(cleanPath, serviceName, "", 1)
 	}
 
 	if cleanPath == "" {
