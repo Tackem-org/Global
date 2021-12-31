@@ -38,4 +38,6 @@ type WebReturn struct {
 	PageString     string
 	PageData       map[string]interface{}
 	CustomPageName string
+	CustomCss      []string
+	CustomJs       []string
 }

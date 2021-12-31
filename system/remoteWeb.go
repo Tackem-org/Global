@@ -117,12 +117,14 @@ func (r *RemoteWebSystem) pageString(returnData *WebReturn, in *pb.PageRequest) 
 			ErrorMessage: "ERROR WITH THE SYSTEM",
 		}, nil
 	}
-
+	css, js := getBaseCSSandJS()
 	return &pb.PageResponse{
 		StatusCode:        http.StatusOK,
 		TemplateHtml:      returnData.PageString,
 		PageVariablesJson: string(pageData),
 		CustomPageName:    returnData.CustomPageName,
+		CustomCss:         append(css, returnData.CustomCss...),
+		CustomJs:          append(js, returnData.CustomJs...),
 	}, nil
 
 }
@@ -146,12 +148,14 @@ func (r *RemoteWebSystem) pageFile(returnData *WebReturn, in *pb.PageRequest) (*
 			ErrorMessage: "ERROR WITH THE SYSTEM",
 		}, nil
 	}
-
+	css, js := getBaseCSSandJS()
 	return &pb.PageResponse{
 		StatusCode:        http.StatusOK,
 		TemplateHtml:      string(templateHtml),
 		PageVariablesJson: string(pageData),
 		CustomPageName:    returnData.CustomPageName,
+		CustomCss:         append(css, returnData.CustomCss...),
+		CustomJs:          append(js, returnData.CustomJs...),
 	}, nil
 }
 
@@ -187,4 +191,14 @@ func (r *RemoteWebSystem) File(ctx context.Context, in *pb.FileRequest) (*pb.Fil
 		File:         data,
 	}, nil
 
+}
+
+func getBaseCSSandJS() (css []string, js []string) {
+	if _, err := fileSystem.ReadFile("static/css/" + regData.data.ServiceName + ".css"); err != nil {
+		css = append(css, "static/css/"+regData.data.ServiceName+".css")
+	}
+	if _, err := fileSystem.ReadFile("static/js/" + regData.data.ServiceName + ".js"); err != nil {
+		js = append(js, "static/js/"+regData.data.ServiceName+".js")
+	}
+	return
 }
