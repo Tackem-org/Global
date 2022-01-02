@@ -183,7 +183,7 @@ func (r *RemoteWebSystem) File(ctx context.Context, in *pb.FileRequest) (*pb.Fil
 		return &pb.FileResponse{
 			StatusCode:   uint32(sc),
 			ErrorMessage: em,
-		}, err
+		}, nil
 	}
 	return &pb.FileResponse{
 		StatusCode:   http.StatusOK,
@@ -194,11 +194,26 @@ func (r *RemoteWebSystem) File(ctx context.Context, in *pb.FileRequest) (*pb.Fil
 }
 
 func getBaseCSSandJS() (css []string, js []string) {
-	if _, err := fileSystem.ReadFile("static/css/" + regData.data.ServiceName + ".css"); err != nil {
-		css = append(css, "static/css/"+regData.data.ServiceName+".css")
+	baseurl := ""
+	if regData.data.ServiceType != "system" {
+		baseurl += regData.data.ServiceType + "/"
 	}
-	if _, err := fileSystem.ReadFile("static/js/" + regData.data.ServiceName + ".js"); err != nil {
-		js = append(js, "static/js/"+regData.data.ServiceName+".js")
+	baseurl += regData.data.ServiceName + "/static/"
+
+	cssfile, err := fileSystem.Open("css/" + regData.data.ServiceName + ".css")
+	if err == nil {
+		css = append(css, baseurl+"css/"+regData.data.ServiceName)
+	}
+	if cssfile != nil {
+		cssfile.Close()
+	}
+
+	jsfile, err := fileSystem.Open("js/" + regData.data.ServiceName + ".js")
+	if err == nil {
+		js = append(js, baseurl+"js/"+regData.data.ServiceName)
+	}
+	if jsfile != nil {
+		jsfile.Close()
 	}
 	return
 }

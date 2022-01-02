@@ -66,13 +66,16 @@ func Run(data SetupData) {
 	logging.Info("Starting gRPC server")
 
 	if !RegData().Connect() {
-		Shutdown(false, false)
+		Shutdown(false)
 	} else {
 		MUp.Up()
 		logging.Info("Registration Done")
 		captureInterupts()
 		WG.Wait()
 
+	}
+	if Data.Shutdown != nil {
+		Data.Shutdown()
 	}
 	fmt.Println("Shutdown Complete Exiting Cleanly")
 	os.Exit(0)
@@ -87,12 +90,12 @@ func captureInterupts() {
 		<-termChan
 		fmt.Print("\n")
 		logging.Warning("SIGTERM received. Shutdown process initiated")
-		Shutdown(true, false)
+		Shutdown(true)
 	}()
 
 	go func() {
 		<-ShutdownCommand
 		logging.Warning("Shutdown Command received. Shutdown process initiated")
-		Shutdown(true, false)
+		Shutdown(true)
 	}()
 }

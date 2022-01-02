@@ -12,12 +12,14 @@ type SetupData struct {
 	GPRCSystems func(server *grpc.Server)
 	WebSystems  func()
 	MainSystem  func()
+	Shutdown    func()
 }
 
 type BaseData struct {
 	ServiceName string
 	ServiceType string
 	Multi       bool
+	SingleRun   bool
 	WebAccess   bool
 	NavItems    []*pb.NavItem
 }

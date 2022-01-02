@@ -84,6 +84,7 @@ func (r *Register) Setup(baseData BaseData) {
 		Hostname:    reg.ReplaceAllString(string(rawHostname), ""),
 		Hostport:    freePort(),
 		Multi:       baseData.Multi,
+		SingleRun:   baseData.SingleRun,
 		Webaccess:   baseData.WebAccess,
 		NavItems:    baseData.NavItems,
 	}
@@ -121,7 +122,7 @@ func (r *Register) Connect() bool {
 	return false
 }
 
-func (r *Register) Disconnect(fullRemove bool) {
+func (r *Register) Disconnect() {
 	logging.Info("DISCONNECT CALLED")
 
 	url := masterUrl + ":" + masterPort
@@ -141,8 +142,7 @@ func (r *Register) Disconnect(fullRemove bool) {
 	defer cancel()
 	ctx = metadata.NewOutgoingContext(ctx, header)
 	response, err := client.Disconnect(ctx, &pb.DisconnectRequest{
-		BaseId:      r.baseID,
-		FullRemoval: fullRemove,
+		BaseId: r.baseID,
 	}, grpc.Header(&header))
 	if err != nil {
 		logging.Fatal(err)
