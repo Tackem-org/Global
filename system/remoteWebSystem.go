@@ -127,10 +127,13 @@ func checkPathPart(part string) bool {
 	return true
 }
 
-func getPathVariables(path string) (string, *map[string]interface{}) {
+func getPathVariables(path string, section *map[string]func(in *WebRequest) (*WebReturn, error)) (string, *map[string]interface{}) {
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
 	returnData := make(map[string]interface{})
 	reString := regexp.MustCompile(`^[a-zA-Z0-9]`)
-	for key := range pagesData {
+	for key := range *section {
 		if strings.Count(key, "{")+strings.Count(key, "}") == 0 {
 			if key == path {
 				return key, nil
@@ -171,9 +174,10 @@ func getPathVariables(path string) (string, *map[string]interface{}) {
 						break
 					}
 				}
-			} else {
+			} else if strings.Count(keyParts[index], "{{") > 1 && strings.Count(keyParts[index], "}}") > 1 {
 				// varCount := strings.Count(keyParts[index], "{{")
 				logging.Info("TODO MORE SPECIAL CHECK OF PATH PART FOR MULTI VARIABLES")
+				logging.Info(fmt.Sprint(pathPart) + ":" + fmt.Sprint(keyParts))
 			}
 		}
 		if match {

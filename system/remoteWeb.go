@@ -56,7 +56,6 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 	if cleanPath == "" {
 		cleanPath = "/"
 	}
-	logging.Info(cleanPath)
 	webRequest := WebRequest{
 		FullPath:  in.GetPath(),
 		CleanPath: cleanPath,
@@ -67,7 +66,7 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 	json.Unmarshal([]byte(in.GetQueryParamsJson()), &webRequest.QueryParams)
 	json.Unmarshal([]byte(in.GetPostJson()), &webRequest.Post)
 
-	pagesKey, pathVariables := getPathVariables(cleanPath)
+	pagesKey, pathVariables := getPathVariables(cleanPath, section)
 	if pagesKey == "" {
 		return &pb.PageResponse{
 			StatusCode:   http.StatusNotFound,
@@ -77,7 +76,6 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 	if pathVariables != nil {
 		webRequest.PathVariables = *pathVariables
 	}
-
 	if call, exists := (*section)[pagesKey]; exists {
 		returnData, err := call(&webRequest)
 		if err != nil {
