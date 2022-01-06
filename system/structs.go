@@ -18,6 +18,7 @@ type SetupData struct {
 type BaseData struct {
 	ServiceName string
 	ServiceType string
+	Version     Versionstruct
 	Multi       bool
 	SingleRun   bool
 	WebAccess   bool
@@ -42,4 +43,11 @@ type WebReturn struct {
 	CustomPageName string
 	CustomCss      []string
 	CustomJs       []string
+}
+
+type Versionstruct struct {
+	Major  uint8
+	Minor  uint8
+	Hotfix uint8
+	Suffix string
 }

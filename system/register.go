@@ -81,12 +81,14 @@ func (r *Register) Setup(baseData BaseData) {
 	r.data = pb.RegisterRequest{
 		ServiceName: baseData.ServiceName,
 		ServiceType: baseData.ServiceType,
+		Version:     &pb.Version{Major: uint32(baseData.Version.Major), Minor: uint32(baseData.Version.Minor), Hotfix: uint32(baseData.Version.Hotfix), Suffix: baseData.Version.Suffix},
 		Hostname:    reg.ReplaceAllString(string(rawHostname), ""),
 		Hostport:    freePort(),
 		Multi:       baseData.Multi,
 		SingleRun:   baseData.SingleRun,
 		Webaccess:   baseData.WebAccess,
 		NavItems:    baseData.NavItems,
+		ConfigItems: []*pb.ConfigItem{},
 	}
 }
 
