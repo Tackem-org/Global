@@ -26,7 +26,7 @@ func StringSliceToIntSlice(in []string) []int {
 func InterfaceSliceToStringSlice(in []interface{}) []string {
 	out := make([]string, len(in))
 	for i, v := range in {
-		out[i] = v.(string)
+		out[i] = fmt.Sprint(v)
 	}
 	return out
 }
