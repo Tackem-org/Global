@@ -7,6 +7,8 @@ Global Features for Tackem
 
 ## In Docker
 
-
 ## Links
-- <https://awesome-go.com/>
+
+## Helpers
+## Uses
+- <github.com/xhit/go-str2duration/v2>

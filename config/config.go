@@ -13,6 +13,7 @@ import (
 	"github.com/Tackem-org/Global/system"
 	pb "github.com/Tackem-org/Proto/pb/config"
 
+	str2duration "github.com/xhit/go-str2duration/v2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
@@ -221,7 +222,7 @@ func GetDuration(key string) (time.Duration, error) {
 	if err != nil {
 		return time.Duration(0), err
 	}
-	duration, err := time.ParseDuration(response.Value)
+	duration, err := str2duration.ParseDuration(response.Value)
 	if err != nil {
 		return time.Duration(0), err
 	}

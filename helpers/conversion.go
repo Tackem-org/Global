@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
+
+	str2duration "github.com/xhit/go-str2duration/v2"
 )
 
 func IntSliceToStringSlice(in []int) []string {
@@ -69,4 +72,15 @@ func StringToStringMap(in string) map[string]interface{} {
 	out := map[string]interface{}{}
 	json.Unmarshal([]byte(in), &out)
 	return out
+}
+
+func StringToDuration(in string) time.Duration {
+	if f, err := strconv.ParseFloat(in, 64); err == nil {
+		return time.Duration(f)
+	} else if i, err := strconv.Atoi(in); err == nil {
+		return time.Duration(i)
+	} else if d, err := str2duration.ParseDuration(in); err == nil {
+		return d
+	}
+	return 0
 }
