@@ -84,3 +84,26 @@ func StringToDuration(in string) time.Duration {
 	}
 	return 0
 }
+
+func DurationToString(in time.Duration) string {
+
+	f := in.String()
+	if !strings.Contains(f, "h") {
+		return f
+	}
+
+	s := strings.Split(f, "h")
+	i, _ := strconv.Atoi(s[0])
+
+	if i < 24 {
+		return f
+	}
+
+	d, h := i/24, i%24
+	if d < 7 {
+		return fmt.Sprintf("%dd%dh%s", d, h, s[1])
+	}
+	w, d := d/7, d%7
+	return fmt.Sprintf("%dw%dd%dh%s", w, d, h, s[1])
+
+}
