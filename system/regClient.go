@@ -34,7 +34,6 @@ func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoin
 
 	ok, err := r.checkKey(ctx)
 	if ok {
-		//TODO NEED TO DEAL WITH REASON HERE
 		switch in.GetReason() {
 		case pb.MasterGoingDownReason_FullShutdown:
 			logging.Info("Master Is Down, Shutting down this system")
