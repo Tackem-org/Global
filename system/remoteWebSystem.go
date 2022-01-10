@@ -13,6 +13,7 @@ import (
 func WebSetup(fileSystemIn *embed.FS) {
 	pagesData = make(map[string]func(in *WebRequest) (*WebReturn, error))
 	adminPagesData = make(map[string]func(in *WebRequest) (*WebReturn, error))
+	webSocketData = make(map[string]func(in *WebSocketRequest) (*WebSocketReturn, error))
 	fileSystem = fileSystemIn
 }
 
@@ -60,6 +61,28 @@ func WebAddAdminPath(path string, call func(in *WebRequest) (*WebReturn, error))
 	return true
 }
 
+func WebAddWebSocket(path string, call func(in *WebSocketRequest) (*WebSocketReturn, error)) bool {
+	logging.Info(fmt.Sprintf("Adding Web Socket %s to remoteWeb", path))
+
+	if strings.HasSuffix(path, ".ws") {
+		logging.Warning(fmt.Sprintf("Adding Web Socket %s to remoteWeb Failed - cannot use static in the name", path))
+		return false
+	}
+	if _, exists := pagesData[path]; exists {
+		logging.Warning(fmt.Sprintf("Adding Web Socket %s to remoteWeb Failed - Path already exists", path))
+		return false
+	}
+
+	startCount := strings.Count(path, "{")
+	endCount := strings.Count(path, "}")
+	if startCount != 0 || endCount != 0 {
+		logging.Warning(fmt.Sprintf("Adding Web Socket %s to remoteWeb Failed - Path Cannot use Variables", path))
+		return false
+	}
+	webSocketData[path] = call
+	return true
+}
+
 func WebRemovePath(path string) bool {
 	logging.Info(fmt.Sprintf("Removing %s from remoteWeb", path))
 	if _, exists := pagesData[path]; !exists {
@@ -79,6 +102,17 @@ func WebRemoveAdminPath(path string) bool {
 	}
 
 	delete(adminPagesData, path)
+	return true
+}
+
+func WebRemoveWebSocket(path string) bool {
+	logging.Info(fmt.Sprintf("Removing Web Socket %s from remoteWeb", path))
+	if _, exists := webSocketData[path]; !exists {
+		logging.Warning(fmt.Sprintf("Removing Web Socket %s from remoteWeb Failed - path not found", path))
+		return false
+	}
+
+	delete(webSocketData, path)
 	return true
 }
 

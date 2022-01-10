@@ -34,10 +34,11 @@ func (r *RemoteWebSystem) AdminPage(ctx context.Context, in *pb.PageRequest) (*p
 	return r.page(ctx, in, r.adminPages)
 }
 
-func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section *map[string]func(in *WebRequest) (*WebReturn, error)) (*pb.PageResponse, error) {
-	cleanPath := in.GetPath()
-	if strings.HasPrefix(cleanPath, "admin/") {
-		cleanPath = strings.Replace(cleanPath, "admin/", "", 1)
+func cleanPath(in string) (cleanPath string) {
+	if strings.HasPrefix(in, "admin/") {
+		cleanPath = strings.Replace(in, "admin/", "", 1)
+	} else {
+		cleanPath = in
 	}
 
 	serviceType := RegData().GetServiceType()
@@ -52,7 +53,10 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 	} else if strings.HasPrefix(cleanPath, serviceName) {
 		cleanPath = strings.Replace(cleanPath, serviceName, "", 1)
 	}
-
+	return
+}
+func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section *map[string]func(in *WebRequest) (*WebReturn, error)) (*pb.PageResponse, error) {
+	cleanPath := cleanPath(in.Path)
 	if cleanPath == "" {
 		cleanPath = "/"
 	}
@@ -189,6 +193,39 @@ func (r *RemoteWebSystem) File(ctx context.Context, in *pb.FileRequest) (*pb.Fil
 		File:         data,
 	}, nil
 
+}
+
+func (r *RemoteWebSystem) WebSocket(ctx context.Context, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error) {
+	logging.Info("[GPRC Remote Web Socket Request] " + in.GetPath())
+
+	path := cleanPath(in.Path)
+	var d map[string]interface{}
+	json.Unmarshal([]byte(in.DataJson), &d)
+	webSocketRequest := WebSocketRequest{
+		Path:   path,
+		UserID: in.UserId,
+		Data:   d,
+	}
+	if call, exists := webSocketData[path]; exists {
+		returnData, err := call(&webSocketRequest)
+		if err != nil {
+			logging.Error("[GPRC Remote Web Socket Request] " + in.GetPath() + ":" + err.Error())
+			return &pb.WebSocketResponse{
+				StatusCode:   http.StatusInternalServerError,
+				ErrorMessage: "ERROR WITH THE SYSTEM",
+			}, nil
+		}
+
+		returnJson, _ := json.Marshal(returnData.Data)
+		return &pb.WebSocketResponse{
+			StatusCode: http.StatusOK,
+			DataJson:   string(returnJson),
+		}, nil
+	}
+	return &pb.WebSocketResponse{
+		StatusCode:   http.StatusNotFound,
+		ErrorMessage: "Web Socket Not Found",
+	}, nil
 }
 
 func getBaseCSSandJS() (css []string, js []string) {

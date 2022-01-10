@@ -11,6 +11,7 @@ type SetupData struct {
 	VerboseLog  bool
 	GPRCSystems func(server *grpc.Server)
 	WebSystems  func()
+	WebSockets  func()
 	MainSystem  func()
 	Shutdown    func()
 }
@@ -43,6 +44,18 @@ type WebReturn struct {
 	CustomPageName string
 	CustomCss      []string
 	CustomJs       []string
+}
+
+type WebSocketRequest struct {
+	Path   string
+	UserID uint64
+	Data   map[string]interface{}
+}
+
+type WebSocketReturn struct {
+	StatusCode   uint32
+	ErrorMessage string
+	Data         map[string]interface{}
 }
 
 type Versionstruct struct {

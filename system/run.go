@@ -42,6 +42,11 @@ func Run(data SetupData) {
 		Data.WebSystems()
 	}
 
+	logging.Info("Setup Web Sockets")
+	if Data.WebSockets != nil {
+		Data.WebSockets()
+	}
+
 	logging.Info("Setup GPRC Service")
 	grpcServer = grpc.NewServer()
 
