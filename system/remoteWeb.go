@@ -259,10 +259,51 @@ func getBaseCSSandJS() (css []string, js []string) {
 	return
 }
 
-func Keys(m *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)) []string {
-	keys := make([]string, 0, len(*m))
-	for k := range *m {
-		keys = append(keys, k)
+func (r *RemoteWebSystem) ValidPage(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
+	return r.validPage(ctx, in, r.pages)
+}
+
+func (r *RemoteWebSystem) ValidAdminPage(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
+	return r.validPage(ctx, in, r.adminPages)
+}
+
+func (r *RemoteWebSystem) validPage(ctx context.Context, in *pb.ValidRequest, section *map[string]func(in *WebRequest) (*WebReturn, error)) (*pb.ValidResponse, error) {
+	cleanPath := cleanPath(in.Path)
+	if cleanPath == "" {
+		cleanPath = "/"
 	}
-	return keys
+	pagesKey, _ := getPathVariables(cleanPath, section)
+	if pagesKey == "" {
+		return &pb.ValidResponse{
+			Found: false,
+		}, nil
+	}
+	_, exists := (*section)[pagesKey]
+	return &pb.ValidResponse{
+		Found: exists,
+	}, nil
+
+}
+
+func (r *RemoteWebSystem) ValidFile(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
+	path := strings.Split(in.GetPath(), "/static/")[1]
+	f, err := fileSystem.Open(path)
+	f.Close()
+	return &pb.ValidResponse{
+		Found: err != nil,
+	}, nil
+
+}
+
+func (r *RemoteWebSystem) ValidWebSocket(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
+
+	path := cleanPath(in.Path)
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+
+	_, exists := (*r.webSockets)[path]
+	return &pb.ValidResponse{
+		Found: exists,
+	}, nil
 }
