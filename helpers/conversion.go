@@ -107,3 +107,19 @@ func DurationToString(in time.Duration) string {
 	return fmt.Sprintf("%dw%dd%dh%s", w, d, h, s[1])
 
 }
+
+func MapStringInterfaceToMapStringString(in map[string]interface{}) map[string]string {
+	out := map[string]string{}
+	for k, v := range in {
+		out[k] = fmt.Sprint(v)
+	}
+	return out
+}
+
+func MapStringInterfaceToMapStringStringSlice(in map[string]interface{}) map[string][]string {
+	out := map[string][]string{}
+	for k := range in {
+		out[k] = InterfaceSliceToStringSlice(in[k].([]interface{}))
+	}
+	return out
+}
