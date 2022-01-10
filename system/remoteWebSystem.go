@@ -64,8 +64,8 @@ func WebAddAdminPath(path string, call func(in *WebRequest) (*WebReturn, error))
 func WebAddWebSocket(path string, call func(in *WebSocketRequest) (*WebSocketReturn, error)) bool {
 	logging.Info(fmt.Sprintf("Adding Web Socket %s to remoteWeb", path))
 
-	if strings.HasSuffix(path, ".ws") {
-		logging.Warning(fmt.Sprintf("Adding Web Socket %s to remoteWeb Failed - cannot use static in the name", path))
+	if !strings.HasSuffix(path, ".ws") {
+		logging.Warning(fmt.Sprintf("Adding Web Socket %s to remoteWeb Failed - missing \".ws\" Suffix", path))
 		return false
 	}
 	if _, exists := pagesData[path]; exists {

@@ -14,6 +14,7 @@ import (
 type RemoteWebSystem struct {
 	pages      *map[string]func(in *WebRequest) (*WebReturn, error)
 	adminPages *map[string]func(in *WebRequest) (*WebReturn, error)
+	webSockets *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)
 	pb.UnimplementedRemoteWebServer
 }
 
@@ -21,6 +22,7 @@ func NewRemoteWebServer() *RemoteWebSystem {
 	return &RemoteWebSystem{
 		pages:      &pagesData,
 		adminPages: &adminPagesData,
+		webSockets: &webSocketData,
 	}
 }
 
@@ -199,6 +201,9 @@ func (r *RemoteWebSystem) WebSocket(ctx context.Context, in *pb.WebSocketRequest
 	logging.Info("[GPRC Remote Web Socket Request] " + in.GetPath())
 
 	path := cleanPath(in.Path)
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
 	var d map[string]interface{}
 	json.Unmarshal([]byte(in.DataJson), &d)
 	webSocketRequest := WebSocketRequest{
@@ -206,7 +211,8 @@ func (r *RemoteWebSystem) WebSocket(ctx context.Context, in *pb.WebSocketRequest
 		UserID: in.UserId,
 		Data:   d,
 	}
-	if call, exists := webSocketData[path]; exists {
+
+	if call, exists := (*r.webSockets)[path]; exists {
 		returnData, err := call(&webSocketRequest)
 		if err != nil {
 			logging.Error("[GPRC Remote Web Socket Request] " + in.GetPath() + ":" + err.Error())
@@ -251,4 +257,12 @@ func getBaseCSSandJS() (css []string, js []string) {
 		jsfile.Close()
 	}
 	return
+}
+
+func Keys(m *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)) []string {
+	keys := make([]string, 0, len(*m))
+	for k := range *m {
+		keys = append(keys, k)
+	}
+	return keys
 }
