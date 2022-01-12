@@ -1,6 +1,7 @@
 package system
 
 import (
+	"github.com/Tackem-org/Global/logging/debug"
 	pb "github.com/Tackem-org/Proto/pb/registration"
 	"google.golang.org/grpc"
 )
@@ -9,6 +10,7 @@ type SetupData struct {
 	BaseData    BaseData
 	LogFile     string
 	VerboseLog  bool
+	DebugLevel  debug.Mask
 	GPRCSystems func(server *grpc.Server)
 	WebSystems  func()
 	WebSockets  func()

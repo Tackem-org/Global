@@ -182,19 +182,6 @@ func GetStringMapString(key string) (map[string]string, error) {
 	return r, nil
 }
 
-func GetStringMapStringSlice(key string) (map[string][]string, error) {
-	r := map[string][]string{}
-	response, err := get(key)
-	if err != nil {
-		return r, err
-	}
-	err = json.Unmarshal([]byte(response.GetValue()), &r)
-	if err != nil {
-		return r, err
-	}
-	return r, nil
-}
-
 func GetStringSlice(key string) ([]string, error) {
 	response, err := get(key)
 	if err != nil {
@@ -305,11 +292,6 @@ func SetStringMap(key string, value map[string]interface{}) (bool, error) {
 }
 
 func SetStringMapString(key string, value map[string]string) (bool, error) {
-	stringValueJson, _ := json.Marshal(value)
-	return set(key, string(stringValueJson))
-}
-
-func SetStringMapStringSlice(key string, value map[string][]string) (bool, error) {
 	stringValueJson, _ := json.Marshal(value)
 	return set(key, string(stringValueJson))
 }

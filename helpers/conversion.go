@@ -56,18 +56,6 @@ func StringToStringSlice(in string) []string {
 	return out
 }
 
-func StringToStringMapString(in string) map[string]string {
-	out := map[string]string{}
-	json.Unmarshal([]byte(in), &out)
-	return out
-}
-
-func StringToStringMapStringSlice(in string) map[string][]string {
-	out := map[string][]string{}
-	json.Unmarshal([]byte(in), &out)
-	return out
-}
-
 func StringToStringMap(in string) map[string]interface{} {
 	out := map[string]interface{}{}
 	json.Unmarshal([]byte(in), &out)

@@ -24,7 +24,7 @@ func Run(data SetupData) {
 		return
 	}
 	fmt.Printf("Verbose %t\n", Data.VerboseLog)
-	logging.Setup(Data.LogFile, Data.VerboseLog)
+	logging.Setup(Data.LogFile, Data.VerboseLog, Data.DebugLevel)
 	logging.Info("Logger Started")
 
 	logging.Info("Setup Registration Data")
