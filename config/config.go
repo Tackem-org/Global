@@ -21,7 +21,7 @@ import (
 func get(key string) (*pb.GetConfigResponse, error) {
 	conn, err := system.GetMasterConnection(false)
 	if err != nil {
-		logging.Error("[Remote Config Get] Cannot Connect to the Server: " + err.Error())
+		logging.Errorf("[Remote Config Get] Cannot Connect to the Server: %s", err.Error())
 		return nil, err
 	}
 	defer conn.Close()
@@ -34,7 +34,7 @@ func get(key string) (*pb.GetConfigResponse, error) {
 
 	response, err := client.Get(ctx, &pb.GetConfigRequest{Key: key}, grpc.Header(&metadata.MD{}))
 	if err != nil {
-		logging.Error("[Remote Config Get] Error with the Servers Get: " + err.Error())
+		logging.Errorf("[Remote Config Get] Error with the Servers Get: %s", err.Error())
 		return nil, err
 	}
 	return response, nil
@@ -220,7 +220,7 @@ func set(key string, value string) (bool, error) {
 	conn, err := system.GetMasterConnection(false)
 
 	if err != nil {
-		logging.Error("[Remote Config Set] Cannot Connect to the Server: " + err.Error())
+		logging.Errorf("[Remote Config Set] Cannot Connect to the Server: %s", err.Error())
 		return false, err
 	}
 	defer conn.Close()
@@ -233,7 +233,7 @@ func set(key string, value string) (bool, error) {
 
 	response, err := client.Set(ctx, &pb.SetConfigRequest{Key: key, Value: value}, grpc.Header(&metadata.MD{}))
 	if err != nil {
-		logging.Error("[Remote Config Set] Error with the Servers Set: " + err.Error())
+		logging.Errorf("[Remote Config Set] Error with the Servers Set: %s", err.Error())
 		return false, err
 	}
 	return response.GetSuccess(), errors.New(response.GetErrorMessage())

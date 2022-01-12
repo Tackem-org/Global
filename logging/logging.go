@@ -13,7 +13,6 @@ import (
 
 var (
 	mu             sync.RWMutex
-	dmu            sync.RWMutex
 	i              *log.Logger
 	d              *log.Logger
 	e              *log.Logger
@@ -75,10 +74,7 @@ func checkLogSize() {
 	if maxSize < size {
 		file.Close()
 		moveBackupLogFiles(0)
-		e := os.Rename(filePath, filePath+".0.bak")
-		if e != nil {
-			Fatal(e)
-		}
+		os.Rename(filePath, filePath+".0.bak")
 		setupBackend()
 	}
 }
@@ -93,10 +89,7 @@ func moveBackupLogFiles(i uint8) {
 	}
 
 	moveBackupLogFiles(i + 1)
-	e := os.Rename(fmt.Sprintf("%s.%d.bak", filePath, i), fmt.Sprintf("%s.%d.bak", filePath, i+1))
-	if e != nil {
-		Fatal(e)
-	}
+	os.Rename(fmt.Sprintf("%s.%d.bak", filePath, i), fmt.Sprintf("%s.%d.bak", filePath, i+1))
 
 }
 func fileExists(path string) bool {
@@ -113,6 +106,16 @@ func CustomLogger(prefix string) *log.Logger {
 func Custom(prefix string, message string) {
 	mu.Lock()
 	defer mu.Unlock()
+	custom(prefix, message)
+}
+
+func Customf(prefix string, message string, values ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
+	custom(prefix, fmt.Sprintf(message, values...))
+}
+
+func custom(prefix string, message string) {
 	t := log.New(mw, prefix+": ", logSettings)
 	t.Println(message)
 }
@@ -120,21 +123,39 @@ func Custom(prefix string, message string) {
 func Info(message string) {
 	mu.Lock()
 	defer mu.Unlock()
+	info(message)
+}
+
+func Infof(message string, values ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
+	info(fmt.Sprintf(message, values...))
+}
+
+func info(message string) {
 	i.Println(message)
 	checkLogSize()
 }
 
 func Debug(debugMask debug.Mask, message string) {
+	mu.Lock()
+	defer mu.Unlock()
+	debugBack(debugMask, message)
+}
+
+func Debugf(debugMask debug.Mask, message string, values ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
+	debugBack(debugMask, fmt.Sprintf(message, values...))
+}
+
+func debugBack(debugMask debug.Mask, message string) {
 	if dm == 0 {
 		return
 	}
-	dmu.Lock()
-	defer dmu.Unlock()
 	if !dm.HasAny(debugMask) {
 		return
 	}
-	mu.Lock()
-	defer mu.Unlock()
 	d.Println(message)
 	checkLogSize()
 }
@@ -142,6 +163,16 @@ func Debug(debugMask debug.Mask, message string) {
 func Warning(message string) {
 	mu.Lock()
 	defer mu.Unlock()
+	warning(message)
+}
+
+func Warningf(message string, values ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
+	warning(fmt.Sprintf(message, values...))
+}
+
+func warning(message string) {
 	w.Println(message)
 	checkLogSize()
 }
@@ -149,20 +180,50 @@ func Warning(message string) {
 func Error(message string) {
 	mu.Lock()
 	defer mu.Unlock()
-	e.Println(message)
-	checkLogSize()
+	error(message)
 }
 
-func Fatal(err error) {
+func Errorf(message string, values ...interface{}) {
 	mu.Lock()
 	defer mu.Unlock()
-	f.Println(err.Error())
-	panic(err)
+	error(fmt.Sprintf(message, values...))
+}
+
+func error(message string) {
+	e.Println(message)
+	checkLogSize()
 }
 
 func Todo(message string) {
 	mu.Lock()
 	defer mu.Unlock()
+	todo(message)
+}
+
+func Todof(message string, values ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
+	todo(fmt.Sprintf(message, values...))
+}
+
+func todo(message string) {
 	t.Println(message)
 	checkLogSize()
+}
+
+func Fatal(message string) {
+	mu.Lock()
+	defer mu.Unlock()
+	fatal(message)
+}
+
+func Fatalf(message string, values ...interface{}) {
+	mu.Lock()
+	defer mu.Unlock()
+	fatal(fmt.Sprintf(message, values...))
+}
+
+func fatal(message string) {
+	f.Println(message)
+	panic(errors.New(message))
 }

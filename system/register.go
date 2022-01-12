@@ -2,7 +2,6 @@ package system
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -71,12 +70,12 @@ func (r *Register) Setup(baseData BaseData) {
 
 	rawHostname, err := ioutil.ReadFile("/etc/hostname")
 	if err != nil {
-		logging.Fatal(err)
+		logging.Fatal(err.Error())
 	}
 
 	reg, err := regexp.Compile("[^a-zA-Z0-9]+")
 	if err != nil {
-		logging.Fatal(err)
+		logging.Fatal(err.Error())
 	}
 	r.data = pb.RegisterRequest{
 		ServiceName: baseData.ServiceName,
@@ -99,7 +98,7 @@ func (r *Register) Connect() bool {
 	defer conncancel()
 	conn, err := grpc.DialContext(connctx, url, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 	if err != nil {
-		logging.Fatal(err)
+		logging.Fatal(err.Error())
 	}
 	defer conn.Close()
 
@@ -112,7 +111,7 @@ func (r *Register) Connect() bool {
 
 	response, err := client.Register(ctx, &r.data, grpc.Header(&header))
 	if err != nil {
-		logging.Fatal(err)
+		logging.Fatal(err.Error())
 	}
 	if response.GetSuccess() {
 		r.baseID = response.GetBaseId()
@@ -133,7 +132,7 @@ func (r *Register) Disconnect() {
 	defer conncancel()
 	conn, err := grpc.DialContext(connctx, url, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 	if err != nil {
-		logging.Fatal(err)
+		logging.Fatal(err.Error())
 	}
 	defer conn.Close()
 
@@ -147,24 +146,24 @@ func (r *Register) Disconnect() {
 		BaseId: r.baseID,
 	}, grpc.Header(&header))
 	if err != nil {
-		logging.Fatal(err)
+		logging.Fatal(err.Error())
 	}
 	if response.GetSuccess() {
 		logging.Info("DISCONNECT FINISHED")
 		return
 	}
-	logging.Fatal(errors.New("failed to disconnect system from master:" + response.GetErrorMessage()))
+	logging.Fatalf("failed to disconnect system from master: %s", response.GetErrorMessage())
 }
 
 func freePort() (port uint32) {
 	port = 50001
-	ln, err := net.Listen("tcp", ":"+fmt.Sprint(port))
+	ln, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	for {
 		if err == nil {
 			break
 		}
 		port++
-		ln, err = net.Listen("tcp", ":"+fmt.Sprint(port))
+		ln, err = net.Listen("tcp", fmt.Sprintf(":%d", port))
 	}
 	ln.Close()
 	return

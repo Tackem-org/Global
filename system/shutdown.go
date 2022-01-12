@@ -1,15 +1,13 @@
 package system
 
 import (
-	"fmt"
-
 	"github.com/Tackem-org/Global/logging"
 )
 
 func Shutdown(registered bool) {
 
 	if registered && MUp.Check() {
-		logging.Info("DeRegistration:" + fmt.Sprintf("%t", MUp.Check()))
+		logging.Infof("DeRegistration: %t", MUp.Check())
 		RegData().Disconnect()
 		logging.Info("DeRegistration Done")
 	}

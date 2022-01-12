@@ -2,7 +2,6 @@ package system
 
 import (
 	"embed"
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -18,19 +17,19 @@ func WebSetup(fileSystemIn *embed.FS) {
 }
 
 func WebAddPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool {
-	logging.Info(fmt.Sprintf("Adding %s to remoteWeb", path))
+	logging.Infof("Adding %s to remoteWeb", path)
 	if strings.Contains(path, "static") {
-		logging.Warning(fmt.Sprintf("Adding %s to remoteWeb Failed - cannot use static in the name", path))
+		logging.Warningf("Adding %s to remoteWeb Failed - cannot use static in the name", path)
 		return false
 	}
 	if _, exists := pagesData[path]; exists {
-		logging.Warning(fmt.Sprintf("Adding %s to remoteWeb Failed - Path already exists", path))
+		logging.Warningf("Adding %s to remoteWeb Failed - Path already exists", path)
 		return false
 	}
 
 	for _, part := range strings.Split(path, "/") {
 		if !checkPathPart(part) {
-			logging.Warning(fmt.Sprintf("Adding %s to remoteWeb Failed: Part format Bad %s", path, part))
+			logging.Warningf("Adding %s to remoteWeb Failed: Part format Bad %s", path, part)
 			return false
 		}
 	}
@@ -40,19 +39,19 @@ func WebAddPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool
 }
 
 func WebAddAdminPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool {
-	logging.Info(fmt.Sprintf("Adding %s to remoteWeb [Admin]", path))
+	logging.Infof("Adding %s to remoteWeb [Admin]", path)
 	if strings.Contains(path, "static") {
-		logging.Warning(fmt.Sprintf("Adding %s to remoteWeb Failed - cannot use static in the name", path))
+		logging.Warningf("Adding %s to remoteWeb Failed - cannot use static in the name", path)
 		return false
 	}
 	if _, exists := adminPagesData[path]; exists {
-		logging.Warning(fmt.Sprintf("Adding %s to remoteWeb Failed - Path already exists", path))
+		logging.Warningf("Adding %s to remoteWeb Failed - Path already exists", path)
 		return false
 	}
 
 	for _, part := range strings.Split(path, "/") {
 		if !checkPathPart(part) {
-			logging.Warning(fmt.Sprintf("Adding %s to remoteWeb Failed: Part format Bad %s", path, part))
+			logging.Warningf("Adding %s to remoteWeb Failed: Part format Bad %s", path, part)
 			return false
 		}
 	}
@@ -62,21 +61,21 @@ func WebAddAdminPath(path string, call func(in *WebRequest) (*WebReturn, error))
 }
 
 func WebAddWebSocket(path string, call func(in *WebSocketRequest) (*WebSocketReturn, error)) bool {
-	logging.Info(fmt.Sprintf("Adding Web Socket %s to remoteWeb", path))
+	logging.Infof("Adding Web Socket %s to remoteWeb", path)
 
 	if !strings.HasSuffix(path, ".ws") {
-		logging.Warning(fmt.Sprintf("Adding Web Socket %s to remoteWeb Failed - missing \".ws\" Suffix", path))
+		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - missing \".ws\" Suffix", path)
 		return false
 	}
 	if _, exists := pagesData[path]; exists {
-		logging.Warning(fmt.Sprintf("Adding Web Socket %s to remoteWeb Failed - Path already exists", path))
+		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - Path already exists", path)
 		return false
 	}
 
 	startCount := strings.Count(path, "{")
 	endCount := strings.Count(path, "}")
 	if startCount != 0 || endCount != 0 {
-		logging.Warning(fmt.Sprintf("Adding Web Socket %s to remoteWeb Failed - Path Cannot use Variables", path))
+		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - Path Cannot use Variables", path)
 		return false
 	}
 	webSocketData[path] = call
@@ -84,9 +83,9 @@ func WebAddWebSocket(path string, call func(in *WebSocketRequest) (*WebSocketRet
 }
 
 func WebRemovePath(path string) bool {
-	logging.Info(fmt.Sprintf("Removing %s from remoteWeb", path))
+	logging.Infof("Removing %s from remoteWeb", path)
 	if _, exists := pagesData[path]; !exists {
-		logging.Warning(fmt.Sprintf("Removing %s from remoteWeb Failed - path not found", path))
+		logging.Warningf("Removing %s from remoteWeb Failed - path not found", path)
 		return false
 	}
 
@@ -95,9 +94,9 @@ func WebRemovePath(path string) bool {
 }
 
 func WebRemoveAdminPath(path string) bool {
-	logging.Info(fmt.Sprintf("Removing %s from remoteWeb [Admin]", path))
+	logging.Infof("Removing %s from remoteWeb [Admin]", path)
 	if _, exists := adminPagesData[path]; !exists {
-		logging.Warning(fmt.Sprintf("Removing %s from remoteWeb Failed - path not found", path))
+		logging.Warningf("Removing %s from remoteWeb Failed - path not found", path)
 		return false
 	}
 
@@ -106,9 +105,9 @@ func WebRemoveAdminPath(path string) bool {
 }
 
 func WebRemoveWebSocket(path string) bool {
-	logging.Info(fmt.Sprintf("Removing Web Socket %s from remoteWeb", path))
+	logging.Infof("Removing Web Socket %s from remoteWeb", path)
 	if _, exists := webSocketData[path]; !exists {
-		logging.Warning(fmt.Sprintf("Removing Web Socket %s from remoteWeb Failed - path not found", path))
+		logging.Warningf("Removing Web Socket %s from remoteWeb Failed - path not found", path)
 		return false
 	}
 
@@ -124,34 +123,34 @@ func checkPathPart(part string) bool {
 	}
 
 	if startCount%2 != 0 || endCount%2 != 0 {
-		logging.Warning(fmt.Sprintf("Bad Path Part [%s] - Bad Bracket Setup", part))
+		logging.Warningf("Bad Path Part [%s] - Bad Bracket Setup", part)
 		return false
 	}
 	if startCount == 2 || endCount == 2 {
 		if !strings.HasPrefix(part, "{{") {
-			logging.Warning(fmt.Sprintf("Bad Path Part [%s] - Prefix Brackets {{ not at start of section", part))
+			logging.Warningf("Bad Path Part [%s] - Prefix Brackets {{ not at start of section", part)
 			return false
 		}
 
 		if !strings.HasSuffix(part, "}}") {
-			logging.Warning(fmt.Sprintf("Bad Path Part [%s] - Suffix Brackets }} not at end of section", part))
+			logging.Warningf("Bad Path Part [%s] - Suffix Brackets }} not at end of section", part)
 			return false
 		}
 
 		splitPart := strings.Split(strings.ReplaceAll(strings.ReplaceAll(part, "{", ""), "}", ""), ":")
 
 		if len(splitPart) != 2 {
-			logging.Warning(fmt.Sprintf("Bad Path Part [%s] - Part not in correct format should be {{[number|string]:[valiable name]}}", part))
+			logging.Warningf("Bad Path Part [%s] - Part not in correct format should be {{[number|string]:[valiable name]}}", part)
 			return false
 		}
 
 		if matched, _ := regexp.Match(`number|string`, []byte(splitPart[0])); !matched {
-			logging.Warning(fmt.Sprintf("Bad Path Part [%s] - variable Type not 'number' or 'string'", part))
+			logging.Warningf("Bad Path Part [%s] - variable Type not 'number' or 'string'", part)
 			return false
 		}
 
 		if matched, _ := regexp.Match(`[a-zA-Z0-9]`, []byte(splitPart[1])); !matched {
-			logging.Warning(fmt.Sprintf("Bad Path Part [%s] - variable value has no name", part))
+			logging.Warningf("Bad Path Part [%s] - variable value has no name", part)
 			return false
 		}
 	} else {
@@ -211,7 +210,7 @@ func getPathVariables(path string, section *map[string]func(in *WebRequest) (*We
 			} else if strings.Count(keyParts[index], "{{") > 1 && strings.Count(keyParts[index], "}}") > 1 {
 				// varCount := strings.Count(keyParts[index], "{{")
 				logging.Info("TODO MORE SPECIAL CHECK OF PATH PART FOR MULTI VARIABLES")
-				logging.Info(fmt.Sprint(pathPart) + ":" + fmt.Sprint(keyParts))
+				logging.Infof("%s:%s", pathPart, keyParts)
 			}
 		}
 		if match {

@@ -27,12 +27,12 @@ func NewRemoteWebServer() *RemoteWebSystem {
 }
 
 func (r *RemoteWebSystem) Page(ctx context.Context, in *pb.PageRequest) (*pb.PageResponse, error) {
-	logging.Info("[GPRC Remote Web System Page Request] " + in.GetPath())
+	logging.Infof("[GPRC Remote Web System Page Request]  %s", in.GetPath())
 	return r.page(ctx, in, r.pages)
 }
 
 func (r *RemoteWebSystem) AdminPage(ctx context.Context, in *pb.PageRequest) (*pb.PageResponse, error) {
-	logging.Info("[GPRC Remote Web System Admin Page Request] " + in.GetPath())
+	logging.Infof("[GPRC Remote Web System Admin Page Request] %s", in.GetPath())
 	return r.page(ctx, in, r.adminPages)
 }
 
@@ -85,7 +85,7 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 	if call, exists := (*section)[pagesKey]; exists {
 		returnData, err := call(&webRequest)
 		if err != nil {
-			logging.Error("[GPRC Remote Web System Page Request] " + in.GetPath() + ":" + err.Error())
+			logging.Errorf("[GPRC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
 			return &pb.PageResponse{
 				StatusCode:   http.StatusInternalServerError,
 				ErrorMessage: "ERROR WITH THE SYSTEM",
@@ -97,14 +97,14 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 		} else if returnData.PageString != "" {
 			return r.pageString(returnData, in)
 		}
-		logging.Error("[GPRC Remote Web System Page Request] " + in.GetPath() + ": Function returned no Page Filename or html string")
+		logging.Errorf("[GPRC Remote Web System Page Request] %s: Function returned no Page Filename or html string", in.GetPath())
 		return &pb.PageResponse{
 			StatusCode:   http.StatusInternalServerError,
 			ErrorMessage: "ERROR WITH THE SYSTEM",
 		}, nil
 	}
 
-	logging.Warning("[GPRC Remote Web System Page Request] " + in.GetPath() + ": Not found")
+	logging.Warningf("[GPRC Remote Web System Page Request] %s: Not found", in.GetPath())
 	return &pb.PageResponse{
 		StatusCode:   http.StatusNotFound,
 		ErrorMessage: "Page Not Found",
@@ -115,7 +115,7 @@ func (r *RemoteWebSystem) pageString(returnData *WebReturn, in *pb.PageRequest) 
 	var pageData []byte
 	pageData, err := json.Marshal(returnData.PageData)
 	if err != nil {
-		logging.Error("[GPRC Remote Web System Page Request] " + in.GetPath() + ":" + err.Error())
+		logging.Errorf("[GPRC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
 		return &pb.PageResponse{
 			StatusCode:   http.StatusInternalServerError,
 			ErrorMessage: "ERROR WITH THE SYSTEM",
@@ -136,7 +136,7 @@ func (r *RemoteWebSystem) pageString(returnData *WebReturn, in *pb.PageRequest) 
 func (r *RemoteWebSystem) pageFile(returnData *WebReturn, in *pb.PageRequest) (*pb.PageResponse, error) {
 	templateHtml, err := fileSystem.ReadFile("pages/" + returnData.FilePath + ".html")
 	if err != nil {
-		logging.Error("[GPRC Remote Web System Page Request] " + in.GetPath() + ":" + err.Error())
+		logging.Errorf("[GPRC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
 		return &pb.PageResponse{
 			StatusCode:   http.StatusInternalServerError,
 			ErrorMessage: "ERROR WITH THE SYSTEM",
@@ -146,7 +146,7 @@ func (r *RemoteWebSystem) pageFile(returnData *WebReturn, in *pb.PageRequest) (*
 	var pageData []byte
 	pageData, err = json.Marshal(returnData.PageData)
 	if err != nil {
-		logging.Error("[GPRC Remote Web System Page Request] " + in.GetPath() + ":" + err.Error())
+		logging.Errorf("[GPRC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
 		return &pb.PageResponse{
 			StatusCode:   http.StatusInternalServerError,
 			ErrorMessage: "ERROR WITH THE SYSTEM",
@@ -164,12 +164,12 @@ func (r *RemoteWebSystem) pageFile(returnData *WebReturn, in *pb.PageRequest) (*
 }
 
 func (r *RemoteWebSystem) File(ctx context.Context, in *pb.FileRequest) (*pb.FileResponse, error) {
-	logging.Info("[GPRC Remote Web System File Request] " + in.GetPath())
+	logging.Infof("[GPRC Remote Web System File Request] %s", in.GetPath())
 
 	path := strings.Split(in.GetPath(), "/static/")[1]
 	data, err := fileSystem.ReadFile(path)
 	if err != nil {
-		logging.Error("[GPRC Remote Web System File Request] " + in.GetPath() + ":" + err.Error())
+		logging.Errorf("[GPRC Remote Web System File Request] %s:%s", in.GetPath(), err.Error())
 		sc := http.StatusInternalServerError
 		em := "Internal Error"
 		switch err.(type) {
@@ -198,7 +198,7 @@ func (r *RemoteWebSystem) File(ctx context.Context, in *pb.FileRequest) (*pb.Fil
 }
 
 func (r *RemoteWebSystem) WebSocket(ctx context.Context, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error) {
-	logging.Info("[GPRC Remote Web Socket Request] " + in.GetPath())
+	logging.Infof("[GPRC Remote Web Socket Request] %s", in.GetPath())
 
 	path := cleanPath(in.Path)
 	if !strings.HasPrefix(path, "/") {
@@ -215,7 +215,7 @@ func (r *RemoteWebSystem) WebSocket(ctx context.Context, in *pb.WebSocketRequest
 	if call, exists := (*r.webSockets)[path]; exists {
 		returnData, err := call(&webSocketRequest)
 		if err != nil {
-			logging.Error("[GPRC Remote Web Socket Request] " + in.GetPath() + ":" + err.Error())
+			logging.Errorf("[GPRC Remote Web Socket Request] %s:%s", in.GetPath(), err.Error())
 			return &pb.WebSocketResponse{
 				StatusCode:   http.StatusInternalServerError,
 				ErrorMessage: "ERROR WITH THE SYSTEM",

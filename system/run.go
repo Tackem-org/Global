@@ -32,7 +32,7 @@ func Run(data SetupData) {
 
 	WG = &sync.WaitGroup{}
 
-	logging.Info(fmt.Sprintf("Setup %s System", data.BaseData.ServiceName))
+	logging.Infof("Setup %s System", data.BaseData.ServiceName)
 	if Data.MainSystem != nil {
 		Data.MainSystem()
 	}
@@ -58,14 +58,13 @@ func Run(data SetupData) {
 
 	WG.Add(1)
 	go func() {
-		port := fmt.Sprint(RegData().GetPort())
-		listen, err := net.Listen("tcp", ":"+port)
+		listen, err := net.Listen("tcp", fmt.Sprintf(":%d", RegData().GetPort()))
 		if err != nil {
-			logging.Error("gPRC could not listen on port " + port)
-			logging.Fatal(err)
+			logging.Errorf("gPRC could not listen on port %d", RegData().GetPort())
+			logging.Fatal(err.Error())
 		}
 		if err := grpcServer.Serve(listen); err != nil {
-			logging.Fatal(err)
+			logging.Fatal(err.Error())
 		}
 	}()
 	logging.Info("Starting gRPC server")
