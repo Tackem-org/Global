@@ -8,7 +8,6 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/Tackem-org/Global/helpers"
 	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/logging/debug"
 	pbregclient "github.com/Tackem-org/Proto/pb/regclient"
@@ -17,17 +16,12 @@ import (
 )
 
 func Run(data SetupData) {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.Run(data SetupData)] {data=%+v}", data)
-	Data = data
 	healthcheckHealthy = true
-	fmt.Printf("Starting Tackem %s System\n", Data.BaseData.ServiceName)
-	MUp.StartDown()
-	if !helpers.InDockerCheck() {
-		return
-	}
-	fmt.Printf("Verbose %t\n", Data.VerboseLog)
+	Data = data
 	logging.Setup(Data.LogFile, Data.VerboseLog, Data.DebugLevel)
-	logging.Info("Logger Started")
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.Run(data SetupData)] {data=%+v}", data)
+	logging.Infof("Starting Tackem %s System\n", Data.BaseData.ServiceName)
+	MUp.StartDown()
 
 	logging.Info("Setup Registration Data")
 	RegData().Setup(Data.BaseData)
