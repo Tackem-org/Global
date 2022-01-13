@@ -5,8 +5,6 @@ Global Features for Tackem
 
 ## Register Service
 
-## In Docker
-
 ## Links
 
 ## Helpers
