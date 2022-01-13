@@ -7,10 +7,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Tackem-org/Global/logging"
+	"github.com/Tackem-org/Global/logging/debug"
 	str2duration "github.com/xhit/go-str2duration/v2"
 )
 
 func IntSliceToStringSlice(in []int) []string {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[helpers.IntSliceToStringSlice(in []int) []string] {in=%v}", in)
 	out := make([]string, len(in))
 	for i, v := range in {
 		out[i] = fmt.Sprint(v)
@@ -19,6 +22,7 @@ func IntSliceToStringSlice(in []int) []string {
 }
 
 func StringSliceToIntSlice(in []string) []int {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[helpers.StringSliceToIntSlice(in []string) []int] {in=%v}", in)
 	out := make([]int, len(in))
 	for i, v := range in {
 		out[i], _ = strconv.Atoi(v)
@@ -27,6 +31,7 @@ func StringSliceToIntSlice(in []string) []int {
 }
 
 func InterfaceSliceToStringSlice(in []interface{}) []string {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[helpers.InterfaceSliceToStringSlice(in []interface{}) []string] {in=%v}", in)
 	out := make([]string, len(in))
 	for i, v := range in {
 		out[i] = fmt.Sprint(v)
@@ -35,6 +40,7 @@ func InterfaceSliceToStringSlice(in []interface{}) []string {
 }
 
 func InterfaceSliceToIntSlice(in []interface{}) []int {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[helpers.InterfaceSliceToIntSlice(in []interface{}) []int] {in=%v}", in)
 	out := make([]int, len(in))
 	for i, v := range in {
 		out[i], _ = strconv.Atoi(v.(string))
@@ -43,6 +49,7 @@ func InterfaceSliceToIntSlice(in []interface{}) []int {
 }
 
 func StringToIntSlice(in string) []int {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[helpers.StringToIntSlice(in string) []int] {in=%v}", in)
 	tmp := strings.Split(in, ",")
 	out := make([]int, len(tmp))
 	for i, v := range tmp {
@@ -52,17 +59,20 @@ func StringToIntSlice(in string) []int {
 }
 
 func StringToStringSlice(in string) []string {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[helpers.StringToStringSlice(in string) []string] {in=%s}", in)
 	out := strings.Split(in, ",")
 	return out
 }
 
 func StringToStringMap(in string) map[string]interface{} {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[helpers.StringToStringMap(in string) map[string]interface{}] {in=%s}", in)
 	out := map[string]interface{}{}
 	json.Unmarshal([]byte(in), &out)
 	return out
 }
 
 func StringToDuration(in string) time.Duration {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[helpers.StringToDuration(in string) time.Duration] {in=%s}", in)
 	if f, err := strconv.ParseFloat(in, 64); err == nil {
 		return time.Duration(f)
 	} else if i, err := strconv.Atoi(in); err == nil {
@@ -74,6 +84,7 @@ func StringToDuration(in string) time.Duration {
 }
 
 func DurationToString(in time.Duration) string {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[helpers.DurationToString(in time.Duration) string] {in=%s}", in.String())
 
 	f := in.String()
 	if !strings.Contains(f, "h") {
@@ -97,17 +108,10 @@ func DurationToString(in time.Duration) string {
 }
 
 func MapStringInterfaceToMapStringString(in map[string]interface{}) map[string]string {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[helpers.MapStringInterfaceToMapStringString(in map[string]interface{}) map[string]string] {in=%v}", in)
 	out := map[string]string{}
 	for k, v := range in {
 		out[k] = fmt.Sprint(v)
-	}
-	return out
-}
-
-func MapStringInterfaceToMapStringStringSlice(in map[string]interface{}) map[string][]string {
-	out := map[string][]string{}
-	for k := range in {
-		out[k] = InterfaceSliceToStringSlice(in[k].([]interface{}))
 	}
 	return out
 }

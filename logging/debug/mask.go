@@ -4,8 +4,12 @@ type Mask uint8
 
 const (
 	FUNCTIONCALLS Mask = 1 << iota
+	HELPERLOCKER
+	GPRCSERVER
+	GPRCCLIENT
 
-	ALL = ^Mask(0)
+	ALL  = ^Mask(0)
+	NONE = Mask(0)
 )
 
 func (dm Mask) Set(flag Mask) {

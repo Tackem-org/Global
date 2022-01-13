@@ -10,12 +10,14 @@ import (
 
 	"github.com/Tackem-org/Global/helpers"
 	"github.com/Tackem-org/Global/logging"
+	"github.com/Tackem-org/Global/logging/debug"
 	pbregclient "github.com/Tackem-org/Proto/pb/regclient"
 	pbremoteweb "github.com/Tackem-org/Proto/pb/remoteweb"
 	"google.golang.org/grpc"
 )
 
 func Run(data SetupData) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.Run(data SetupData)] {data=%+v}", data)
 	Data = data
 	healthcheckHealthy = true
 	fmt.Printf("Starting Tackem %s System\n", Data.BaseData.ServiceName)
@@ -50,7 +52,7 @@ func Run(data SetupData) {
 	logging.Info("Setup GPRC Service")
 	grpcServer = grpc.NewServer()
 
-	pbregclient.RegisterRegClientServer(grpcServer, NewRegClientServer())
+	pbregclient.RegisterRegClientServer(grpcServer, &RegClientServer{})
 	if data.BaseData.WebAccess {
 		pbremoteweb.RegisterRemoteWebServer(grpcServer, NewRemoteWebServer())
 	}
@@ -86,6 +88,7 @@ func Run(data SetupData) {
 }
 
 func captureInterupts() {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.captureInterupts()]")
 	termChan := make(chan os.Signal)
 	ShutdownCommand = make(chan bool)
 	signal.Notify(termChan, syscall.SIGTERM, syscall.SIGINT)

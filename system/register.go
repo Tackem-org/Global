@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/Tackem-org/Global/logging"
+	"github.com/Tackem-org/Global/logging/debug"
 
 	pb "github.com/Tackem-org/Proto/pb/registration"
 	"google.golang.org/grpc"
@@ -26,6 +27,7 @@ type Register struct {
 }
 
 func RegData() *Register {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.RegData() *Register]")
 	if regData == nil {
 		regData = NewRegister()
 	}
@@ -33,6 +35,7 @@ func RegData() *Register {
 }
 
 func NewRegister() *Register {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.NewRegister() *Register]")
 	if val, present := os.LookupEnv("MASTERURL"); present {
 		masterUrl = val
 	}
@@ -43,31 +46,37 @@ func NewRegister() *Register {
 }
 
 func (r *Register) GetBaseID() string {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.(r *Register) GetBaseID() string]")
 	return r.baseID
 }
 
 func (r *Register) GetServiceID() uint32 {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.(r *Register) GetServiceID() uint32]")
 	return r.serviceID
 }
 
 func (r *Register) GetKey() string {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.(r *Register) GetKey() string]")
 	return r.key
 }
 
 func (r *Register) GetPort() uint32 {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.(r *Register) GetPort() uint32]")
 	return r.data.Hostport
 }
 
 func (r *Register) GetServiceName() string {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.(r *Register) GetServiceName() string]")
 	return r.data.ServiceName
 }
 
 func (r *Register) GetServiceType() string {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.(r *Register) GetServiceType() string]")
 	return r.data.ServiceType
 }
 
 func (r *Register) Setup(baseData BaseData) {
-
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *Register) Setup(baseData BaseData)] {baseData=%v}", baseData)
 	rawHostname, err := ioutil.ReadFile("/etc/hostname")
 	if err != nil {
 		logging.Fatal(err.Error())
@@ -92,7 +101,7 @@ func (r *Register) Setup(baseData BaseData) {
 }
 
 func (r *Register) Connect() bool {
-
+	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) Connect() bool]")
 	url := masterUrl + ":" + masterPort
 	connctx, conncancel := context.WithTimeout(context.Background(), time.Second)
 	defer conncancel()
@@ -124,7 +133,7 @@ func (r *Register) Connect() bool {
 }
 
 func (r *Register) Disconnect() {
-	logging.Info("DISCONNECT CALLED")
+	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) Disconnect()]")
 
 	url := masterUrl + ":" + masterPort
 
@@ -148,14 +157,13 @@ func (r *Register) Disconnect() {
 	if err != nil {
 		logging.Fatal(err.Error())
 	}
-	if response.GetSuccess() {
-		logging.Info("DISCONNECT FINISHED")
-		return
+	if !response.GetSuccess() {
+		logging.Fatalf("failed to disconnect system from master: %s", response.GetErrorMessage())
 	}
-	logging.Fatalf("failed to disconnect system from master: %s", response.GetErrorMessage())
 }
 
 func freePort() (port uint32) {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.freePort() (port uint32) ]")
 	port = 50001
 	ln, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	for {

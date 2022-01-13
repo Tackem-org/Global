@@ -7,9 +7,11 @@ import (
 	"strings"
 
 	"github.com/Tackem-org/Global/logging"
+	"github.com/Tackem-org/Global/logging/debug"
 )
 
 func WebSetup(fileSystemIn *embed.FS) {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.WebSetup(fileSystemIn *embed.FS)]")
 	pagesData = make(map[string]func(in *WebRequest) (*WebReturn, error))
 	adminPagesData = make(map[string]func(in *WebRequest) (*WebReturn, error))
 	webSocketData = make(map[string]func(in *WebSocketRequest) (*WebSocketReturn, error))
@@ -17,7 +19,7 @@ func WebSetup(fileSystemIn *embed.FS) {
 }
 
 func WebAddPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool {
-	logging.Infof("Adding %s to remoteWeb", path)
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool] {path=%s}", path)
 	if strings.Contains(path, "static") {
 		logging.Warningf("Adding %s to remoteWeb Failed - cannot use static in the name", path)
 		return false
@@ -39,7 +41,7 @@ func WebAddPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool
 }
 
 func WebAddAdminPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool {
-	logging.Infof("Adding %s to remoteWeb [Admin]", path)
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAdminAddPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool] {path=%s}", path)
 	if strings.Contains(path, "static") {
 		logging.Warningf("Adding %s to remoteWeb Failed - cannot use static in the name", path)
 		return false
@@ -61,7 +63,7 @@ func WebAddAdminPath(path string, call func(in *WebRequest) (*WebReturn, error))
 }
 
 func WebAddWebSocket(path string, call func(in *WebSocketRequest) (*WebSocketReturn, error)) bool {
-	logging.Infof("Adding Web Socket %s to remoteWeb", path)
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddWebSocket(path string, call func(in *WebRequest) (*WebReturn, error)) bool] {path=%s}", path)
 
 	if !strings.HasSuffix(path, ".ws") {
 		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - missing \".ws\" Suffix", path)
@@ -83,7 +85,7 @@ func WebAddWebSocket(path string, call func(in *WebSocketRequest) (*WebSocketRet
 }
 
 func WebRemovePath(path string) bool {
-	logging.Infof("Removing %s from remoteWeb", path)
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebRemovePath(path string) bool] {path=%s}", path)
 	if _, exists := pagesData[path]; !exists {
 		logging.Warningf("Removing %s from remoteWeb Failed - path not found", path)
 		return false
@@ -94,7 +96,7 @@ func WebRemovePath(path string) bool {
 }
 
 func WebRemoveAdminPath(path string) bool {
-	logging.Infof("Removing %s from remoteWeb [Admin]", path)
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebRemoveAdminPath(path string) bool] {path=%s}", path)
 	if _, exists := adminPagesData[path]; !exists {
 		logging.Warningf("Removing %s from remoteWeb Failed - path not found", path)
 		return false
@@ -105,7 +107,7 @@ func WebRemoveAdminPath(path string) bool {
 }
 
 func WebRemoveWebSocket(path string) bool {
-	logging.Infof("Removing Web Socket %s from remoteWeb", path)
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebRemoveWebSocket(path string) bool] {path=%s}", path)
 	if _, exists := webSocketData[path]; !exists {
 		logging.Warningf("Removing Web Socket %s from remoteWeb Failed - path not found", path)
 		return false
@@ -116,6 +118,7 @@ func WebRemoveWebSocket(path string) bool {
 }
 
 func checkPathPart(part string) bool {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.checkPathPart(part string) bool] {path=%s}", part)
 	startCount := strings.Count(part, "{")
 	endCount := strings.Count(part, "}")
 	if startCount == 0 && endCount == 0 {
@@ -161,6 +164,7 @@ func checkPathPart(part string) bool {
 }
 
 func getPathVariables(path string, section *map[string]func(in *WebRequest) (*WebReturn, error)) (string, *map[string]interface{}) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.getPathVariables(path string, section *map[string]func(in *WebRequest) (*WebReturn, error)) (string, *map[string]interface{})] {path=%s}", path)
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
 	}

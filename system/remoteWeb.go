@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/Tackem-org/Global/logging"
+	"github.com/Tackem-org/Global/logging/debug"
 	pb "github.com/Tackem-org/Proto/pb/remoteweb"
 )
 
@@ -19,6 +20,7 @@ type RemoteWebSystem struct {
 }
 
 func NewRemoteWebServer() *RemoteWebSystem {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.NewRemoteWebServer() *RemoteWebSystem]")
 	return &RemoteWebSystem{
 		pages:      &pagesData,
 		adminPages: &adminPagesData,
@@ -27,16 +29,17 @@ func NewRemoteWebServer() *RemoteWebSystem {
 }
 
 func (r *RemoteWebSystem) Page(ctx context.Context, in *pb.PageRequest) (*pb.PageResponse, error) {
-	logging.Infof("[GPRC Remote Web System Page Request]  %s", in.GetPath())
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) Page(ctx context.Context, in *pb.PageRequest) (*pb.PageResponse, error)] {in=%v}", in)
 	return r.page(ctx, in, r.pages)
 }
 
 func (r *RemoteWebSystem) AdminPage(ctx context.Context, in *pb.PageRequest) (*pb.PageResponse, error) {
-	logging.Infof("[GPRC Remote Web System Admin Page Request] %s", in.GetPath())
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) AdminPage(ctx context.Context, in *pb.PageRequest) (*pb.PageResponse, error)] {in=%v}", in)
 	return r.page(ctx, in, r.adminPages)
 }
 
 func cleanPath(in string) (cleanPath string) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.cleanPath(in string) (cleanPath string)] {in=%s}", in)
 	if strings.HasPrefix(in, "admin/") {
 		cleanPath = strings.Replace(in, "admin/", "", 1)
 	} else {
@@ -58,6 +61,7 @@ func cleanPath(in string) (cleanPath string) {
 	return
 }
 func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section *map[string]func(in *WebRequest) (*WebReturn, error)) (*pb.PageResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section *map[string]func(in *WebRequest) (*WebReturn, error)) (*pb.PageResponse, error)] {in=%v}", in)
 	cleanPath := cleanPath(in.Path)
 	if cleanPath == "" {
 		cleanPath = "/"
@@ -112,6 +116,7 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 }
 
 func (r *RemoteWebSystem) pageString(returnData *WebReturn, in *pb.PageRequest) (*pb.PageResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) pageString(returnData *WebReturn, in *pb.PageRequest) (*pb.PageResponse, error)] {in=%v}", in)
 	var pageData []byte
 	pageData, err := json.Marshal(returnData.PageData)
 	if err != nil {
@@ -134,6 +139,7 @@ func (r *RemoteWebSystem) pageString(returnData *WebReturn, in *pb.PageRequest) 
 }
 
 func (r *RemoteWebSystem) pageFile(returnData *WebReturn, in *pb.PageRequest) (*pb.PageResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) pageFile(returnData *WebReturn, in *pb.PageRequest) (*pb.PageResponse, error)] {in=%v}", in)
 	templateHtml, err := fileSystem.ReadFile("pages/" + returnData.FilePath + ".html")
 	if err != nil {
 		logging.Errorf("[GPRC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
@@ -164,8 +170,7 @@ func (r *RemoteWebSystem) pageFile(returnData *WebReturn, in *pb.PageRequest) (*
 }
 
 func (r *RemoteWebSystem) File(ctx context.Context, in *pb.FileRequest) (*pb.FileResponse, error) {
-	logging.Infof("[GPRC Remote Web System File Request] %s", in.GetPath())
-
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) File(returnData *WebReturn, in *pb.FileRequest) (*pb.FileResponse, error)] {in=%v}", in)
 	path := strings.Split(in.GetPath(), "/static/")[1]
 	data, err := fileSystem.ReadFile(path)
 	if err != nil {
@@ -198,8 +203,7 @@ func (r *RemoteWebSystem) File(ctx context.Context, in *pb.FileRequest) (*pb.Fil
 }
 
 func (r *RemoteWebSystem) WebSocket(ctx context.Context, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error) {
-	logging.Infof("[GPRC Remote Web Socket Request] %s", in.GetPath())
-
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) WebSocket(returnData *WebReturn, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error)] {in=%v}", in)
 	path := cleanPath(in.Path)
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
@@ -235,6 +239,7 @@ func (r *RemoteWebSystem) WebSocket(ctx context.Context, in *pb.WebSocketRequest
 }
 
 func getBaseCSSandJS() (css []string, js []string) {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.getBaseCSSandJS() (css []string, js []string)]")
 	baseurl := ""
 	if regData.data.ServiceType != "system" {
 		baseurl += regData.data.ServiceType + "/"
@@ -260,14 +265,17 @@ func getBaseCSSandJS() (css []string, js []string) {
 }
 
 func (r *RemoteWebSystem) ValidPage(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) ValidPage(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error)] {in=%v}", in)
 	return r.validPage(ctx, in, r.pages)
 }
 
 func (r *RemoteWebSystem) ValidAdminPage(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) ValidAdminPage(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error)] {in=%v}", in)
 	return r.validPage(ctx, in, r.adminPages)
 }
 
 func (r *RemoteWebSystem) validPage(ctx context.Context, in *pb.ValidRequest, section *map[string]func(in *WebRequest) (*WebReturn, error)) (*pb.ValidResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) validPage(ctx context.Context, in *pb.ValidRequest, section *map[string]func(in *WebRequest) (*WebReturn, error)) (*pb.ValidResponse, error)] {in=%v}", in)
 	cleanPath := cleanPath(in.Path)
 	if cleanPath == "" {
 		cleanPath = "/"
@@ -286,6 +294,7 @@ func (r *RemoteWebSystem) validPage(ctx context.Context, in *pb.ValidRequest, se
 }
 
 func (r *RemoteWebSystem) ValidFile(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) ValidFile(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error)] {in=%v}", in)
 	path := strings.Split(in.GetPath(), "/static/")[1]
 	f, err := fileSystem.Open(path)
 	f.Close()
@@ -296,7 +305,7 @@ func (r *RemoteWebSystem) ValidFile(ctx context.Context, in *pb.ValidRequest) (*
 }
 
 func (r *RemoteWebSystem) ValidWebSocket(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
-
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) ValidWebSocket(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error)] {in=%v}", in)
 	path := cleanPath(in.Path)
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path

@@ -9,7 +9,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Tackem-org/Global/helpers"
 	"github.com/Tackem-org/Global/logging"
+	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/Tackem-org/Global/system"
 	pb "github.com/Tackem-org/Proto/pb/config"
 
@@ -19,6 +21,7 @@ import (
 )
 
 func get(key string) (*pb.GetConfigResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.get(key string) (*pb.GetConfigResponse, error)] {key=%s}", key)
 	conn, err := system.GetMasterConnection(false)
 	if err != nil {
 		logging.Errorf("[Remote Config Get] Cannot Connect to the Server: %s", err.Error())
@@ -41,6 +44,7 @@ func get(key string) (*pb.GetConfigResponse, error) {
 }
 
 func GetBool(key string) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetBool(key string) (bool, error)] {key=%s}", key)
 	response, err := get(key)
 	if err != nil {
 		return false, err
@@ -53,6 +57,7 @@ func GetBool(key string) (bool, error) {
 }
 
 func GetFloat64(key string) (float64, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetFloat64(key string) (float64, error)] {key=%s}", key)
 	response, err := get(key)
 	if err != nil {
 		return 0.0, err
@@ -65,6 +70,7 @@ func GetFloat64(key string) (float64, error) {
 }
 
 func GetInt(key string) (int, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetInt(key string) (int, error)] {key=%s}", key)
 	response, err := get(key)
 	if err != nil {
 		return 0, err
@@ -76,6 +82,7 @@ func GetInt(key string) (int, error) {
 	return int(val), nil
 }
 func GetInt32(key string) (int32, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetInt32(key string) (int32, error)] {key=%s}", key)
 	response, err := get(key)
 	if err != nil {
 		return 0, err
@@ -87,6 +94,7 @@ func GetInt32(key string) (int32, error) {
 	return int32(val), nil
 }
 func GetInt64(key string) (int64, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetInt64(key string) (int64, error)] {key=%s}", key)
 	response, err := get(key)
 	if err != nil {
 		return 0, err
@@ -99,6 +107,7 @@ func GetInt64(key string) (int64, error) {
 }
 
 func GetUint(key string) (uint, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetUint(key string) (uint, error)] {key=%s}", key)
 	response, err := get(key)
 	if err != nil {
 		return 0, err
@@ -110,6 +119,7 @@ func GetUint(key string) (uint, error) {
 	return uint(val), nil
 }
 func GetUint32(key string) (uint32, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetUint32(key string) (uint32, error)] {key=%s}", key)
 	response, err := get(key)
 	if err != nil {
 		return 0, err
@@ -121,6 +131,7 @@ func GetUint32(key string) (uint32, error) {
 	return uint32(val), nil
 }
 func GetUint64(key string) (uint64, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetUint64(key string) (uint64, error)] {key=%s}", key)
 	response, err := get(key)
 	if err != nil {
 		return 0, err
@@ -133,6 +144,7 @@ func GetUint64(key string) (uint64, error) {
 }
 
 func GetIntSlice(key string) ([]int, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetIntSlice(key string) ([]int, error)] {key=%s}", key)
 	response, err := get(key)
 	if err != nil {
 		return []int{}, err
@@ -149,6 +161,7 @@ func GetIntSlice(key string) ([]int, error) {
 }
 
 func GetString(key string) (string, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetString(key string) (string, error)] {key=%s}", key)
 	response, err := get(key)
 	if err != nil {
 		return "", err
@@ -157,6 +170,7 @@ func GetString(key string) (string, error) {
 }
 
 func GetStringMap(key string) (map[string]interface{}, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetStringMap(key string) (map[string]interface{}, error)] {key=%s}", key)
 	r := map[string]interface{}{}
 	response, err := get(key)
 	if err != nil {
@@ -170,6 +184,7 @@ func GetStringMap(key string) (map[string]interface{}, error) {
 }
 
 func GetStringMapString(key string) (map[string]string, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetStringMapString(key string) (map[string]string, error)] {key=%s}", key)
 	r := map[string]string{}
 	response, err := get(key)
 	if err != nil {
@@ -183,6 +198,7 @@ func GetStringMapString(key string) (map[string]string, error) {
 }
 
 func GetStringSlice(key string) ([]string, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetStringSlice(key string) ([]string, error)] {key=%s}", key)
 	response, err := get(key)
 	if err != nil {
 		return []string{}, err
@@ -191,6 +207,7 @@ func GetStringSlice(key string) ([]string, error) {
 }
 
 func GetTime(key string) (time.Time, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetTime(key string) (time.Time, error)] {key=%s}", key)
 	response, err := get(key)
 	if err != nil {
 		return time.Now(), err
@@ -205,6 +222,7 @@ func GetTime(key string) (time.Time, error) {
 }
 
 func GetDuration(key string) (time.Duration, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetDuration(key string) (time.Duration, error)] {key=%s}", key)
 	response, err := get(key)
 	if err != nil {
 		return time.Duration(0), err
@@ -217,6 +235,7 @@ func GetDuration(key string) (time.Duration, error) {
 }
 
 func set(key string, value string) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.set(key string, value string) (bool, error)] {key=%s, value=%s}", key, value)
 	conn, err := system.GetMasterConnection(false)
 
 	if err != nil {
@@ -241,38 +260,47 @@ func set(key string, value string) (bool, error) {
 }
 
 func SetBool(key string, value bool) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.SetBool(key string, value bool) (bool, error)] {key=%s, value=%t}", key, value)
 	return set(key, fmt.Sprintf("%t", value))
 }
 
 func SetFloat64(key string, value float64) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.SetFloat64(key string, value float64) (bool, error)] {key=%s, value=%f}", key, value)
 	return set(key, fmt.Sprintf("%f", value))
 }
 
 func SetInt(key string, value int) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.SetInt(key string, value int) (bool, error)] {key=%s, value=%d}", key, value)
 	return set(key, fmt.Sprintf("%d", value))
 }
 
 func SetInt32(key string, value int32) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.SetInt32(key string, value int32) (bool, error)] {key=%s, value=%d}", key, value)
 	return set(key, fmt.Sprintf("%d", value))
 }
 
 func SetInt64(key string, value int64) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.SetInt64(key string, value int64) (bool, error)] {key=%s, value=%d}", key, value)
 	return set(key, fmt.Sprintf("%d", value))
 }
 
 func SetUint(key string, value uint) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.SetUint(key string, value uint) (bool, error)] {key=%s, value=%d}", key, value)
 	return set(key, fmt.Sprintf("%d", value))
 }
 
 func SetUint32(key string, value uint32) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.SetUint32(key string, value uint32) (bool, error)] {key=%s, value=%d}", key, value)
 	return set(key, fmt.Sprintf("%d", value))
 }
 
 func SetUint64(key string, value uint64) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.SetUint64(key string, value uint64) (bool, error)] {key=%s, value=%d}", key, value)
 	return set(key, fmt.Sprintf("%d", value))
 }
 
 func SetIntSlice(key string, value []int) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.SetIntSlice(key string, value []int) (bool, error)] {key=%s, value=%v}", key, value)
 	valuesText := []string{}
 	var s string
 	for _, i := range value {
@@ -283,27 +311,33 @@ func SetIntSlice(key string, value []int) (bool, error) {
 }
 
 func SetString(key string, value string) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.SetString(key string, value string) (bool, error)] {key=%s, value=%s}", key, value)
 	return set(key, value)
 }
 
 func SetStringMap(key string, value map[string]interface{}) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.SetStringMap(key string, value map[string]interface{}) (bool, error)] {key=%s, value=%v}", key, value)
 	stringValueJson, _ := json.Marshal(value)
 	return set(key, string(stringValueJson))
 }
 
 func SetStringMapString(key string, value map[string]string) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.SetStringMapString(key string, value map[string]string) (bool, error)] {key=%s, value=%v}", key, value)
 	stringValueJson, _ := json.Marshal(value)
 	return set(key, string(stringValueJson))
 }
 
 func SetStringSlice(key string, value []string) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.SetStringSlice(key string, value []string) (bool, error)] {key=%s, value=%v}", key, value)
 	return set(key, strings.Join(value, ","))
 }
 
 func SetTime(key string, value time.Time) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.SetTime(key string, value time.Time) (bool, error)] {key=%s, value=%s}", key, value.Format("2006-01-02T15:04"))
 	return set(key, strconv.FormatInt(value.Unix(), 10))
 }
 
 func SetDuration(key string, value time.Duration) (bool, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.SetDuration(key string, value time.Duration) (bool, error)] {key=%s, value=%s}", key, helpers.DurationToString(value))
 	return set(key, value.String())
 }

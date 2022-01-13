@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/Tackem-org/Global/logging"
+	"github.com/Tackem-org/Global/logging/debug"
 	pb "github.com/Tackem-org/Proto/pb/regclient"
 	"google.golang.org/grpc/metadata"
 )
@@ -14,11 +15,8 @@ type RegClientServer struct {
 	pb.UnimplementedRegClientServer
 }
 
-func NewRegClientServer() *RegClientServer {
-	return &RegClientServer{}
-}
-
 func (r *RegClientServer) HealthCheck(ctx context.Context, in *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) HealthCheck(ctx context.Context, in *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error)] {in=%v}", in)
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -29,6 +27,7 @@ func (r *RegClientServer) HealthCheck(ctx context.Context, in *pb.HealthCheckReq
 }
 
 func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoingDownRequest) (*pb.MasterGoingDownResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoingDownRequest) (*pb.MasterGoingDownResponse, error)] {in=%v}", in)
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -52,10 +51,10 @@ func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoin
 		Success:      ok,
 		ErrorMessage: err,
 	}, nil
-
 }
 
 func (r *RegClientServer) MasterBackUp(ctx context.Context, in *pb.MasterBackUpRequest) (*pb.MasterBackUpResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) MasterBackUp(ctx context.Context, in *pb.MasterBackUpRequest) (*pb.MasterBackUpResponse, error)] {in=%v}", in)
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -68,10 +67,10 @@ func (r *RegClientServer) MasterBackUp(ctx context.Context, in *pb.MasterBackUpR
 		Success:      ok,
 		ErrorMessage: err,
 	}, nil
-
 }
 
 func (r *RegClientServer) checkKey(ctx context.Context) (bool, string) {
+	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) checkKey(ctx context.Context) (bool, string)]")
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return false, "error retrieving header"
