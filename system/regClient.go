@@ -19,7 +19,7 @@ func (r *RegClientServer) HealthCheck(ctx context.Context, in *pb.HealthCheckReq
 	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) HealthCheck(ctx context.Context, in *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error)] {in=%v}", in)
 	r.mu.Lock()
 	defer r.mu.Unlock()
-
+	logging.Info("Health Check OK")
 	return &pb.HealthCheckResponse{
 		Healthy: healthcheckHealthy,
 		Issues:  healthcheckIssues,
@@ -39,8 +39,6 @@ func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoin
 			ShutdownCommand <- true
 
 		case pb.MasterGoingDownReason_Shutdown:
-			fallthrough
-		case pb.MasterGoingDownReason_Reboot:
 			fallthrough
 		case pb.MasterGoingDownReason_Update:
 			logging.Info("Master Is Down")
