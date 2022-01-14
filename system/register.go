@@ -100,19 +100,23 @@ func (r *Register) Setup(baseData BaseData) {
 	}
 }
 
-func (r *Register) Connect() bool {
-	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) Connect() bool]")
+func (r *Register) connection() (pb.RegistrationClient, *grpc.ClientConn, context.CancelFunc) {
+	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) connection() pb.RegistrationClient]")
 	url := masterUrl + ":" + masterPort
 	connctx, conncancel := context.WithTimeout(context.Background(), time.Second)
-	defer conncancel()
 	conn, err := grpc.DialContext(connctx, url, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 	if err != nil {
 		logging.Fatal(err.Error())
 	}
+
+	return pb.NewRegistrationClient(conn), conn, conncancel
+}
+
+func (r *Register) Connect() bool {
+	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) Connect() bool]")
+	client, conn, conncancel := r.connection()
+	defer conncancel()
 	defer conn.Close()
-
-	client := pb.NewRegistrationClient(conn)
-
 	header := GetFirstHeader()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -134,19 +138,9 @@ func (r *Register) Connect() bool {
 
 func (r *Register) Disconnect() {
 	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) Disconnect()]")
-
-	url := masterUrl + ":" + masterPort
-
-	connctx, conncancel := context.WithTimeout(context.Background(), time.Second)
+	client, conn, conncancel := r.connection()
 	defer conncancel()
-	conn, err := grpc.DialContext(connctx, url, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
-	if err != nil {
-		logging.Fatal(err.Error())
-	}
 	defer conn.Close()
-
-	client := pb.NewRegistrationClient(conn)
-
 	header := GetHeader()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -158,7 +152,47 @@ func (r *Register) Disconnect() {
 		logging.Fatal(err.Error())
 	}
 	if !response.GetSuccess() {
-		logging.Fatalf("failed to disconnect system from master: %s", response.GetErrorMessage())
+		logging.Warningf("failed to disconnect system from master: %s", response.GetErrorMessage())
+	}
+}
+
+func (r *Register) Activate() {
+	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) Activate()]")
+	client, conn, conncancel := r.connection()
+	defer conncancel()
+	defer conn.Close()
+	header := GetHeader()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	ctx = metadata.NewOutgoingContext(ctx, header)
+	response, err := client.Activate(ctx, &pb.ActivateRequest{
+		BaseId: r.baseID,
+	}, grpc.Header(&header))
+	if err != nil {
+		logging.Fatal(err.Error())
+	}
+	if !response.GetSuccess() {
+		logging.Warningf("failed to disconnect system from master: %s", response.GetErrorMessage())
+	}
+}
+
+func (r *Register) Deactivate() {
+	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) Deactivate()]")
+	client, conn, conncancel := r.connection()
+	defer conncancel()
+	defer conn.Close()
+	header := GetHeader()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	ctx = metadata.NewOutgoingContext(ctx, header)
+	response, err := client.Deactivate(ctx, &pb.DeactivateRequest{
+		BaseId: r.baseID,
+	}, grpc.Header(&header))
+	if err != nil {
+		logging.Fatal(err.Error())
+	}
+	if !response.GetSuccess() {
+		logging.Warningf("failed to deactivate system from master: %s", response.GetErrorMessage())
 	}
 }
 
@@ -180,3 +214,95 @@ func freePort() (port uint32) {
 	ln.Close()
 	return
 }
+
+// func (r *Register) Connect() bool {
+// 	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) Connect() bool]")
+// 	url := masterUrl + ":" + masterPort
+// 	connctx, conncancel := context.WithTimeout(context.Background(), time.Second)
+// 	defer conncancel()
+// 	conn, err := grpc.DialContext(connctx, url, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+// 	if err != nil {
+// 		logging.Fatal(err.Error())
+// 	}
+// 	defer conn.Close()
+
+// 	client := pb.NewRegistrationClient(conn)
+
+// 	header := GetFirstHeader()
+// 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+// 	defer cancel()
+// 	ctx = metadata.NewOutgoingContext(ctx, header)
+
+// 	response, err := client.Register(ctx, &r.data, grpc.Header(&header))
+// 	if err != nil {
+// 		logging.Fatal(err.Error())
+// 	}
+// 	if response.GetSuccess() {
+// 		r.baseID = response.GetBaseId()
+// 		r.serviceID = response.GetServiceId()
+// 		r.key = response.GetKey()
+// 		return true
+// 	}
+// 	logging.Error(response.GetErrorMessage())
+// 	return false
+// }
+
+// func (r *Register) Disconnect() {
+// 	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) Disconnect()]")
+
+// 	url := masterUrl + ":" + masterPort
+
+// 	connctx, conncancel := context.WithTimeout(context.Background(), time.Second)
+// 	defer conncancel()
+// 	conn, err := grpc.DialContext(connctx, url, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+// 	if err != nil {
+// 		logging.Fatal(err.Error())
+// 	}
+// 	defer conn.Close()
+
+// 	client := pb.NewRegistrationClient(conn)
+
+// 	header := GetHeader()
+// 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+// 	defer cancel()
+// 	ctx = metadata.NewOutgoingContext(ctx, header)
+// 	response, err := client.Disconnect(ctx, &pb.DisconnectRequest{
+// 		BaseId: r.baseID,
+// 	}, grpc.Header(&header))
+// 	if err != nil {
+// 		logging.Fatal(err.Error())
+// 	}
+// 	if !response.GetSuccess() {
+// 		logging.Fatalf("failed to disconnect system from master: %s", response.GetErrorMessage())
+// 	}
+// }
+
+// func (r *Register) Activate() {
+// 	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) Activate()]")
+
+// 	url := masterUrl + ":" + masterPort
+
+// 	connctx, conncancel := context.WithTimeout(context.Background(), time.Second)
+// 	defer conncancel()
+// 	conn, err := grpc.DialContext(connctx, url, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+// 	if err != nil {
+// 		logging.Fatal(err.Error())
+// 	}
+// 	defer conn.Close()
+
+// 	client := pb.NewRegistrationClient(conn)
+
+// 	header := GetHeader()
+// 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+// 	defer cancel()
+// 	ctx = metadata.NewOutgoingContext(ctx, header)
+// 	response, err := client.Activate(ctx, &pb.ActivateRequest{
+// 		BaseId: r.baseID,
+// 	}, grpc.Header(&header))
+// 	if err != nil {
+// 		logging.Fatal(err.Error())
+// 	}
+// 	if !response.GetSuccess() {
+// 		logging.Fatalf("failed to disconnect system from master: %s", response.GetErrorMessage())
+// 	}
+// }

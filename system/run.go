@@ -68,12 +68,13 @@ func Run(data SetupData) {
 		}
 	}()
 	logging.Info("Starting gRPC server")
-
-	if !RegData().Connect() {
+	rd := RegData()
+	if !rd.Connect() {
 		Shutdown(false)
 	} else {
 		MUp.Up()
 		logging.Info("Registration Done")
+		rd.Activate()
 		captureInterupts()
 		WG.Wait()
 
