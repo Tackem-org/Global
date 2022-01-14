@@ -39,8 +39,6 @@ func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoin
 			ShutdownCommand <- true
 
 		case pb.MasterGoingDownReason_Shutdown:
-			fallthrough
-		case pb.MasterGoingDownReason_Update:
 			logging.Info("Master Is Down")
 			MUp.Down()
 		}
