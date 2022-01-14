@@ -96,7 +96,7 @@ func (r *Register) Setup(baseData BaseData) {
 		SingleRun:   baseData.SingleRun,
 		Webaccess:   baseData.WebAccess,
 		NavItems:    baseData.NavItems,
-		ConfigItems: []*pb.ConfigItem{},
+		ConfigItems: baseData.ConfigItems,
 	}
 }
 
@@ -164,14 +164,18 @@ func (r *Register) Disconnect() {
 
 func freePort() (port uint32) {
 	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.freePort() (port uint32) ]")
+	bind := ""
+	if val, ok := os.LookupEnv("BIND"); ok {
+		bind = val
+	}
 	port = 50001
-	ln, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	ln, err := net.Listen("tcp", fmt.Sprintf("%s:%d", bind, port))
 	for {
 		if err == nil {
 			break
 		}
 		port++
-		ln, err = net.Listen("tcp", fmt.Sprintf(":%d", port))
+		ln, err = net.Listen("tcp", fmt.Sprintf("%s:%d", bind, port))
 	}
 	ln.Close()
 	return

@@ -16,11 +16,11 @@ import (
 )
 
 func Run(data SetupData) {
+	logging.Setup(data.LogFile, data.VerboseLog, data.DebugLevel)
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.Run(data SetupData)] {data=%+v}", data)
+	logging.Infof("Starting Tackem %s System", data.BaseData.ServiceName)
 	healthcheckHealthy = true
 	Data = data
-	logging.Setup(Data.LogFile, Data.VerboseLog, Data.DebugLevel)
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.Run(data SetupData)] {data=%+v}", data)
-	logging.Infof("Starting Tackem %s System\n", Data.BaseData.ServiceName)
 	MUp.StartDown()
 
 	logging.Info("Setup Registration Data")
@@ -54,7 +54,11 @@ func Run(data SetupData) {
 
 	WG.Add(1)
 	go func() {
-		listen, err := net.Listen("tcp", fmt.Sprintf(":%d", RegData().GetPort()))
+		bind := ""
+		if val, ok := os.LookupEnv("BIND"); ok {
+			bind = val
+		}
+		listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", bind, RegData().GetPort()))
 		if err != nil {
 			logging.Errorf("gPRC could not listen on port %d", RegData().GetPort())
 			logging.Fatal(err.Error())

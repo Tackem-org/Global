@@ -42,7 +42,7 @@ func GetHeader() metadata.MD {
 func GetFirstHeader() metadata.MD {
 	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.GetFirstHeader() metadata.MD]")
 	var key string
-	if val, present := os.LookupEnv("MASTERKEY"); present {
+	if val, ok := os.LookupEnv("MASTERKEY"); ok {
 		key = val
 	}
 

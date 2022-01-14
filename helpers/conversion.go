@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -39,13 +40,17 @@ func InterfaceSliceToStringSlice(in []interface{}) []string {
 	return out
 }
 
-func InterfaceSliceToIntSlice(in []interface{}) []int {
+func InterfaceSliceToIntSlice(in []interface{}) ([]int, error) {
 	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[helpers.InterfaceSliceToIntSlice(in []interface{}) []int] {in=%v}", in)
 	out := make([]int, len(in))
 	for i, v := range in {
-		out[i], _ = strconv.Atoi(v.(string))
+		tmp, err := strconv.Atoi(v.(string))
+		if err != nil {
+			return nil, err
+		}
+		out[i] = tmp
 	}
-	return out
+	return out, nil
 }
 
 func StringToIntSlice(in string) []int {
@@ -71,16 +76,16 @@ func StringToStringMap(in string) map[string]interface{} {
 	return out
 }
 
-func StringToDuration(in string) time.Duration {
+func StringToDuration(in string) (time.Duration, error) {
 	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[helpers.StringToDuration(in string) time.Duration] {in=%s}", in)
 	if f, err := strconv.ParseFloat(in, 64); err == nil {
-		return time.Duration(f)
+		return time.Duration(f), nil
 	} else if i, err := strconv.Atoi(in); err == nil {
-		return time.Duration(i)
+		return time.Duration(i), nil
 	} else if d, err := str2duration.ParseDuration(in); err == nil {
-		return d
+		return d, nil
 	}
-	return 0
+	return 0, errors.New("cannot convert value to duration")
 }
 
 func DurationToString(in time.Duration) string {

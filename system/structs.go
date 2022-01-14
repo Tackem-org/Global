@@ -26,6 +26,7 @@ type BaseData struct {
 	SingleRun   bool
 	WebAccess   bool
 	NavItems    []*pb.NavItem
+	ConfigItems []*pb.ConfigItem
 }
 
 type WebRequest struct {
