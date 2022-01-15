@@ -7,15 +7,17 @@ import (
 )
 
 type SetupData struct {
-	BaseData    BaseData
-	LogFile     string
-	VerboseLog  bool
-	DebugLevel  debug.Mask
-	GPRCSystems func(server *grpc.Server)
-	WebSystems  func()
-	WebSockets  func()
-	MainSystem  func()
-	Shutdown    func()
+	BaseData       BaseData
+	LogFile        string
+	VerboseLog     bool
+	DebugLevel     debug.Mask
+	GPRCSystems    func(server *grpc.Server)
+	WebSystems     func()
+	WebSockets     func()
+	MainSetup      func()
+	MainSystem     func()
+	MainSystemLoop bool
+	Shutdown       func()
 }
 
 type BaseData struct {

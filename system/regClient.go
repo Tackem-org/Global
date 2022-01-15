@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 
+	"github.com/Tackem-org/Global/channels"
 	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/logging/debug"
 	pb "github.com/Tackem-org/Proto/pb/regclient"
@@ -36,7 +37,7 @@ func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoin
 		switch in.GetReason() {
 		case pb.MasterGoingDownReason_FullShutdown:
 			logging.Info("Master Is Down, Shutting down this system")
-			ShutdownCommand <- true
+			channels.Root.Shutdown <- true
 
 		case pb.MasterGoingDownReason_Shutdown:
 			logging.Info("Master Is Down")
@@ -62,6 +63,7 @@ func (r *RegClientServer) MasterBackUp(ctx context.Context, in *pb.MasterBackUpR
 	return &pb.MasterBackUpResponse{
 		Success:      ok,
 		ErrorMessage: err,
+		Active:       Active,
 	}, nil
 }
 

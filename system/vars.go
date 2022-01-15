@@ -10,18 +10,17 @@ import (
 
 var (
 	Data               SetupData
+	Active             bool = false
 	regData            *Register
 	grpcServer         *grpc.Server
 	WG                 *sync.WaitGroup
 	MUp                helpers.Locker
-	masterUrl          = "127.0.0.1" //"tackem_master"
-	masterPort         = "50001"
+	masterUrl          string = "127.0.0.1" //"tackem_master"
+	masterPort         string = "50001"
 	pagesData          map[string]func(in *WebRequest) (*WebReturn, error)
 	adminPagesData     map[string]func(in *WebRequest) (*WebReturn, error)
 	webSocketData      map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)
 	fileSystem         *embed.FS
 	healthcheckHealthy bool
 	healthcheckIssues  []string
-
-	ShutdownCommand chan bool
 )

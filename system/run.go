@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"net"
 	"os"
-	"os/signal"
 	"sync"
-	"syscall"
 
+	"github.com/Tackem-org/Global/channels"
 	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/logging/debug"
 	pbregclient "github.com/Tackem-org/Proto/pb/regclient"
@@ -17,10 +16,12 @@ import (
 
 func Run(data SetupData) {
 	logging.Setup(data.LogFile, data.VerboseLog, data.DebugLevel)
+	defer logging.Shutdown()
 	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.Run(data SetupData)] {data=%+v}", data)
 	logging.Infof("Starting Tackem %s System", data.BaseData.ServiceName)
 	healthcheckHealthy = true
 	Data = data
+	channels.Setup()
 	MUp.StartDown()
 
 	logging.Info("Setup Registration Data")
@@ -29,8 +30,8 @@ func Run(data SetupData) {
 	WG = &sync.WaitGroup{}
 
 	logging.Infof("Setup %s System", data.BaseData.ServiceName)
-	if Data.MainSystem != nil {
-		Data.MainSystem()
+	if Data.MainSetup != nil {
+		Data.MainSetup()
 	}
 
 	logging.Info("Setup Web Service")
@@ -75,33 +76,59 @@ func Run(data SetupData) {
 		MUp.Up()
 		logging.Info("Registration Done")
 		rd.Activate()
-		captureInterupts()
+		logging.Info("System Active")
+		mainLoop()
 		WG.Wait()
-
+		rd.Deactivate()
 	}
+
 	if Data.Shutdown != nil {
 		Data.Shutdown()
 	}
-	fmt.Println("Shutdown Complete Exiting Cleanly")
+	logging.Info("Shutdown Complete Exiting Cleanly")
 	os.Exit(0)
 }
 
-func captureInterupts() {
+func mainLoop() {
 	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.captureInterupts()]")
-	termChan := make(chan os.Signal)
-	ShutdownCommand = make(chan bool)
-	signal.Notify(termChan, syscall.SIGTERM, syscall.SIGINT)
+	if Data.MainSystem == nil {
+		select {
+		case <-channels.Root.TermChan:
+			fmt.Print("\n")
+			logging.Info("SIGTERM received. Shutdown process initiated")
+		case <-channels.Root.Shutdown:
+			logging.Info("Shutdown Command received. Shutdown process initiated")
+		}
 
-	go func() {
-		<-termChan
-		fmt.Print("\n")
-		logging.Warning("SIGTERM received. Shutdown process initiated")
-		Shutdown(true)
-	}()
+	} else if Data.MainSystemLoop {
+		loopBool := true
+		for loopBool {
+			select {
+			case <-channels.Root.TermChan:
+				fmt.Print("\n")
+				logging.Info("SIGTERM received. Shutdown process initiated")
+				loopBool = false
+			case <-channels.Root.Shutdown:
+				logging.Info("Shutdown Command received. Shutdown process initiated")
+				loopBool = false
+			default:
+				Data.MainSystem()
+			}
+		}
+	} else {
+		Data.MainSystem()
+	}
+	Shutdown(true)
+}
 
-	go func() {
-		<-ShutdownCommand
-		logging.Warning("Shutdown Command received. Shutdown process initiated")
-		Shutdown(true)
-	}()
+func Shutdown(registered bool) {
+	grpcServer.Stop()
+	WG.Done()
+	logging.Info("Shutdown gRPC Server")
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.Shutdown(registered bool)] {registered=%t}", registered)
+	if registered && MUp.Check() {
+		logging.Infof("DeRegistration: %t", MUp.Check())
+		RegData().Disconnect()
+		logging.Info("DeRegistration Done")
+	}
 }
