@@ -2,33 +2,34 @@ package system
 
 import (
 	"github.com/Tackem-org/Global/logging/debug"
+	"github.com/Tackem-org/Global/structs"
 	pb "github.com/Tackem-org/Proto/pb/registration"
 	"google.golang.org/grpc"
 )
 
 type SetupData struct {
-	BaseData       BaseData
-	LogFile        string
-	VerboseLog     bool
-	DebugLevel     debug.Mask
-	GPRCSystems    func(server *grpc.Server)
-	WebSystems     func()
-	WebSockets     func()
-	MainSetup      func()
-	MainSystem     func()
-	MainSystemLoop bool
-	Shutdown       func()
+	BaseData    BaseData
+	LogFile     string
+	VerboseLog  bool
+	DebugLevel  debug.Mask
+	GPRCSystems func(server *grpc.Server)
+	WebSystems  func()
+	WebSockets  func()
+	MainSetup   func()
+	MainSystem  func()
+	Shutdown    func()
 }
 
 type BaseData struct {
-	ServiceName string
-	ServiceType string
-	Version     Versionstruct
-	Multi       bool
-	SingleRun   bool
-	WebAccess   bool
-	NavItems    []*pb.NavItem
-	ConfigItems []*pb.ConfigItem
+	ServiceName     string
+	ServiceType     string
+	Version         structs.Version
+	Multi           bool
+	SingleRun       bool
+	WebAccess       bool
+	NavItems        []*pb.NavItem
+	ConfigItems     []*pb.ConfigItem
+	RequiredSystems []*pb.RequiredSystem
 }
 
 type WebRequest struct {
@@ -61,11 +62,4 @@ type WebSocketReturn struct {
 	StatusCode   uint32
 	ErrorMessage string
 	Data         map[string]interface{}
-}
-
-type Versionstruct struct {
-	Major  uint8
-	Minor  uint8
-	Hotfix uint8
-	Suffix string
 }

@@ -100,7 +100,7 @@ func mainLoop() {
 			logging.Info("Shutdown Command received. Shutdown process initiated")
 		}
 
-	} else if Data.MainSystemLoop {
+	} else if !Data.BaseData.SingleRun {
 		loopBool := true
 		for loopBool {
 			select {
