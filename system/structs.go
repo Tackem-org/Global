@@ -21,15 +21,15 @@ type SetupData struct {
 }
 
 type BaseData struct {
-	ServiceName     string
-	ServiceType     string
-	Version         structs.Version
-	Multi           bool
-	SingleRun       bool
-	WebAccess       bool
-	NavItems        []*pb.NavItem
-	ConfigItems     []*pb.ConfigItem
-	RequiredSystems []*pb.RequiredSystem
+	ServiceName      string
+	ServiceType      string
+	Version          structs.Version
+	Multi            bool
+	SingleRun        bool
+	WebAccess        bool
+	NavItems         []*pb.NavItem
+	ConfigItems      []*pb.ConfigItem
+	RequiredServices []*pb.RequiredService
 }
 
 type WebRequest struct {
@@ -64,7 +64,7 @@ type WebSocketReturn struct {
 	Data         map[string]interface{}
 }
 
-type DependentSystem struct {
+type DependentService struct {
 	BaseID    string
 	Key       string
 	Hostname  string
@@ -72,7 +72,7 @@ type DependentSystem struct {
 	SingleRun bool
 }
 
-type RequiredSystem struct {
+type RequiredService struct {
 	ServiceName string
 	ServiceType string
 	BaseID      string

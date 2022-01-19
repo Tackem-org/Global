@@ -48,28 +48,28 @@ func GetHeader() metadata.MD {
 func GetFirstHeader() metadata.MD {
 	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.GetFirstHeader() metadata.MD]")
 	var key string
-	if val, ok := os.LookupEnv("MASTERKEY"); ok {
+	if val, ok := os.LookupEnv("REGKEY"); ok {
 		key = val
 	}
 
 	return metadata.New(map[string]string{
-		"masterkey": key,
+		"registrationkey": key,
 	})
 }
 
-func getRequiredSystem(systemName string, systemType string) *RequiredSystem {
-	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.getRequiredSystem(systemName string, systemType string) *RequiredSystem]")
-	for _, system := range requiredSystems {
-		if system.ServiceName == systemName && system.ServiceType == systemType {
-			return &system
+func getRequiredService(serviceName string, serviceType string) *RequiredService {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.getRequiredService(serviceName string, serviceType string) *RequiredService]")
+	for _, s := range requiredServices {
+		if s.ServiceName == serviceName && s.ServiceType == serviceType {
+			return &s
 		}
 	}
 	return nil
 }
 
-func GetRequiredHeader(systemName string, systemType string) metadata.MD {
-	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.GetRequiredHeader(systemName string, systemType string) metadata.MD]")
-	r := getRequiredSystem(systemName, systemType)
+func GetRequiredHeader(serviceName string, serviceType string) metadata.MD {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.GetRequiredHeader(serviceName string, serviceType string) metadata.MD]")
+	r := getRequiredService(serviceName, serviceType)
 	if r == nil {
 		return metadata.New(map[string]string{})
 	}
@@ -79,12 +79,12 @@ func GetRequiredHeader(systemName string, systemType string) metadata.MD {
 	})
 }
 
-func GetConnection(systemName string, systemType string) (*grpc.ClientConn, error) {
-	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.GetConnection(systemName string, systemType string) (*grpc.ClientConn, error)]")
+func GetConnection(serviceName string, serviceType string) (*grpc.ClientConn, error) {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.GetConnection(serviceName string, serviceType string) (*grpc.ClientConn, error)]")
 	MUp.Wait()
-	r := getRequiredSystem(systemName, systemType)
+	r := getRequiredService(serviceName, serviceType)
 	if r == nil {
-		return nil, &SystemDownError{}
+		return nil, &ServiceDownError{}
 	}
 	return getConnection(fmt.Sprintf("%s:%d", r.Hostname, r.Hostport))
 

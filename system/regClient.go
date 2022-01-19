@@ -29,14 +29,14 @@ func (r *RegClientServer) HealthCheck(ctx context.Context, in *pb.HealthCheckReq
 
 func (r *RegClientServer) AddDependant(ctx context.Context, in *pb.AddDependantRequest) (*pb.AddDependantResponse, error) {
 	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) AddDependant(ctx context.Context, in *pb.AddDependantRequest) (*pb.AddDependantResponse, error)] {in=%v}", in)
-	for _, system := range requiredSystems {
-		if system.BaseID == in.BaseId {
+	for _, s := range requiredServices {
+		if s.BaseID == in.BaseId {
 			return &pb.AddDependantResponse{
 				Success: true,
 			}, nil
 		}
 	}
-	dependentSystems = append(dependentSystems, DependentSystem{
+	dependentServices = append(dependentServices, DependentService{
 		BaseID:    in.BaseId,
 		Key:       in.Key,
 		Hostname:  in.Hostname,
@@ -50,9 +50,9 @@ func (r *RegClientServer) AddDependant(ctx context.Context, in *pb.AddDependantR
 
 func (r *RegClientServer) RemoveDependant(ctx context.Context, in *pb.RemoveDependantRequest) (*pb.RemoveDependantResponse, error) {
 	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) RemoveDependant(ctx context.Context, in *pb.RemoveDependantRequest) (*pb.RemoveDependantResponse, error)] {in=%v}", in)
-	for index, system := range requiredSystems {
-		if system.BaseID == in.BaseId {
-			dependentSystems = append(dependentSystems[:index], dependentSystems[index+1:]...)
+	for index, s := range requiredServices {
+		if s.BaseID == in.BaseId {
+			dependentServices = append(dependentServices[:index], dependentServices[index+1:]...)
 			return &pb.RemoveDependantResponse{
 				Success: true,
 			}, nil
@@ -60,7 +60,7 @@ func (r *RegClientServer) RemoveDependant(ctx context.Context, in *pb.RemoveDepe
 	}
 	return &pb.RemoveDependantResponse{
 		Success:      false,
-		ErrorMessage: "System Not Found",
+		ErrorMessage: "Service Not Found",
 	}, nil
 }
 
@@ -73,7 +73,7 @@ func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoin
 	if ok {
 		switch in.GetReason() {
 		case pb.MasterGoingDownReason_FullShutdown:
-			logging.Info("Master Is Down, Shutting down this system")
+			logging.Info("Master Is Down, Shutting down this service")
 			channels.Root.Shutdown <- true
 
 		case pb.MasterGoingDownReason_Shutdown:

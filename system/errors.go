@@ -2,8 +2,8 @@ package system
 
 import "fmt"
 
-type SystemDownError struct{ err string }
+type ServiceDownError struct{ err string }
 
-func (e *SystemDownError) Error() string {
-	return fmt.Sprintf("System Down Unable to Login %s", e.err)
+func (e *ServiceDownError) Error() string {
+	return fmt.Sprintf("Service Down Unable to Login %s", e.err)
 }
