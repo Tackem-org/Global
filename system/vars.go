@@ -23,4 +23,6 @@ var (
 	fileSystem         *embed.FS
 	healthcheckHealthy bool
 	healthcheckIssues  []string
+	dependentSystems   []DependentSystem
+	requiredSystems    []RequiredSystem
 )

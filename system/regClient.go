@@ -27,6 +27,43 @@ func (r *RegClientServer) HealthCheck(ctx context.Context, in *pb.HealthCheckReq
 	}, nil
 }
 
+func (r *RegClientServer) AddDependant(ctx context.Context, in *pb.AddDependantRequest) (*pb.AddDependantResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) AddDependant(ctx context.Context, in *pb.AddDependantRequest) (*pb.AddDependantResponse, error)] {in=%v}", in)
+	for _, system := range requiredSystems {
+		if system.BaseID == in.BaseId {
+			return &pb.AddDependantResponse{
+				Success: true,
+			}, nil
+		}
+	}
+	dependentSystems = append(dependentSystems, DependentSystem{
+		BaseID:    in.BaseId,
+		Key:       in.Key,
+		Hostname:  in.Hostname,
+		Hostport:  in.Hostport,
+		SingleRun: in.SingleRun,
+	})
+	return &pb.AddDependantResponse{
+		Success: true,
+	}, nil
+}
+
+func (r *RegClientServer) RemoveDependant(ctx context.Context, in *pb.RemoveDependantRequest) (*pb.RemoveDependantResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) RemoveDependant(ctx context.Context, in *pb.RemoveDependantRequest) (*pb.RemoveDependantResponse, error)] {in=%v}", in)
+	for index, system := range requiredSystems {
+		if system.BaseID == in.BaseId {
+			dependentSystems = append(dependentSystems[:index], dependentSystems[index+1:]...)
+			return &pb.RemoveDependantResponse{
+				Success: true,
+			}, nil
+		}
+	}
+	return &pb.RemoveDependantResponse{
+		Success:      false,
+		ErrorMessage: "System Not Found",
+	}, nil
+}
+
 func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoingDownRequest) (*pb.MasterGoingDownResponse, error) {
 	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoingDownRequest) (*pb.MasterGoingDownResponse, error)] {in=%v}", in)
 	r.mu.Lock()

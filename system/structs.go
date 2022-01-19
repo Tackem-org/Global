@@ -63,3 +63,21 @@ type WebSocketReturn struct {
 	ErrorMessage string
 	Data         map[string]interface{}
 }
+
+type DependentSystem struct {
+	BaseID    string
+	Key       string
+	Hostname  string
+	Hostport  uint32
+	SingleRun bool
+}
+
+type RequiredSystem struct {
+	ServiceName string
+	ServiceType string
+	BaseID      string
+	Key         string
+	Hostname    string
+	Hostport    uint32
+	SingleRun   bool
+}
