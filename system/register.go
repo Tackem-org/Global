@@ -3,10 +3,8 @@ package system
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"net"
 	"os"
-	"regexp"
 	"time"
 
 	"github.com/Tackem-org/Global/logging"
@@ -62,7 +60,7 @@ func (r *Register) GetKey() string {
 
 func (r *Register) GetPort() uint32 {
 	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.(r *Register) GetPort() uint32]")
-	return r.data.Hostport
+	return r.data.Port
 }
 
 func (r *Register) GetServiceName() string {
@@ -77,21 +75,11 @@ func (r *Register) GetServiceType() string {
 
 func (r *Register) Setup(baseData BaseData) {
 	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *Register) Setup(baseData BaseData)] {baseData=%v}", baseData)
-	rawHostname, err := ioutil.ReadFile("/etc/hostname")
-	if err != nil {
-		logging.Fatal(err.Error())
-	}
-
-	reg, err := regexp.Compile("[^a-zA-Z0-9]+")
-	if err != nil {
-		logging.Fatal(err.Error())
-	}
 	r.data = pb.RegisterRequest{
 		ServiceName:      baseData.ServiceName,
 		ServiceType:      baseData.ServiceType,
 		Version:          &pb.Version{Major: uint32(baseData.Version.Major), Minor: uint32(baseData.Version.Minor), Hotfix: uint32(baseData.Version.Hotfix)},
-		Hostname:         reg.ReplaceAllString(string(rawHostname), ""),
-		Hostport:         freePort(),
+		Port:             freePort(),
 		Multi:            baseData.Multi,
 		SingleRun:        baseData.SingleRun,
 		Webaccess:        baseData.WebAccess,

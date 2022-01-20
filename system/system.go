@@ -86,6 +86,6 @@ func GetConnection(serviceName string, serviceType string) (*grpc.ClientConn, er
 	if r == nil {
 		return nil, &ServiceDownError{}
 	}
-	return getConnection(fmt.Sprintf("%s:%d", r.Hostname, r.Hostport))
+	return getConnection(fmt.Sprintf("%s:%d", r.IPAddress, r.Port))
 
 }

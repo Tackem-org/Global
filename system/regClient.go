@@ -39,8 +39,8 @@ func (r *RegClientServer) AddDependant(ctx context.Context, in *pb.AddDependantR
 	dependentServices = append(dependentServices, DependentService{
 		BaseID:    in.BaseId,
 		Key:       in.Key,
-		Hostname:  in.Hostname,
-		Hostport:  in.Hostport,
+		IPAddress: in.IpAddress,
+		Port:      in.Port,
 		SingleRun: in.SingleRun,
 	})
 	return &pb.AddDependantResponse{

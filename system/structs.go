@@ -67,8 +67,8 @@ type WebSocketReturn struct {
 type DependentService struct {
 	BaseID    string
 	Key       string
-	Hostname  string
-	Hostport  uint32
+	IPAddress string
+	Port      uint32
 	SingleRun bool
 }
 
@@ -77,7 +77,7 @@ type RequiredService struct {
 	ServiceType string
 	BaseID      string
 	Key         string
-	Hostname    string
-	Hostport    uint32
+	IPAddress   string
+	Port        uint32
 	SingleRun   bool
 }
