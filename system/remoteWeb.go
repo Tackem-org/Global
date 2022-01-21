@@ -60,6 +60,7 @@ func cleanPath(in string) (cleanPath string) {
 	}
 	return
 }
+
 func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section *map[string]func(in *WebRequest) (*WebReturn, error)) (*pb.PageResponse, error) {
 	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section *map[string]func(in *WebRequest) (*WebReturn, error)) (*pb.PageResponse, error)] {in=%v}", in)
 	cleanPath := cleanPath(in.Path)
@@ -135,7 +136,6 @@ func (r *RemoteWebSystem) pageString(returnData *WebReturn, in *pb.PageRequest) 
 		CustomCss:         append(css, returnData.CustomCss...),
 		CustomJs:          append(js, returnData.CustomJs...),
 	}, nil
-
 }
 
 func (r *RemoteWebSystem) pageFile(returnData *WebReturn, in *pb.PageRequest) (*pb.PageResponse, error) {
@@ -199,7 +199,6 @@ func (r *RemoteWebSystem) File(ctx context.Context, in *pb.FileRequest) (*pb.Fil
 		ErrorMessage: "",
 		File:         data,
 	}, nil
-
 }
 
 func (r *RemoteWebSystem) WebSocket(ctx context.Context, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error) {
@@ -290,7 +289,6 @@ func (r *RemoteWebSystem) validPage(ctx context.Context, in *pb.ValidRequest, se
 	return &pb.ValidResponse{
 		Found: exists,
 	}, nil
-
 }
 
 func (r *RemoteWebSystem) ValidFile(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
@@ -301,7 +299,6 @@ func (r *RemoteWebSystem) ValidFile(ctx context.Context, in *pb.ValidRequest) (*
 	return &pb.ValidResponse{
 		Found: f != nil,
 	}, nil
-
 }
 
 func (r *RemoteWebSystem) ValidWebSocket(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {

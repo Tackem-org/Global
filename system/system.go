@@ -42,7 +42,6 @@ func GetHeader() metadata.MD {
 		"baseID": regData.baseID,
 		"key":    regData.key,
 	})
-
 }
 
 func GetFirstHeader() metadata.MD {
@@ -87,5 +86,4 @@ func GetConnection(serviceName string, serviceType string) (*grpc.ClientConn, er
 		return nil, &ServiceDownError{}
 	}
 	return getConnection(fmt.Sprintf("%s:%d", r.IPAddress, r.Port))
-
 }

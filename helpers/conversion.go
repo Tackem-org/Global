@@ -109,7 +109,6 @@ func DurationToString(in time.Duration) string {
 	}
 	w, d := d/7, d%7
 	return fmt.Sprintf("%dw%dd%dh%s", w, d, h, s[1])
-
 }
 
 func MapStringInterfaceToMapStringString(in map[string]interface{}) map[string]string {

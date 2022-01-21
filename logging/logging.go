@@ -47,7 +47,6 @@ func Shutdown() {
 	mu.Lock()
 	defer mu.Unlock()
 	file.Close()
-
 }
 
 func setupBackend() {
@@ -90,8 +89,8 @@ func moveBackupLogFiles(i uint8) {
 
 	moveBackupLogFiles(i + 1)
 	os.Rename(fmt.Sprintf("%s.%d.bak", filePath, i), fmt.Sprintf("%s.%d.bak", filePath, i+1))
-
 }
+
 func fileExists(path string) bool {
 	_, err := os.Stat(path)
 	return !errors.Is(err, os.ErrNotExist)

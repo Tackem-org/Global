@@ -81,6 +81,7 @@ func GetInt(key string) (int, error) {
 	}
 	return int(val), nil
 }
+
 func GetInt32(key string) (int32, error) {
 	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetInt32(key string) (int32, error)] {key=%s}", key)
 	response, err := get(key)
@@ -93,6 +94,7 @@ func GetInt32(key string) (int32, error) {
 	}
 	return int32(val), nil
 }
+
 func GetInt64(key string) (int64, error) {
 	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetInt64(key string) (int64, error)] {key=%s}", key)
 	response, err := get(key)
@@ -118,6 +120,7 @@ func GetUint(key string) (uint, error) {
 	}
 	return uint(val), nil
 }
+
 func GetUint32(key string) (uint32, error) {
 	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetUint32(key string) (uint32, error)] {key=%s}", key)
 	response, err := get(key)
@@ -130,6 +133,7 @@ func GetUint32(key string) (uint32, error) {
 	}
 	return uint32(val), nil
 }
+
 func GetUint64(key string) (uint64, error) {
 	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[config.GetUint64(key string) (uint64, error)] {key=%s}", key)
 	response, err := get(key)
@@ -217,7 +221,6 @@ func GetTime(key string) (time.Time, error) {
 	if err != nil {
 		return time.Now(), err
 	}
-
 	return time.Unix(val, 0), nil
 }
 
@@ -256,7 +259,6 @@ func set(key string, value string) (bool, error) {
 		return false, err
 	}
 	return response.GetSuccess(), errors.New(response.GetErrorMessage())
-
 }
 
 func SetBool(key string, value bool) (bool, error) {
