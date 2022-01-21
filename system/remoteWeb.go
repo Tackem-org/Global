@@ -296,10 +296,10 @@ func (r *RemoteWebSystem) validPage(ctx context.Context, in *pb.ValidRequest, se
 func (r *RemoteWebSystem) ValidFile(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
 	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) ValidFile(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error)] {in=%v}", in)
 	path := strings.Split(in.GetPath(), "/static/")[1]
-	f, err := fileSystem.Open(path)
-	f.Close()
+	f, _ := fileSystem.Open(path)
+	defer f.Close()
 	return &pb.ValidResponse{
-		Found: err != nil,
+		Found: f != nil,
 	}, nil
 
 }
