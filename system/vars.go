@@ -20,6 +20,7 @@ var (
 	pagesData          map[string]func(in *WebRequest) (*WebReturn, error)
 	adminPagesData     map[string]func(in *WebRequest) (*WebReturn, error)
 	webSocketData      map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)
+	adminWebSocketData map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)
 	fileSystem         *embed.FS
 	healthcheckHealthy bool
 	healthcheckIssues  []string

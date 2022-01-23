@@ -13,18 +13,20 @@ import (
 )
 
 type RemoteWebSystem struct {
-	pages      *map[string]func(in *WebRequest) (*WebReturn, error)
-	adminPages *map[string]func(in *WebRequest) (*WebReturn, error)
-	webSockets *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)
+	pages           *map[string]func(in *WebRequest) (*WebReturn, error)
+	adminPages      *map[string]func(in *WebRequest) (*WebReturn, error)
+	webSockets      *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)
+	adminWebSockets *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)
 	pb.UnimplementedRemoteWebServer
 }
 
 func NewRemoteWebServer() *RemoteWebSystem {
 	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.NewRemoteWebServer() *RemoteWebSystem]")
 	return &RemoteWebSystem{
-		pages:      &pagesData,
-		adminPages: &adminPagesData,
-		webSockets: &webSocketData,
+		pages:           &pagesData,
+		adminPages:      &adminPagesData,
+		webSockets:      &webSocketData,
+		adminWebSockets: &adminWebSocketData,
 	}
 }
 
@@ -127,7 +129,7 @@ func (r *RemoteWebSystem) pageString(returnData *WebReturn, in *pb.PageRequest) 
 			ErrorMessage: "ERROR WITH THE SYSTEM",
 		}, nil
 	}
-	css, js := getBaseCSSandJS()
+	css, js := getBaseCSSandJS(in.Path)
 	return &pb.PageResponse{
 		StatusCode:        http.StatusOK,
 		TemplateHtml:      returnData.PageString,
@@ -158,7 +160,7 @@ func (r *RemoteWebSystem) pageFile(returnData *WebReturn, in *pb.PageRequest) (*
 			ErrorMessage: "ERROR WITH THE SYSTEM",
 		}, nil
 	}
-	css, js := getBaseCSSandJS()
+	css, js := getBaseCSSandJS(in.Path)
 	return &pb.PageResponse{
 		StatusCode:        http.StatusOK,
 		TemplateHtml:      string(templateHtml),
@@ -203,6 +205,14 @@ func (r *RemoteWebSystem) File(ctx context.Context, in *pb.FileRequest) (*pb.Fil
 
 func (r *RemoteWebSystem) WebSocket(ctx context.Context, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error) {
 	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) WebSocket(returnData *WebReturn, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error)] {in=%v}", in)
+	return r.webSocket(ctx, in, r.webSockets)
+}
+func (r *RemoteWebSystem) AdminWebSocket(ctx context.Context, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) AdminWebSocket(returnData *WebReturn, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error)] {in=%v}", in)
+	return r.webSocket(ctx, in, r.adminWebSockets)
+}
+func (r *RemoteWebSystem) webSocket(ctx context.Context, in *pb.WebSocketRequest, section *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)) (*pb.WebSocketResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) webSocket(returnData *WebReturn, in *pb.WebSocketRequest, section *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)) (*pb.WebSocketResponse, error)] {in=%v}", in)
 	path := cleanPath(in.Path)
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
@@ -215,7 +225,7 @@ func (r *RemoteWebSystem) WebSocket(ctx context.Context, in *pb.WebSocketRequest
 		Data:   d,
 	}
 
-	if call, exists := (*r.webSockets)[path]; exists {
+	if call, exists := (*section)[path]; exists {
 		returnData, err := call(&webSocketRequest)
 		if err != nil {
 			logging.Errorf("[GPRC Remote Web Socket Request] %s:%s", in.GetPath(), err.Error())
@@ -237,7 +247,7 @@ func (r *RemoteWebSystem) WebSocket(ctx context.Context, in *pb.WebSocketRequest
 	}, nil
 }
 
-func getBaseCSSandJS() (css []string, js []string) {
+func getBaseCSSandJS(path string) (css []string, js []string) {
 	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.getBaseCSSandJS() (css []string, js []string)]")
 	baseurl := ""
 	if regData.data.ServiceType != "system" {
@@ -256,6 +266,27 @@ func getBaseCSSandJS() (css []string, js []string) {
 	jsfile, err := fileSystem.Open("js/" + regData.data.ServiceName + ".js")
 	if err == nil {
 		js = append(js, baseurl+"js/"+regData.data.ServiceName)
+	}
+	if jsfile != nil {
+		jsfile.Close()
+	}
+
+	cPath := cleanPath(path)
+	if strings.HasPrefix(path, "admin/") {
+		cPath = "admin/" + cPath
+	}
+
+	cssfile, err = fileSystem.Open("css/" + cPath + ".css")
+	if err == nil {
+		css = append(css, baseurl+"css/"+cPath)
+	}
+	if cssfile != nil {
+		cssfile.Close()
+	}
+
+	jsfile, err = fileSystem.Open("js/" + cPath + ".js")
+	if err == nil {
+		js = append(js, baseurl+"js/"+cPath)
 	}
 	if jsfile != nil {
 		jsfile.Close()
@@ -309,6 +340,19 @@ func (r *RemoteWebSystem) ValidWebSocket(ctx context.Context, in *pb.ValidReques
 	}
 
 	_, exists := (*r.webSockets)[path]
+	return &pb.ValidResponse{
+		Found: exists,
+	}, nil
+}
+
+func (r *RemoteWebSystem) ValidAdminWebSocket(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) ValidAdminWebSocket(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error)] {in=%v}", in)
+	path := cleanPath(in.Path)
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+
+	_, exists := (*r.adminWebSockets)[path]
 	return &pb.ValidResponse{
 		Found: exists,
 	}, nil
