@@ -237,8 +237,9 @@ func (r *RemoteWebSystem) webSocket(ctx context.Context, in *pb.WebSocketRequest
 
 		returnJson, _ := json.Marshal(returnData.Data)
 		return &pb.WebSocketResponse{
-			StatusCode: http.StatusOK,
-			DataJson:   string(returnJson),
+			StatusCode:   returnData.StatusCode,
+			ErrorMessage: returnData.ErrorMessage,
+			DataJson:     string(returnJson),
 		}, nil
 	}
 	return &pb.WebSocketResponse{
