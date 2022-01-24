@@ -160,7 +160,7 @@ func (r *RemoteWebSystem) pageFile(returnData *WebReturn, in *pb.PageRequest) (*
 			ErrorMessage: "ERROR WITH THE SYSTEM",
 		}, nil
 	}
-	css, js := getBaseCSSandJS(in.Path)
+	css, js := getBaseCSSandJS(returnData.FilePath)
 	return &pb.PageResponse{
 		StatusCode:        http.StatusOK,
 		TemplateHtml:      string(templateHtml),
@@ -272,22 +272,17 @@ func getBaseCSSandJS(path string) (css []string, js []string) {
 		jsfile.Close()
 	}
 
-	cPath := cleanPath(path)
-	if strings.HasPrefix(path, "admin/") {
-		cPath = "admin/" + cPath
-	}
-
-	cssfile, err = fileSystem.Open("css/" + cPath + ".css")
+	cssfile, err = fileSystem.Open("css/" + path + ".css")
 	if err == nil {
-		css = append(css, baseurl+"css/"+cPath)
+		css = append(css, baseurl+"css/"+path)
 	}
 	if cssfile != nil {
 		cssfile.Close()
 	}
 
-	jsfile, err = fileSystem.Open("js/" + cPath + ".js")
+	jsfile, err = fileSystem.Open("js/" + path + ".js")
 	if err == nil {
-		js = append(js, baseurl+"js/"+cPath)
+		js = append(js, baseurl+"js/"+path)
 	}
 	if jsfile != nil {
 		jsfile.Close()
