@@ -322,7 +322,9 @@ func (r *RemoteWebSystem) ValidFile(ctx context.Context, in *pb.ValidRequest) (*
 	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) ValidFile(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error)] {in=%v}", in)
 	path := strings.Split(in.GetPath(), "/static/")[1]
 	f, _ := fileSystem.Open(path)
-	defer f.Close()
+	if f != nil {
+		defer f.Close()
+	}
 	return &pb.ValidResponse{
 		Found: f != nil,
 	}, nil
