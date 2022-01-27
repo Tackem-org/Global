@@ -3,7 +3,6 @@ package system
 import (
 	"context"
 	"encoding/json"
-	"html/template"
 	iofs "io/fs"
 	"net/http"
 	"strings"
@@ -71,10 +70,11 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 	if cleanPath == "" {
 		cleanPath = "/"
 	}
+	user := structs.GetUserData(in.GetUser())
 	webRequest := WebRequest{
 		FullPath:  in.GetPath(),
 		CleanPath: cleanPath,
-		User:      getUserData(in.GetUser()),
+		User:      user,
 		Method:    in.GetMethod(),
 	}
 
@@ -101,6 +101,12 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 			}, nil
 		}
 
+		if returnData.StatusCode >= 300 || returnData.StatusCode <= 199 {
+			return &pb.PageResponse{
+				StatusCode:   returnData.StatusCode,
+				ErrorMessage: returnData.ErrorMessage,
+			}, nil
+		}
 		if returnData.FilePath != "" {
 			return r.pageFile(returnData, in)
 		} else if returnData.PageString != "" {
@@ -133,7 +139,7 @@ func (r *RemoteWebSystem) pageString(returnData *WebReturn, in *pb.PageRequest) 
 	}
 	css, js := getBaseCSSandJS(in.Path)
 	return &pb.PageResponse{
-		StatusCode:        http.StatusOK,
+		StatusCode:        returnData.StatusCode,
 		TemplateHtml:      returnData.PageString,
 		PageVariablesJson: string(pageData),
 		CustomPageName:    returnData.CustomPageName,
@@ -164,7 +170,7 @@ func (r *RemoteWebSystem) pageFile(returnData *WebReturn, in *pb.PageRequest) (*
 	}
 	css, js := getBaseCSSandJS(returnData.FilePath)
 	return &pb.PageResponse{
-		StatusCode:        http.StatusOK,
+		StatusCode:        returnData.StatusCode,
 		TemplateHtml:      string(templateHtml),
 		PageVariablesJson: string(pageData),
 		CustomPageName:    returnData.CustomPageName,
@@ -223,7 +229,7 @@ func (r *RemoteWebSystem) webSocket(ctx context.Context, in *pb.WebSocketRequest
 	json.Unmarshal([]byte(in.DataJson), &d)
 	webSocketRequest := WebSocketRequest{
 		Path: path,
-		User: getUserData(in.GetUser()),
+		User: structs.GetUserData(in.GetUser()),
 		Data: d,
 	}
 
@@ -356,16 +362,4 @@ func (r *RemoteWebSystem) ValidAdminWebSocket(ctx context.Context, in *pb.ValidR
 	return &pb.ValidResponse{
 		Found: exists,
 	}, nil
-}
-
-func getUserData(in *pb.UserData) structs.UserData {
-	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[web.getUserData(r *http.Request) UserData]")
-	return structs.UserData{
-		ID:          in.UserId,
-		Name:        in.Name,
-		Initial:     in.Initial,
-		Icon:        template.URL(in.Icon),
-		IsAdmin:     in.IsAdmin,
-		Permissions: in.Permissions,
-	}
 }
