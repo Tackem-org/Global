@@ -35,7 +35,7 @@ type BaseData struct {
 type WebRequest struct {
 	FullPath      string
 	CleanPath     string
-	UserID        uint64
+	User          structs.UserData
 	SessionToken  string
 	Method        string
 	QueryParams   map[string]interface{}
@@ -53,9 +53,9 @@ type WebReturn struct {
 }
 
 type WebSocketRequest struct {
-	Path   string
-	UserID uint64
-	Data   map[string]interface{}
+	Path string
+	User structs.UserData
+	Data map[string]interface{}
 }
 
 type WebSocketReturn struct {

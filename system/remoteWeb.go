@@ -3,12 +3,14 @@ package system
 import (
 	"context"
 	"encoding/json"
+	"html/template"
 	iofs "io/fs"
 	"net/http"
 	"strings"
 
 	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/logging/debug"
+	"github.com/Tackem-org/Global/structs"
 	pb "github.com/Tackem-org/Proto/pb/remoteweb"
 )
 
@@ -72,7 +74,7 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 	webRequest := WebRequest{
 		FullPath:  in.GetPath(),
 		CleanPath: cleanPath,
-		UserID:    in.GetUserId(),
+		User:      getUserData(in.GetUser()),
 		Method:    in.GetMethod(),
 	}
 
@@ -220,9 +222,9 @@ func (r *RemoteWebSystem) webSocket(ctx context.Context, in *pb.WebSocketRequest
 	var d map[string]interface{}
 	json.Unmarshal([]byte(in.DataJson), &d)
 	webSocketRequest := WebSocketRequest{
-		Path:   path,
-		UserID: in.UserId,
-		Data:   d,
+		Path: path,
+		User: getUserData(in.GetUser()),
+		Data: d,
 	}
 
 	if call, exists := (*section)[path]; exists {
@@ -354,4 +356,16 @@ func (r *RemoteWebSystem) ValidAdminWebSocket(ctx context.Context, in *pb.ValidR
 	return &pb.ValidResponse{
 		Found: exists,
 	}, nil
+}
+
+func getUserData(in *pb.UserData) structs.UserData {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[web.getUserData(r *http.Request) UserData]")
+	return structs.UserData{
+		ID:          in.UserId,
+		Name:        in.Name,
+		Initial:     in.Initial,
+		Icon:        template.URL(in.Icon),
+		IsAdmin:     in.IsAdmin,
+		Permissions: in.Permissions,
+	}
 }
