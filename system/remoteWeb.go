@@ -78,8 +78,9 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 		Method:    in.GetMethod(),
 	}
 
-	json.Unmarshal([]byte(in.GetQueryParamsJson()), &webRequest.QueryParams)
-	json.Unmarshal([]byte(in.GetPostJson()), &webRequest.Post)
+	logging.Infof("in.PostJson: %s", in.PostJson)
+	json.Unmarshal([]byte(in.QueryParamsJson), &webRequest.QueryParams)
+	json.Unmarshal([]byte(in.PostJson), &webRequest.Post)
 
 	pagesKey, pathVariables := getPathVariables(cleanPath, section)
 	if pagesKey == "" {
