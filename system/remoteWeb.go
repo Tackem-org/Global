@@ -78,7 +78,6 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 		Method:    in.GetMethod(),
 	}
 
-	logging.Infof("in.PostJson: %s", in.PostJson)
 	json.Unmarshal([]byte(in.QueryParamsJson), &webRequest.QueryParams)
 	json.Unmarshal([]byte(in.PostJson), &webRequest.Post)
 
