@@ -48,9 +48,10 @@ func Run(data SetupData) {
 	grpcServer = grpc.NewServer()
 
 	pbregclient.RegisterRegClientServer(grpcServer, &RegClientServer{})
-	if data.BaseData.WebAccess {
+	if len(adminPagesData)+len(pagesData)+len(adminWebSocketData)+len(webSocketData) > 0 {
 		pbremoteweb.RegisterRemoteWebServer(grpcServer, NewRemoteWebServer())
 	}
+
 	Data.GPRCSystems(grpcServer)
 
 	WG.Add(1)

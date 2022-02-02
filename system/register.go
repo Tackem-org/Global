@@ -82,7 +82,6 @@ func (r *Register) Setup(baseData BaseData) {
 		Port:             freePort(),
 		Multi:            baseData.Multi,
 		SingleRun:        baseData.SingleRun,
-		Webaccess:        baseData.WebAccess,
 		NavItems:         baseData.NavItems,
 		ConfigItems:      baseData.ConfigItems,
 		RequiredServices: baseData.RequiredServices,
