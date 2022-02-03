@@ -14,8 +14,8 @@ import (
 )
 
 type RemoteWebSystem struct {
-	pages           *map[string]func(in *WebRequest) (*WebReturn, error)
-	adminPages      *map[string]func(in *WebRequest) (*WebReturn, error)
+	pages           *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)
+	adminPages      *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)
 	webSockets      *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)
 	adminWebSockets *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)
 	pb.UnimplementedRemoteWebServer
@@ -64,14 +64,14 @@ func cleanPath(in string) (cleanPath string) {
 	return
 }
 
-func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section *map[string]func(in *WebRequest) (*WebReturn, error)) (*pb.PageResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section *map[string]func(in *WebRequest) (*WebReturn, error)) (*pb.PageResponse, error)] {in=%v}", in)
+func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)) (*pb.PageResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)) (*pb.PageResponse, error)] {in=%v}", in)
 	cleanPath := cleanPath(in.Path)
 	if cleanPath == "" {
 		cleanPath = "/"
 	}
 	user := structs.GetUserData(in.GetUser())
-	webRequest := WebRequest{
+	webRequest := structs.WebRequest{
 		FullPath:  in.GetPath(),
 		CleanPath: cleanPath,
 		User:      user,
@@ -126,8 +126,8 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 	}, nil
 }
 
-func (r *RemoteWebSystem) pageString(returnData *WebReturn, in *pb.PageRequest) (*pb.PageResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) pageString(returnData *WebReturn, in *pb.PageRequest) (*pb.PageResponse, error)] {in=%v}", in)
+func (r *RemoteWebSystem) pageString(returnData *structs.WebReturn, in *pb.PageRequest) (*pb.PageResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) pageString(returnData *structs.WebReturn, in *pb.PageRequest) (*pb.PageResponse, error)] {in=%v}", in)
 	var pageData []byte
 	pageData, err := json.Marshal(returnData.PageData)
 	if err != nil {
@@ -148,8 +148,8 @@ func (r *RemoteWebSystem) pageString(returnData *WebReturn, in *pb.PageRequest) 
 	}, nil
 }
 
-func (r *RemoteWebSystem) pageFile(returnData *WebReturn, in *pb.PageRequest) (*pb.PageResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) pageFile(returnData *WebReturn, in *pb.PageRequest) (*pb.PageResponse, error)] {in=%v}", in)
+func (r *RemoteWebSystem) pageFile(returnData *structs.WebReturn, in *pb.PageRequest) (*pb.PageResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) pageFile(returnData *structs.WebReturn, in *pb.PageRequest) (*pb.PageResponse, error)] {in=%v}", in)
 	templateHtml, err := fileSystem.ReadFile("pages/" + returnData.FilePath + ".html")
 	if err != nil {
 		logging.Errorf("[GPRC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
@@ -180,7 +180,7 @@ func (r *RemoteWebSystem) pageFile(returnData *WebReturn, in *pb.PageRequest) (*
 }
 
 func (r *RemoteWebSystem) File(ctx context.Context, in *pb.FileRequest) (*pb.FileResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) File(returnData *WebReturn, in *pb.FileRequest) (*pb.FileResponse, error)] {in=%v}", in)
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) File(returnData *structs.WebReturn, in *pb.FileRequest) (*pb.FileResponse, error)] {in=%v}", in)
 	path := strings.Split(in.GetPath(), "/static/")[1]
 	data, err := fileSystem.ReadFile(path)
 	if err != nil {
@@ -212,15 +212,15 @@ func (r *RemoteWebSystem) File(ctx context.Context, in *pb.FileRequest) (*pb.Fil
 }
 
 func (r *RemoteWebSystem) WebSocket(ctx context.Context, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) WebSocket(returnData *WebReturn, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error)] {in=%v}", in)
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) WebSocket(returnData *structs.WebReturn, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error)] {in=%v}", in)
 	return r.webSocket(ctx, in, r.webSockets)
 }
 func (r *RemoteWebSystem) AdminWebSocket(ctx context.Context, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) AdminWebSocket(returnData *WebReturn, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error)] {in=%v}", in)
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) AdminWebSocket(returnData *structs.WebReturn, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error)] {in=%v}", in)
 	return r.webSocket(ctx, in, r.adminWebSockets)
 }
 func (r *RemoteWebSystem) webSocket(ctx context.Context, in *pb.WebSocketRequest, section *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)) (*pb.WebSocketResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) webSocket(returnData *WebReturn, in *pb.WebSocketRequest, section *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)) (*pb.WebSocketResponse, error)] {in=%v}", in)
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) webSocket(returnData *structs.WebReturn, in *pb.WebSocketRequest, section *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)) (*pb.WebSocketResponse, error)] {in=%v}", in)
 	path := cleanPath(in.Path)
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
@@ -308,8 +308,8 @@ func (r *RemoteWebSystem) ValidAdminPage(ctx context.Context, in *pb.ValidReques
 	return r.validPage(ctx, in, r.adminPages)
 }
 
-func (r *RemoteWebSystem) validPage(ctx context.Context, in *pb.ValidRequest, section *map[string]func(in *WebRequest) (*WebReturn, error)) (*pb.ValidResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) validPage(ctx context.Context, in *pb.ValidRequest, section *map[string]func(in *WebRequest) (*WebReturn, error)) (*pb.ValidResponse, error)] {in=%v}", in)
+func (r *RemoteWebSystem) validPage(ctx context.Context, in *pb.ValidRequest, section *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)) (*pb.ValidResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) validPage(ctx context.Context, in *pb.ValidRequest, section *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)) (*pb.ValidResponse, error)] {in=%v}", in)
 	cleanPath := cleanPath(in.Path)
 	if cleanPath == "" {
 		cleanPath = "/"

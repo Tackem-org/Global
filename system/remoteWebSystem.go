@@ -8,18 +8,19 @@ import (
 
 	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/logging/debug"
+	"github.com/Tackem-org/Global/structs"
 )
 
 func WebSetup(fileSystemIn *embed.FS) {
 	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.WebSetup(fileSystemIn *embed.FS)]")
-	pagesData = make(map[string]func(in *WebRequest) (*WebReturn, error))
-	adminPagesData = make(map[string]func(in *WebRequest) (*WebReturn, error))
+	pagesData = make(map[string]func(in *structs.WebRequest) (*structs.WebReturn, error))
+	adminPagesData = make(map[string]func(in *structs.WebRequest) (*structs.WebReturn, error))
 	webSocketData = make(map[string]func(in *WebSocketRequest) (*WebSocketReturn, error))
 	fileSystem = fileSystemIn
 }
 
-func WebAddPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool] {path=%s}", path)
+func WebAddPath(path string, call func(in *structs.WebRequest) (*structs.WebReturn, error)) bool {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddPath(path string, call func(in *structs.WebRequest) (*structs.WebReturn, error)) bool] {path=%s}", path)
 	if strings.Contains(path, "static") {
 		logging.Warningf("Adding %s to remoteWeb Failed - cannot use static in the name", path)
 		return false
@@ -40,8 +41,8 @@ func WebAddPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool
 	return true
 }
 
-func WebAddAdminPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAdminAddPath(path string, call func(in *WebRequest) (*WebReturn, error)) bool] {path=%s}", path)
+func WebAddAdminPath(path string, call func(in *structs.WebRequest) (*structs.WebReturn, error)) bool {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAdminAddPath(path string, call func(in *structs.WebRequest) (*structs.WebReturn, error)) bool] {path=%s}", path)
 	if strings.Contains(path, "static") {
 		logging.Warningf("Adding %s to remoteWeb Failed - cannot use static in the name", path)
 		return false
@@ -63,7 +64,7 @@ func WebAddAdminPath(path string, call func(in *WebRequest) (*WebReturn, error))
 }
 
 func WebAddWebSocket(path string, call func(in *WebSocketRequest) (*WebSocketReturn, error)) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddWebSocket(path string, call func(in *WebRequest) (*WebReturn, error)) bool] {path=%s}", path)
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddWebSocket(path string, call func(in *structs.WebRequest) (*structs.WebReturn, error)) bool] {path=%s}", path)
 
 	if !strings.HasSuffix(path, ".ws") {
 		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - missing \".ws\" Suffix", path)
@@ -85,7 +86,7 @@ func WebAddWebSocket(path string, call func(in *WebSocketRequest) (*WebSocketRet
 }
 
 func WebAddAdminWebSocket(path string, call func(in *WebSocketRequest) (*WebSocketReturn, error)) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddWebSocket(path string, call func(in *WebRequest) (*WebReturn, error)) bool] {path=%s}", path)
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddWebSocket(path string, call func(in *structs.WebRequest) (*structs.WebReturn, error)) bool] {path=%s}", path)
 
 	if !strings.HasSuffix(path, ".ws") {
 		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - missing \".ws\" Suffix", path)
@@ -196,8 +197,8 @@ func checkPathPart(part string) bool {
 	return true
 }
 
-func getPathVariables(path string, section *map[string]func(in *WebRequest) (*WebReturn, error)) (string, *map[string]interface{}) {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.getPathVariables(path string, section *map[string]func(in *WebRequest) (*WebReturn, error)) (string, *map[string]interface{})] {path=%s}", path)
+func getPathVariables(path string, section *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)) (string, *map[string]interface{}) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.getPathVariables(path string, section *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)) (string, *map[string]interface{})] {path=%s}", path)
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
 	}
