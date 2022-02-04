@@ -81,18 +81,9 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 
 	json.Unmarshal([]byte(in.QueryParamsJson), &webRequest.QueryParams)
 	json.Unmarshal([]byte(in.PostJson), &webRequest.Post)
+	json.Unmarshal([]byte(in.PathParamsJson), &webRequest.PathVariables)
 
-	pagesKey, pathVariables := getPathVariables(cleanPath, section)
-	if pagesKey == "" {
-		return &pb.PageResponse{
-			StatusCode:   http.StatusNotFound,
-			ErrorMessage: "Page Not Found",
-		}, nil
-	}
-	if pathVariables != nil {
-		webRequest.PathVariables = *pathVariables
-	}
-	if call, exists := (*section)[pagesKey]; exists {
+	if call, exists := (*section)[in.BasePath]; exists {
 		returnData, err := call(&webRequest)
 		if err != nil {
 			logging.Errorf("[GPRC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
@@ -182,15 +173,15 @@ func (r *RemoteWebSystem) pageFile(returnData *structs.WebReturn, in *pb.PageReq
 
 func (r *RemoteWebSystem) File(ctx context.Context, in *pb.FileRequest) (*pb.FileResponse, error) {
 	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) File(returnData *structs.WebReturn, in *pb.FileRequest) (*pb.FileResponse, error)] {in=%v}", in)
-	path := strings.Split(in.GetPath(), "/static/")[1]
-	data, err := fileSystem.ReadFile(path)
+
+	data, err := fileSystem.ReadFile(in.Path)
 	if err != nil {
 		logging.Errorf("[GPRC Remote Web System File Request] %s:%s", in.GetPath(), err.Error())
 		sc := http.StatusInternalServerError
 		em := "Internal Error"
 		switch err.(type) {
 		case *iofs.PathError:
-			if path[len(path)-1:] == "/" {
+			if in.Path[len(in.Path)-1:] == "/" {
 				sc = http.StatusForbidden
 				em = "Path is a Directory Access Forbidden"
 			} else {
