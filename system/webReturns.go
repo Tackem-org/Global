@@ -5,19 +5,20 @@ import (
 
 	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/logging/debug"
+	"github.com/Tackem-org/Global/structs"
 )
 
-func QuickWebReturn(statusCode uint32, errorMessage string) (*WebReturn, error) {
+func QuickWebReturn(statusCode uint32, errorMessage string) (*structs.WebReturn, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.ForbiddenWebReturn() (*system.WebReturn, error)]")
-	return &WebReturn{
+	return &structs.WebReturn{
 		StatusCode:   statusCode,
 		ErrorMessage: errorMessage,
 	}, nil
 }
 
-func ForbiddenWebReturn() (*WebReturn, error) {
+func ForbiddenWebReturn() (*structs.WebReturn, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.ForbiddenWebReturn() (*system.WebReturn, error)]")
-	return &WebReturn{
+	return &structs.WebReturn{
 		StatusCode:   http.StatusForbidden,
 		ErrorMessage: "user not authorised to view this page",
 	}, nil

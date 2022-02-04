@@ -3,7 +3,6 @@ package system
 import (
 	"embed"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/Tackem-org/Global/logging"
@@ -195,68 +194,4 @@ func checkPathPart(part string) bool {
 		logging.Info("TODO MORE SPECIAL CHECK OF PATH PART FOR MULTI VARIABLES")
 	}
 	return true
-}
-
-func getPathVariables(path string, section *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)) (string, *map[string]interface{}) {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.getPathVariables(path string, section *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)) (string, *map[string]interface{})] {path=%s}", path)
-	if !strings.HasPrefix(path, "/") {
-		path = "/" + path
-	}
-	returnData := make(map[string]interface{})
-	reString := regexp.MustCompile(`^[a-zA-Z0-9]`)
-	for key := range *section {
-		if strings.Count(key, "{")+strings.Count(key, "}") == 0 {
-			if key == path {
-				return key, nil
-			}
-			continue
-		}
-		keyParts := strings.Split(key, "/")
-		pathParts := strings.Split(path, "/")
-		if len(keyParts) != len(pathParts) {
-			continue
-		}
-		match := true
-		for index, pathPart := range pathParts {
-			if strings.Count(keyParts[index], "{{") == 1 && strings.Count(keyParts[index], "}}") == 1 {
-				if strings.HasPrefix(keyParts[index], "{{") && strings.HasSuffix(keyParts[index], "}}") {
-					splitPart := strings.Split(strings.ReplaceAll(strings.ReplaceAll(keyParts[index], "{", ""), "}", ""), ":")
-					if splitPart[0] == "number" {
-						if i, err := strconv.Atoi(pathPart); err == nil {
-							if returnData == nil {
-								returnData = make(map[string]interface{})
-							}
-							returnData[splitPart[1]] = i
-						} else {
-							match = false
-							break
-						}
-					} else if splitPart[0] == "string" {
-						if matched := reString.MatchString(pathPart); matched {
-							returnData[splitPart[1]] = pathPart
-						} else {
-							match = false
-							break
-						}
-					}
-				} else {
-					if keyParts[index] != pathPart {
-						match = false
-						break
-					}
-				}
-			} else if strings.Count(keyParts[index], "{{") > 1 && strings.Count(keyParts[index], "}}") > 1 {
-				// varCount := strings.Count(keyParts[index], "{{")
-				logging.Info("TODO MORE SPECIAL CHECK OF PATH PART FOR MULTI VARIABLES")
-				logging.Infof("%s:%s", pathPart, keyParts)
-			}
-		}
-		if match {
-			return key, &returnData
-		} else {
-			returnData = make(map[string]interface{})
-		}
-	}
-
-	return "", nil
 }

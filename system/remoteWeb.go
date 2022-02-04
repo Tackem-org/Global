@@ -41,6 +41,7 @@ func (r *RemoteWebSystem) AdminPage(ctx context.Context, in *pb.PageRequest) (*p
 	return r.page(ctx, in, r.adminPages)
 }
 
+//TODO CHANGE HOW THIS DEALS with the new incmming data (getting the path to match and variables from master)
 func cleanPath(in string) (cleanPath string) {
 	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.cleanPath(in string) (cleanPath string)] {in=%s}", in)
 	if strings.HasPrefix(in, "admin/") {
@@ -296,70 +297,4 @@ func getBaseCSSandJS(path string) (css []string, js []string) {
 		jsfile.Close()
 	}
 	return
-}
-
-func (r *RemoteWebSystem) ValidPage(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) ValidPage(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error)] {in=%v}", in)
-	return r.validPage(ctx, in, r.pages)
-}
-
-func (r *RemoteWebSystem) ValidAdminPage(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) ValidAdminPage(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error)] {in=%v}", in)
-	return r.validPage(ctx, in, r.adminPages)
-}
-
-func (r *RemoteWebSystem) validPage(ctx context.Context, in *pb.ValidRequest, section *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)) (*pb.ValidResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) validPage(ctx context.Context, in *pb.ValidRequest, section *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)) (*pb.ValidResponse, error)] {in=%v}", in)
-	cleanPath := cleanPath(in.Path)
-	if cleanPath == "" {
-		cleanPath = "/"
-	}
-	pagesKey, _ := getPathVariables(cleanPath, section)
-	if pagesKey == "" {
-		return &pb.ValidResponse{
-			Found: false,
-		}, nil
-	}
-	_, exists := (*section)[pagesKey]
-	return &pb.ValidResponse{
-		Found: exists,
-	}, nil
-}
-
-func (r *RemoteWebSystem) ValidFile(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) ValidFile(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error)] {in=%v}", in)
-	path := strings.Split(in.GetPath(), "/static/")[1]
-	f, _ := fileSystem.Open(path)
-	if f != nil {
-		defer f.Close()
-	}
-	return &pb.ValidResponse{
-		Found: f != nil,
-	}, nil
-}
-
-func (r *RemoteWebSystem) ValidWebSocket(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) ValidWebSocket(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error)] {in=%v}", in)
-	path := cleanPath(in.Path)
-	if !strings.HasPrefix(path, "/") {
-		path = "/" + path
-	}
-
-	_, exists := (*r.webSockets)[path]
-	return &pb.ValidResponse{
-		Found: exists,
-	}, nil
-}
-
-func (r *RemoteWebSystem) ValidAdminWebSocket(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) ValidAdminWebSocket(ctx context.Context, in *pb.ValidRequest) (*pb.ValidResponse, error)] {in=%v}", in)
-	path := cleanPath(in.Path)
-	if !strings.HasPrefix(path, "/") {
-		path = "/" + path
-	}
-
-	_, exists := (*r.adminWebSockets)[path]
-	return &pb.ValidResponse{
-		Found: exists,
-	}, nil
 }
