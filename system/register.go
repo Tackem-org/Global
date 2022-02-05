@@ -76,15 +76,17 @@ func (r *Register) GetServiceType() string {
 func (r *Register) Setup(baseData BaseData) {
 	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *Register) Setup(baseData BaseData)] {baseData=%v}", baseData)
 	r.data = pb.RegisterRequest{
-		ServiceName:      baseData.ServiceName,
-		ServiceType:      baseData.ServiceType,
-		Version:          &pb.Version{Major: uint32(baseData.Version.Major), Minor: uint32(baseData.Version.Minor), Hotfix: uint32(baseData.Version.Hotfix)},
-		Port:             freePort(),
-		Multi:            baseData.Multi,
-		SingleRun:        baseData.SingleRun,
-		NavItems:         baseData.NavItems,
-		ConfigItems:      baseData.ConfigItems,
-		RequiredServices: baseData.RequiredServices,
+		ServiceName:       baseData.ServiceName,
+		ServiceType:       baseData.ServiceType,
+		Version:           &pb.Version{Major: uint32(baseData.Version.Major), Minor: uint32(baseData.Version.Minor), Hotfix: uint32(baseData.Version.Hotfix)},
+		Port:              freePort(),
+		Multi:             baseData.Multi,
+		SingleRun:         baseData.SingleRun,
+		ConfigItems:       baseData.ConfigItems,
+		RequiredServices:  baseData.RequiredServices,
+		WebLinkItems:      pagesProtoData,
+		AdminWebLinkItems: adminPagesProtoData,
+		NavItems:          baseData.NavItems,
 	}
 }
 

@@ -8,62 +8,68 @@ import (
 	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/Tackem-org/Global/structs"
+	pb "github.com/Tackem-org/Proto/pb/registration"
 )
+
+type PageFunc = func(in *structs.WebRequest) (*structs.WebReturn, error)
+type SocketFunc = func(in *WebSocketRequest) (*WebSocketReturn, error)
 
 func WebSetup(fileSystemIn *embed.FS) {
 	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.WebSetup(fileSystemIn *embed.FS)]")
-	pagesData = make(map[string]func(in *structs.WebRequest) (*structs.WebReturn, error))
-	adminPagesData = make(map[string]func(in *structs.WebRequest) (*structs.WebReturn, error))
-	webSocketData = make(map[string]func(in *WebSocketRequest) (*WebSocketReturn, error))
+	pagesData = make(map[string]PageFunc)
+	adminPagesData = make(map[string]PageFunc)
+	webSocketData = make(map[string]SocketFunc)
 	fileSystem = fileSystemIn
 }
 
-func WebAddPath(path string, call func(in *structs.WebRequest) (*structs.WebReturn, error)) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddPath(path string, call func(in *structs.WebRequest) (*structs.WebReturn, error)) bool] {path=%s}", path)
-	if strings.Contains(path, "static") {
-		logging.Warningf("Adding %s to remoteWeb Failed - cannot use static in the name", path)
+func WebAddPath(webLinkItem *pb.WebLinkItem, call PageFunc) bool {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddPath(webLinkItem *pb.WebLinkItem, call PageFunc) bool] {webLinkItem=%+v}", webLinkItem)
+	if strings.Contains(webLinkItem.Path, "static") {
+		logging.Warningf("Adding %s to remoteWeb Failed - cannot use static in the name", webLinkItem.Path)
 		return false
 	}
-	if _, exists := pagesData[path]; exists {
-		logging.Warningf("Adding %s to remoteWeb Failed - Path already exists", path)
+	if _, exists := pagesData[webLinkItem.Path]; exists {
+		logging.Warningf("Adding %s to remoteWeb Failed - Path already exists", webLinkItem.Path)
 		return false
 	}
 
-	for _, part := range strings.Split(path, "/") {
+	for _, part := range strings.Split(webLinkItem.Path, "/") {
 		if !checkPathPart(part) {
-			logging.Warningf("Adding %s to remoteWeb Failed: Part format Bad %s", path, part)
+			logging.Warningf("Adding %s to remoteWeb Failed: Part format Bad %s", webLinkItem.Path, part)
 			return false
 		}
 	}
 
-	pagesData[path] = call
+	pagesData[webLinkItem.Path] = call
+	pagesProtoData = append(pagesProtoData, webLinkItem)
 	return true
 }
 
-func WebAddAdminPath(path string, call func(in *structs.WebRequest) (*structs.WebReturn, error)) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAdminAddPath(path string, call func(in *structs.WebRequest) (*structs.WebReturn, error)) bool] {path=%s}", path)
-	if strings.Contains(path, "static") {
-		logging.Warningf("Adding %s to remoteWeb Failed - cannot use static in the name", path)
+func WebAddAdminPath(webLinkItem *pb.AdminWebLinkItem, call PageFunc) bool {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAdminAddPath(webLinkItem *pb.WebLinkItem, call PageFunc) bool] {webLinkItem=%+v}", webLinkItem)
+	if strings.Contains(webLinkItem.Path, "static") {
+		logging.Warningf("Adding %s to remoteWeb Failed - cannot use static in the name", webLinkItem.Path)
 		return false
 	}
-	if _, exists := adminPagesData[path]; exists {
-		logging.Warningf("Adding %s to remoteWeb Failed - Path already exists", path)
+	if _, exists := adminPagesData[webLinkItem.Path]; exists {
+		logging.Warningf("Adding %s to remoteWeb Failed - Path already exists", webLinkItem.Path)
 		return false
 	}
 
-	for _, part := range strings.Split(path, "/") {
+	for _, part := range strings.Split(webLinkItem.Path, "/") {
 		if !checkPathPart(part) {
-			logging.Warningf("Adding %s to remoteWeb Failed: Part format Bad %s", path, part)
+			logging.Warningf("Adding %s to remoteWeb Failed: Part format Bad %s", webLinkItem.Path, part)
 			return false
 		}
 	}
 
-	adminPagesData[path] = call
+	adminPagesData[webLinkItem.Path] = call
+	adminPagesProtoData = append(adminPagesProtoData, webLinkItem)
 	return true
 }
 
-func WebAddWebSocket(path string, call func(in *WebSocketRequest) (*WebSocketReturn, error)) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddWebSocket(path string, call func(in *structs.WebRequest) (*structs.WebReturn, error)) bool] {path=%s}", path)
+func WebAddWebSocket(path string, call SocketFunc) bool {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddWebSocket(path string, call SocketFunc) bool] {path=%s}", path)
 
 	if !strings.HasSuffix(path, ".ws") {
 		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - missing \".ws\" Suffix", path)
@@ -84,8 +90,8 @@ func WebAddWebSocket(path string, call func(in *WebSocketRequest) (*WebSocketRet
 	return true
 }
 
-func WebAddAdminWebSocket(path string, call func(in *WebSocketRequest) (*WebSocketReturn, error)) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddWebSocket(path string, call func(in *structs.WebRequest) (*structs.WebReturn, error)) bool] {path=%s}", path)
+func WebAddAdminWebSocket(path string, call SocketFunc) bool {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddWebSocket(path string, call SocketFunc) bool] {path=%s}", path)
 
 	if !strings.HasSuffix(path, ".ws") {
 		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - missing \".ws\" Suffix", path)
@@ -114,6 +120,11 @@ func WebRemovePath(path string) bool {
 	}
 
 	delete(pagesData, path)
+	for index, item := range pagesProtoData {
+		if item.Path == path {
+			pagesProtoData = append(pagesProtoData[:index], pagesProtoData[index+1:]...)
+		}
+	}
 	return true
 }
 
@@ -125,6 +136,11 @@ func WebRemoveAdminPath(path string) bool {
 	}
 
 	delete(adminPagesData, path)
+	for index, item := range adminPagesProtoData {
+		if item.Path == path {
+			adminPagesProtoData = append(adminPagesProtoData[:index], adminPagesProtoData[index+1:]...)
+		}
+	}
 	return true
 }
 

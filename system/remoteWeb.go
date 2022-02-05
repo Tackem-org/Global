@@ -14,10 +14,10 @@ import (
 )
 
 type RemoteWebSystem struct {
-	pages           *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)
-	adminPages      *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)
-	webSockets      *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)
-	adminWebSockets *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)
+	pages           *map[string]PageFunc
+	adminPages      *map[string]PageFunc
+	webSockets      *map[string]SocketFunc
+	adminWebSockets *map[string]SocketFunc
 	pb.UnimplementedRemoteWebServer
 }
 
@@ -65,8 +65,8 @@ func cleanPath(in string) (cleanPath string) {
 	return
 }
 
-func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)) (*pb.PageResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section *map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)) (*pb.PageResponse, error)] {in=%v}", in)
+func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section *map[string]PageFunc) (*pb.PageResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.(r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section *map[string]PageFunc) (*pb.PageResponse, error)] {in=%v}", in)
 	cleanPath := cleanPath(in.Path)
 	if cleanPath == "" {
 		cleanPath = "/"
@@ -82,7 +82,6 @@ func (r *RemoteWebSystem) page(ctx context.Context, in *pb.PageRequest, section 
 	json.Unmarshal([]byte(in.QueryParamsJson), &webRequest.QueryParams)
 	json.Unmarshal([]byte(in.PostJson), &webRequest.Post)
 	json.Unmarshal([]byte(in.PathParamsJson), &webRequest.PathVariables)
-
 	if call, exists := (*section)[in.BasePath]; exists {
 		returnData, err := call(&webRequest)
 		if err != nil {
@@ -211,8 +210,8 @@ func (r *RemoteWebSystem) AdminWebSocket(ctx context.Context, in *pb.WebSocketRe
 	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) AdminWebSocket(returnData *structs.WebReturn, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error)] {in=%v}", in)
 	return r.webSocket(ctx, in, r.adminWebSockets)
 }
-func (r *RemoteWebSystem) webSocket(ctx context.Context, in *pb.WebSocketRequest, section *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)) (*pb.WebSocketResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) webSocket(returnData *structs.WebReturn, in *pb.WebSocketRequest, section *map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)) (*pb.WebSocketResponse, error)] {in=%v}", in)
+func (r *RemoteWebSystem) webSocket(ctx context.Context, in *pb.WebSocketRequest, section *map[string]SocketFunc) (*pb.WebSocketResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) webSocket(returnData *structs.WebReturn, in *pb.WebSocketRequest, section *map[string]SocketFunc) (*pb.WebSocketResponse, error)] {in=%v}", in)
 	path := cleanPath(in.Path)
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path

@@ -24,9 +24,6 @@ func Run(data SetupData) {
 	channels.Setup()
 	MUp.StartDown()
 
-	logging.Info("Setup Registration Data")
-	RegData().Setup(Data.BaseData)
-
 	WG = &sync.WaitGroup{}
 
 	logging.Infof("Setup %s System", data.BaseData.ServiceName)
@@ -43,6 +40,9 @@ func Run(data SetupData) {
 	if Data.WebSockets != nil {
 		Data.WebSockets()
 	}
+
+	logging.Info("Setup Registration Data")
+	RegData().Setup(Data.BaseData)
 
 	logging.Info("Setup GPRC Service")
 	grpcServer = grpc.NewServer()
