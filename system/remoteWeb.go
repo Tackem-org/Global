@@ -14,34 +14,19 @@ import (
 )
 
 type RemoteWebSystem struct {
-	pages           *map[string]PageFunc
-	adminPages      *map[string]PageFunc
-	webSockets      *map[string]SocketFunc
-	adminWebSockets *map[string]SocketFunc
 	pb.UnimplementedRemoteWebServer
-}
-
-func NewRemoteWebServer() *RemoteWebSystem {
-	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.NewRemoteWebServer() *RemoteWebSystem]")
-	return &RemoteWebSystem{
-		pages:           &pagesData,
-		adminPages:      &adminPagesData,
-		webSockets:      &webSocketData,
-		adminWebSockets: &adminWebSocketData,
-	}
 }
 
 func (r *RemoteWebSystem) Page(ctx context.Context, in *pb.PageRequest) (*pb.PageResponse, error) {
 	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) Page(ctx context.Context, in *pb.PageRequest) (*pb.PageResponse, error)] {in=%v}", in)
-	return r.page(ctx, in, r.pages)
+	return r.page(ctx, in, &pagesData)
 }
 
 func (r *RemoteWebSystem) AdminPage(ctx context.Context, in *pb.PageRequest) (*pb.PageResponse, error) {
 	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) AdminPage(ctx context.Context, in *pb.PageRequest) (*pb.PageResponse, error)] {in=%v}", in)
-	return r.page(ctx, in, r.adminPages)
+	return r.page(ctx, in, &adminPagesData)
 }
 
-//TODO CHANGE HOW THIS DEALS with the new incmming data (getting the path to match and variables from master)
 func cleanPath(in string) (cleanPath string) {
 	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.cleanPath(in string) (cleanPath string)] {in=%s}", in)
 	if strings.HasPrefix(in, "admin/") {
@@ -204,30 +189,27 @@ func (r *RemoteWebSystem) File(ctx context.Context, in *pb.FileRequest) (*pb.Fil
 
 func (r *RemoteWebSystem) WebSocket(ctx context.Context, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error) {
 	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) WebSocket(returnData *structs.WebReturn, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error)] {in=%v}", in)
-	return r.webSocket(ctx, in, r.webSockets)
-}
-func (r *RemoteWebSystem) AdminWebSocket(ctx context.Context, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) AdminWebSocket(returnData *structs.WebReturn, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error)] {in=%v}", in)
-	return r.webSocket(ctx, in, r.adminWebSockets)
-}
-func (r *RemoteWebSystem) webSocket(ctx context.Context, in *pb.WebSocketRequest, section *map[string]SocketFunc) (*pb.WebSocketResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) webSocket(returnData *structs.WebReturn, in *pb.WebSocketRequest, section *map[string]SocketFunc) (*pb.WebSocketResponse, error)] {in=%v}", in)
-	path := cleanPath(in.Path)
-	if !strings.HasPrefix(path, "/") {
-		path = "/" + path
-	}
+
 	var d map[string]interface{}
 	json.Unmarshal([]byte(in.DataJson), &d)
-	webSocketRequest := WebSocketRequest{
-		Path: path,
-		User: structs.GetUserData(in.GetUser()),
-		Data: d,
-	}
 
-	if call, exists := (*section)[path]; exists {
+	webSocketRequest := WebSocketRequest{
+		Command: in.Command,
+		User:    structs.GetUserData(in.GetUser()),
+		Data:    d,
+	}
+	command := in.Command
+	serviceType := RegData().GetServiceType()
+	if serviceType != "service" {
+		command = strings.Replace(command, serviceType+".", "", 1)
+	}
+	serviceName := RegData().GetServiceName()
+	command = strings.Replace(command, serviceName+".", "", 1)
+
+	if call, exists := webSocketData[command]; exists {
 		returnData, err := call(&webSocketRequest)
 		if err != nil {
-			logging.Errorf("[GPRC Remote Web Socket Request] %s:%s", in.GetPath(), err.Error())
+			logging.Errorf("[GPRC Remote Web Socket Request] %s:%s", in.Command, err.Error())
 			return &pb.WebSocketResponse{
 				StatusCode:   http.StatusInternalServerError,
 				ErrorMessage: "ERROR WITH THE SYSTEM",

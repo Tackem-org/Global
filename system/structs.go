@@ -32,9 +32,9 @@ type BaseData struct {
 }
 
 type WebSocketRequest struct {
-	Path string
-	User *structs.UserData
-	Data map[string]interface{}
+	Command string
+	User    *structs.UserData
+	Data    map[string]interface{}
 }
 
 type WebSocketReturn struct {

@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/Tackem-org/Global/helpers"
-	"github.com/Tackem-org/Global/structs"
 	"google.golang.org/grpc"
 
 	pb "github.com/Tackem-org/Proto/pb/registration"
@@ -20,12 +19,12 @@ var (
 	MUp                 helpers.Locker
 	masterUrl           string = "127.0.0.1" //"tackem_master"
 	masterPort          string = "50001"
-	pagesData           map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)
+	pagesData           map[string]PageFunc
 	pagesProtoData      []*pb.WebLinkItem
-	adminPagesData      map[string]func(in *structs.WebRequest) (*structs.WebReturn, error)
+	adminPagesData      map[string]PageFunc
 	adminPagesProtoData []*pb.AdminWebLinkItem
-	webSocketData       map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)
-	adminWebSocketData  map[string]func(in *WebSocketRequest) (*WebSocketReturn, error)
+	webSocketData       map[string]SocketFunc
+	webSocketProtoData  []*pb.WebSocketItem
 	fileSystem          *embed.FS
 	healthcheckHealthy  bool
 	healthcheckIssues   []string

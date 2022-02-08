@@ -68,47 +68,21 @@ func WebAddAdminPath(webLinkItem *pb.AdminWebLinkItem, call PageFunc) bool {
 	return true
 }
 
-func WebAddWebSocket(path string, call SocketFunc) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddWebSocket(path string, call SocketFunc) bool] {path=%s}", path)
+func WebAddWebSocket(webSocketItem *pb.WebSocketItem, call SocketFunc) bool {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddWebSocket(webSocketItem *pb.WebSocketItem, call SocketFunc) bool] {webSocketItem.Command=%s}", webSocketItem.Command)
 
-	if !strings.HasSuffix(path, ".ws") {
-		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - missing \".ws\" Suffix", path)
-		return false
-	}
-	if _, exists := webSocketData[path]; exists {
-		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - Path already exists", path)
+	if _, exists := webSocketData[webSocketItem.Command]; exists {
+		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - Command already exists", webSocketItem.Command)
 		return false
 	}
 
-	startCount := strings.Count(path, "{")
-	endCount := strings.Count(path, "}")
-	if startCount != 0 || endCount != 0 {
-		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - Path Cannot use Variables", path)
-		return false
-	}
-	webSocketData[path] = call
-	return true
-}
-
-func WebAddAdminWebSocket(path string, call SocketFunc) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebAddWebSocket(path string, call SocketFunc) bool] {path=%s}", path)
-
-	if !strings.HasSuffix(path, ".ws") {
-		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - missing \".ws\" Suffix", path)
-		return false
-	}
-	if _, exists := adminWebSocketData[path]; exists {
-		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - Path already exists", path)
+	if matched, _ := regexp.Match(`[a-zA-Z0-9]`, []byte(webSocketItem.Command)); !matched {
+		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - Command name not valid", webSocketItem.Command)
 		return false
 	}
 
-	startCount := strings.Count(path, "{")
-	endCount := strings.Count(path, "}")
-	if startCount != 0 || endCount != 0 {
-		logging.Warningf("Adding Web Socket %s to remoteWeb Failed - Path Cannot use Variables", path)
-		return false
-	}
-	webSocketData[path] = call
+	webSocketData[webSocketItem.Command] = call
+	webSocketProtoData = append(webSocketProtoData, webSocketItem)
 	return true
 }
 
@@ -144,25 +118,19 @@ func WebRemoveAdminPath(path string) bool {
 	return true
 }
 
-func WebRemoveWebSocket(path string) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebRemoveWebSocket(path string) bool] {path=%s}", path)
-	if _, exists := webSocketData[path]; !exists {
-		logging.Warningf("Removing Web Socket %s from remoteWeb Failed - path not found", path)
+func WebRemoveWebSocket(command string) bool {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebRemoveWebSocket(command string) bool] {command=%s}", command)
+	if _, exists := webSocketData[command]; !exists {
+		logging.Warningf("Removing Web Socket %s from remoteWeb Failed - command not found", command)
 		return false
 	}
 
-	delete(webSocketData, path)
-	return true
-}
-
-func WebRemoveAdminWebSocket(path string) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebRemoveWebSocket(path string) bool] {path=%s}", path)
-	if _, exists := adminWebSocketData[path]; !exists {
-		logging.Warningf("Removing Web Socket %s from remoteWeb Failed - path not found", path)
-		return false
+	delete(webSocketData, command)
+	for index, item := range webSocketProtoData {
+		if item.Command == command {
+			webSocketProtoData = append(webSocketProtoData[:index], webSocketProtoData[index+1:]...)
+		}
 	}
-
-	delete(webSocketData, path)
 	return true
 }
 

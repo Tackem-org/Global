@@ -87,6 +87,7 @@ func (r *Register) Setup(baseData BaseData) {
 		WebLinkItems:      pagesProtoData,
 		AdminWebLinkItems: adminPagesProtoData,
 		NavItems:          baseData.NavItems,
+		WebSocketItems:    webSocketProtoData,
 	}
 }
 
