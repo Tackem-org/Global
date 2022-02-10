@@ -1,14 +1,19 @@
 package system
 
 import (
+	"context"
 	"embed"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/Tackem-org/Global/structs"
 	pb "github.com/Tackem-org/Proto/pb/registration"
+	pbw "github.com/Tackem-org/Proto/pb/web"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 )
 
 type PageFunc = func(in *structs.WebRequest) (*structs.WebReturn, error)
@@ -146,36 +151,58 @@ func checkPathPart(part string) bool {
 		logging.Warningf("Bad Path Part [%s] - Bad Bracket Setup", part)
 		return false
 	}
-	if startCount == 2 || endCount == 2 {
-		if !strings.HasPrefix(part, "{{") {
-			logging.Warningf("Bad Path Part [%s] - Prefix Brackets {{ not at start of section", part)
-			return false
-		}
 
-		if !strings.HasSuffix(part, "}}") {
-			logging.Warningf("Bad Path Part [%s] - Suffix Brackets }} not at end of section", part)
-			return false
-		}
-
-		splitPart := strings.Split(strings.ReplaceAll(strings.ReplaceAll(part, "{", ""), "}", ""), ":")
-
-		if len(splitPart) != 2 {
-			logging.Warningf("Bad Path Part [%s] - Part not in correct format should be {{[number|string]:[valiable name]}}", part)
-			return false
-		}
-
-		if matched, _ := regexp.Match(`number|string`, []byte(splitPart[0])); !matched {
-			logging.Warningf("Bad Path Part [%s] - variable Type not 'number' or 'string'", part)
-			return false
-		}
-
-		if matched, _ := regexp.Match(`[a-zA-Z0-9]`, []byte(splitPart[1])); !matched {
-			logging.Warningf("Bad Path Part [%s] - variable value has no name", part)
-			return false
-		}
-	} else {
-		// varCount := startCount / 2
-		logging.Info("TODO MORE SPECIAL CHECK OF PATH PART FOR MULTI VARIABLES")
+	if startCount > 2 || endCount > 2 {
+		logging.Warningf("Bad Path Part [%s] - Can only have 1 variable for each path part", part)
+		return false
 	}
+
+	if !strings.HasPrefix(part, "{{") {
+		logging.Warningf("Bad Path Part [%s] - Prefix Brackets {{ not at start of section", part)
+		return false
+	}
+
+	if !strings.HasSuffix(part, "}}") {
+		logging.Warningf("Bad Path Part [%s] - Suffix Brackets }} not at end of section", part)
+		return false
+	}
+
+	splitPart := strings.Split(strings.ReplaceAll(strings.ReplaceAll(part, "{", ""), "}", ""), ":")
+
+	if len(splitPart) != 2 {
+		logging.Warningf("Bad Path Part [%s] - Part not in correct format should be {{[number|string]:[valiable name]}}", part)
+		return false
+	}
+
+	if matched, _ := regexp.Match(`number|string`, []byte(splitPart[0])); !matched {
+		logging.Warningf("Bad Path Part [%s] - variable Type not 'number' or 'string'", part)
+		return false
+	}
+
+	if matched, _ := regexp.Match(`[a-zA-Z0-9]`, []byte(splitPart[1])); !matched {
+		logging.Warningf("Bad Path Part [%s] - variable value has no name", part)
+		return false
+	}
+
 	return true
+}
+
+func WebSocketSend(command string, adminOnly bool, permission string, data map[string]interface{}) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.WebSocketSend(command string, adminOnly bool, permission string, data map[string]interface{}) bool] {command=%s, adminOnly=%t, permission=%s, data=%+v}", command, adminOnly, permission, data)
+	conn, err := GetMasterConnection(false)
+	if err != nil {
+		logging.Errorf("[Web Socket Send] Cannot Connect to Master: %s", err.Error())
+		return
+	}
+	defer conn.Close()
+
+	client := pbw.NewWebClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	ctx = metadata.NewOutgoingContext(ctx, metadata.MD{})
+
+	if _, err := client.SendWebSocket(ctx, &pbw.SendWebSocketRequest{Command: command, AdminOnly: adminOnly, Permission: permission, DataJson: ""}, grpc.Header(&metadata.MD{})); err != nil {
+		logging.Errorf("[Web Socket Send] Error with the Server: %s", err.Error())
+	}
 }

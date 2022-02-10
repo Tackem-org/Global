@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	mu             sync.RWMutex
+	mu             sync.Mutex
 	i              *log.Logger
 	d              *log.Logger
 	e              *log.Logger

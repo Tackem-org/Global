@@ -12,7 +12,7 @@ import (
 )
 
 type RegClientServer struct {
-	mu sync.RWMutex
+	mu sync.Mutex
 	pb.UnimplementedRegClientServer
 }
 
