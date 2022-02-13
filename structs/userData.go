@@ -9,7 +9,6 @@ import (
 type UserData struct {
 	ID          uint64
 	Name        string
-	Initial     string
 	Icon        string
 	IsAdmin     bool
 	Permissions []string
@@ -32,7 +31,6 @@ func GetUserData(in *pb.UserData) *UserData {
 	return &UserData{
 		ID:          in.UserId,
 		Name:        in.Name,
-		Initial:     in.Initial,
 		Icon:        in.Icon,
 		IsAdmin:     in.IsAdmin,
 		Permissions: in.Permissions,
