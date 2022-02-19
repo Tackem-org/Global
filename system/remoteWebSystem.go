@@ -206,3 +206,43 @@ func WebSocketSend(command string, adminOnly bool, permission string, data map[s
 		logging.Errorf("[Web Socket Send] Error with the Server: %s", err.Error())
 	}
 }
+
+func AddTask(t *pbw.SendTaskRequest) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.AddTask(t *pbw.SendTaskRequest)]")
+	conn, err := GetMasterConnection(false)
+	if err != nil {
+		logging.Errorf("[Web Socket Send] Cannot Connect to Master: %s", err.Error())
+		return
+	}
+	defer conn.Close()
+
+	client := pbw.NewWebClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	ctx = metadata.NewOutgoingContext(ctx, metadata.MD{})
+
+	if _, err := client.SendTask(ctx, t, grpc.Header(&metadata.MD{})); err != nil {
+		logging.Errorf("[Web Socket Send] Error with the Server: %s", err.Error())
+	}
+}
+
+func RemoveTask(t *pbw.RemoveTaskRequest) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.AddTask(t *pbw.SendTaskRequest)]")
+	conn, err := GetMasterConnection(false)
+	if err != nil {
+		logging.Errorf("[Web Socket Send] Cannot Connect to Master: %s", err.Error())
+		return
+	}
+	defer conn.Close()
+
+	client := pbw.NewWebClient(conn)
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	ctx = metadata.NewOutgoingContext(ctx, metadata.MD{})
+
+	if _, err := client.RemoveTask(ctx, t, grpc.Header(&metadata.MD{})); err != nil {
+		logging.Errorf("[Web Socket Send] Error with the Server: %s", err.Error())
+	}
+}

@@ -4,6 +4,7 @@ import (
 	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/Tackem-org/Global/structs"
 	pb "github.com/Tackem-org/Proto/pb/registration"
+	pbw "github.com/Tackem-org/Proto/pb/web"
 	"google.golang.org/grpc"
 )
 
@@ -15,6 +16,7 @@ type SetupData struct {
 	GPRCSystems func(server *grpc.Server)
 	WebSystems  func()
 	WebSockets  func()
+	TaskGrabber func() []*pbw.SendTaskRequest
 	MainSetup   func()
 	MainSystem  func()
 	Shutdown    func()
@@ -40,6 +42,7 @@ type WebSocketRequest struct {
 type WebSocketReturn struct {
 	StatusCode   uint32
 	ErrorMessage string
+	TellAll      bool
 	Data         map[string]interface{}
 }
 

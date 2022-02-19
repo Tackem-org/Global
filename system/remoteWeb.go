@@ -220,6 +220,7 @@ func (r *RemoteWebSystem) WebSocket(ctx context.Context, in *pb.WebSocketRequest
 		return &pb.WebSocketResponse{
 			StatusCode:   returnData.StatusCode,
 			ErrorMessage: returnData.ErrorMessage,
+			TellAll:      returnData.TellAll,
 			DataJson:     string(returnJson),
 		}, nil
 	}
@@ -227,6 +228,22 @@ func (r *RemoteWebSystem) WebSocket(ctx context.Context, in *pb.WebSocketRequest
 		StatusCode:   http.StatusNotFound,
 		ErrorMessage: "Web Socket Not Found",
 	}, nil
+}
+
+func (r *RemoteWebSystem) Tasks(ctx context.Context, in *pb.TasksRequest) (*pb.TasksResponse, error) {
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RemoteWebSystem) Tasks(returnData *structs.WebReturn, in *pb.TasksRequest) (*pb.TasksResponse, error)] {in=%v}", in)
+	logging.Info("Master Has Requested Tasks")
+	t := Data.TaskGrabber()
+	if len(t) == 0 {
+		logging.Info("No Tasks To Send (sending empty list)")
+	} else {
+		logging.Info("Sending Master Tasks")
+
+	}
+	return &pb.TasksResponse{
+		Tasks: t,
+	}, nil
+
 }
 
 func getBaseCSSandJS(path string) (css []string, js []string) {

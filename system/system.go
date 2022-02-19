@@ -20,6 +20,10 @@ func GRPCServer() *grpc.Server {
 	return grpcServer
 }
 
+func GetBaseID() string {
+	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.GetBaseID() string]")
+	return regData.baseID
+}
 func getConnection(url string) (*grpc.ClientConn, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.getConnection(url string) (*grpc.ClientConn, error)]")
 
