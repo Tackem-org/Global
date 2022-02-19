@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/Tackem-org/Global/channels"
 	"github.com/Tackem-org/Global/logging"
@@ -71,17 +72,20 @@ func Run(data SetupData) {
 	}()
 	logging.Info("Starting gRPC server")
 	rd := RegData()
-	if !rd.Connect() {
-		Shutdown(false)
-	} else {
-		MUp.Up()
-		logging.Info("Registration Done")
-		rd.Activate()
-		logging.Info("System Active")
-		mainLoop()
-		WG.Wait()
-		rd.Deactivate()
+
+	waitTime := time.Duration(5)
+	for !rd.Connect() {
+		logging.Infof("Master System Is Down Waiting for %d seconds before retrying", waitTime)
+		time.Sleep(waitTime * time.Second)
 	}
+
+	MUp.Up()
+	logging.Info("Registration Done")
+	rd.Activate()
+	logging.Info("System Active")
+	mainLoop()
+	WG.Wait()
+	rd.Deactivate()
 
 	if Data.Shutdown != nil {
 		Data.Shutdown()

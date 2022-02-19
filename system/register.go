@@ -97,7 +97,8 @@ func (r *Register) connection() (pb.RegistrationClient, *grpc.ClientConn, contex
 	connctx, conncancel := context.WithTimeout(context.Background(), time.Second)
 	conn, err := grpc.DialContext(connctx, url, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 	if err != nil {
-		logging.Fatal(err.Error())
+		conncancel()
+		return nil, nil, nil
 	}
 
 	return pb.NewRegistrationClient(conn), conn, conncancel
@@ -106,6 +107,9 @@ func (r *Register) connection() (pb.RegistrationClient, *grpc.ClientConn, contex
 func (r *Register) Connect() bool {
 	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) Connect() bool]")
 	client, conn, conncancel := r.connection()
+	if client == nil {
+		return false
+	}
 	defer conncancel()
 	defer conn.Close()
 	header := GetFirstHeader()
@@ -193,7 +197,7 @@ func freePort() (port uint32) {
 	if val, ok := os.LookupEnv("BIND"); ok {
 		bind = val
 	}
-	port = 50001
+	port = 50002
 	ln, err := net.Listen("tcp", fmt.Sprintf("%s:%d", bind, port))
 	for {
 		if err == nil {
