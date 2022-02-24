@@ -13,10 +13,10 @@ type SetupData struct {
 	LogFile     string
 	VerboseLog  bool
 	DebugLevel  debug.Mask
-	GPRCSystems func(server *grpc.Server)
+	GRPCSystems func(server *grpc.Server)
 	WebSystems  func()
 	WebSockets  func()
-	TaskGrabber func() []*pbw.SendTaskRequest
+	TaskGrabber func() []*pbw.TaskMessage
 	MainSetup   func()
 	MainSystem  func()
 	Shutdown    func()

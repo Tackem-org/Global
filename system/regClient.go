@@ -17,7 +17,7 @@ type RegClientServer struct {
 }
 
 func (r *RegClientServer) HealthCheck(ctx context.Context, in *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) HealthCheck(ctx context.Context, in *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error)] {in=%v}", in)
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GRPCSERVER, "CALLED:[system.(r *RegClientServer) HealthCheck(ctx context.Context, in *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error)] {in=%v}", in)
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	logging.Info("Health Check OK")
@@ -28,7 +28,7 @@ func (r *RegClientServer) HealthCheck(ctx context.Context, in *pb.HealthCheckReq
 }
 
 func (r *RegClientServer) AddDependant(ctx context.Context, in *pb.AddDependantRequest) (*pb.AddDependantResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) AddDependant(ctx context.Context, in *pb.AddDependantRequest) (*pb.AddDependantResponse, error)] {in=%v}", in)
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GRPCSERVER, "CALLED:[system.(r *RegClientServer) AddDependant(ctx context.Context, in *pb.AddDependantRequest) (*pb.AddDependantResponse, error)] {in=%v}", in)
 	for _, s := range requiredServices {
 		if s.BaseID == in.BaseId {
 			return &pb.AddDependantResponse{
@@ -49,7 +49,7 @@ func (r *RegClientServer) AddDependant(ctx context.Context, in *pb.AddDependantR
 }
 
 func (r *RegClientServer) RemoveDependant(ctx context.Context, in *pb.RemoveDependantRequest) (*pb.RemoveDependantResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) RemoveDependant(ctx context.Context, in *pb.RemoveDependantRequest) (*pb.RemoveDependantResponse, error)] {in=%v}", in)
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GRPCSERVER, "CALLED:[system.(r *RegClientServer) RemoveDependant(ctx context.Context, in *pb.RemoveDependantRequest) (*pb.RemoveDependantResponse, error)] {in=%v}", in)
 	for index, s := range requiredServices {
 		if s.BaseID == in.BaseId {
 			dependentServices = append(dependentServices[:index], dependentServices[index+1:]...)
@@ -65,7 +65,7 @@ func (r *RegClientServer) RemoveDependant(ctx context.Context, in *pb.RemoveDepe
 }
 
 func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoingDownRequest) (*pb.MasterGoingDownResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoingDownRequest) (*pb.MasterGoingDownResponse, error)] {in=%v}", in)
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GRPCSERVER, "CALLED:[system.(r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoingDownRequest) (*pb.MasterGoingDownResponse, error)] {in=%v}", in)
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -88,7 +88,7 @@ func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoin
 }
 
 func (r *RegClientServer) MasterBackUp(ctx context.Context, in *pb.MasterBackUpRequest) (*pb.MasterBackUpResponse, error) {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) MasterBackUp(ctx context.Context, in *pb.MasterBackUpRequest) (*pb.MasterBackUpResponse, error)] {in=%v}", in)
+	logging.Debugf(debug.FUNCTIONCALLS|debug.GRPCSERVER, "CALLED:[system.(r *RegClientServer) MasterBackUp(ctx context.Context, in *pb.MasterBackUpRequest) (*pb.MasterBackUpResponse, error)] {in=%v}", in)
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -105,7 +105,7 @@ func (r *RegClientServer) MasterBackUp(ctx context.Context, in *pb.MasterBackUpR
 }
 
 func (r *RegClientServer) checkKey(ctx context.Context) (bool, string) {
-	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCSERVER, "CALLED:[system.(r *RegClientServer) checkKey(ctx context.Context) (bool, string)]")
+	logging.Debug(debug.FUNCTIONCALLS|debug.GRPCSERVER, "CALLED:[system.(r *RegClientServer) checkKey(ctx context.Context) (bool, string)]")
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return false, "error retrieving header"

@@ -18,7 +18,7 @@ var (
 	WG                  *sync.WaitGroup
 	MUp                 helpers.Locker
 	masterUrl           string = "127.0.0.1" //"tackem_master"
-	masterPort          string = "50001"
+	masterPort          string = "50000"
 	pagesData           map[string]PageFunc
 	pagesProtoData      []*pb.WebLinkItem
 	adminPagesData      map[string]PageFunc

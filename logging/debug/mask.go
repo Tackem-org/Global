@@ -4,9 +4,10 @@ type Mask uint8
 
 const (
 	FUNCTIONCALLS Mask = 1 << iota
+	FUNCTIONARGS
 	HELPERLOCKER
-	GPRCSERVER
-	GPRCCLIENT
+	GRPCSERVER
+	GRPCCLIENT
 
 	ALL  = ^Mask(0)
 	NONE = Mask(0)

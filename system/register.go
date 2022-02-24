@@ -18,7 +18,7 @@ import (
 
 type Register struct {
 	baseID    string
-	serviceID uint32
+	serviceID uint64
 	key       string
 
 	data pb.RegisterRequest
@@ -48,7 +48,7 @@ func (r *Register) GetBaseID() string {
 	return r.baseID
 }
 
-func (r *Register) GetServiceID() uint32 {
+func (r *Register) GetServiceID() uint64 {
 	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.(r *Register) GetServiceID() uint32]")
 	return r.serviceID
 }
@@ -92,7 +92,7 @@ func (r *Register) Setup(baseData BaseData) {
 }
 
 func (r *Register) connection() (pb.RegistrationClient, *grpc.ClientConn, context.CancelFunc) {
-	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) connection() pb.RegistrationClient]")
+	logging.Debug(debug.FUNCTIONCALLS|debug.GRPCCLIENT, "CALLED:[system.(r *Register) connection() pb.RegistrationClient]")
 	url := masterUrl + ":" + masterPort
 	connctx, conncancel := context.WithTimeout(context.Background(), time.Second)
 	conn, err := grpc.DialContext(connctx, url, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
@@ -105,7 +105,7 @@ func (r *Register) connection() (pb.RegistrationClient, *grpc.ClientConn, contex
 }
 
 func (r *Register) Connect() bool {
-	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) Connect() bool]")
+	logging.Debug(debug.FUNCTIONCALLS|debug.GRPCCLIENT, "CALLED:[system.(r *Register) Connect() bool]")
 	client, conn, conncancel := r.connection()
 	if client == nil {
 		return false
@@ -132,7 +132,7 @@ func (r *Register) Connect() bool {
 }
 
 func (r *Register) Disconnect() {
-	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) Disconnect()]")
+	logging.Debug(debug.FUNCTIONCALLS|debug.GRPCCLIENT, "CALLED:[system.(r *Register) Disconnect()]")
 	client, conn, conncancel := r.connection()
 	defer conncancel()
 	defer conn.Close()
@@ -152,7 +152,7 @@ func (r *Register) Disconnect() {
 }
 
 func (r *Register) Activate() {
-	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) Activate()]")
+	logging.Debug(debug.FUNCTIONCALLS|debug.GRPCCLIENT, "CALLED:[system.(r *Register) Activate()]")
 	client, conn, conncancel := r.connection()
 	defer conncancel()
 	defer conn.Close()
@@ -167,12 +167,12 @@ func (r *Register) Activate() {
 		logging.Fatal(err.Error())
 	}
 	if !response.GetSuccess() {
-		logging.Warningf("failed to disconnect service from master: %s", response.GetErrorMessage())
+		logging.Warningf("failed to Activate service from master: %s", response.GetErrorMessage())
 	}
 }
 
 func (r *Register) Deactivate() {
-	logging.Debug(debug.FUNCTIONCALLS|debug.GPRCCLIENT, "CALLED:[system.(r *Register) Deactivate()]")
+	logging.Debug(debug.FUNCTIONCALLS|debug.GRPCCLIENT, "CALLED:[system.(r *Register) Deactivate()]")
 	client, conn, conncancel := r.connection()
 	defer conncancel()
 	defer conn.Close()
@@ -197,7 +197,7 @@ func freePort() (port uint32) {
 	if val, ok := os.LookupEnv("BIND"); ok {
 		bind = val
 	}
-	port = 50002
+	port = 50001
 	ln, err := net.Listen("tcp", fmt.Sprintf("%s:%d", bind, port))
 	for {
 		if err == nil {

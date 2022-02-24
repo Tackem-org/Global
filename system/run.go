@@ -45,7 +45,7 @@ func Run(data SetupData) {
 	logging.Info("Setup Registration Data")
 	RegData().Setup(Data.BaseData)
 
-	logging.Info("Setup GPRC Service")
+	logging.Info("Setup GRPC Service")
 	grpcServer = grpc.NewServer()
 
 	pbregclient.RegisterRegClientServer(grpcServer, &RegClientServer{})
@@ -53,7 +53,7 @@ func Run(data SetupData) {
 		pbremoteweb.RegisterRemoteWebServer(grpcServer, &RemoteWebSystem{})
 	}
 
-	Data.GPRCSystems(grpcServer)
+	Data.GRPCSystems(grpcServer)
 
 	WG.Add(1)
 	go func() {
@@ -63,7 +63,7 @@ func Run(data SetupData) {
 		}
 		listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", bind, RegData().GetPort()))
 		if err != nil {
-			logging.Errorf("gPRC could not listen on port %d", RegData().GetPort())
+			logging.Errorf("GRPC could not listen on port %d", RegData().GetPort())
 			logging.Fatal(err.Error())
 		}
 		if err := grpcServer.Serve(listen); err != nil {

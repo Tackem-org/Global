@@ -207,8 +207,8 @@ func WebSocketSend(command string, adminOnly bool, permission string, data map[s
 	}
 }
 
-func AddTask(t *pbw.SendTaskRequest) {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.AddTask(t *pbw.SendTaskRequest)]")
+func AddTask(t *pbw.TaskMessage) {
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.AddTask(t *pbw.TaskMessage)]")
 	conn, err := GetMasterConnection(false)
 	if err != nil {
 		logging.Errorf("[Web Socket Send] Cannot Connect to Master: %s", err.Error())
@@ -228,7 +228,7 @@ func AddTask(t *pbw.SendTaskRequest) {
 }
 
 func RemoveTask(t *pbw.RemoveTaskRequest) {
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.AddTask(t *pbw.SendTaskRequest)]")
+	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.AddTask(t *pbw.TaskMessage)]")
 	conn, err := GetMasterConnection(false)
 	if err != nil {
 		logging.Errorf("[Web Socket Send] Cannot Connect to Master: %s", err.Error())

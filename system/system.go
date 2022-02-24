@@ -8,6 +8,7 @@ import (
 
 	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/logging/debug"
+	"github.com/Tackem-org/Global/sysErrors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
@@ -87,7 +88,7 @@ func GetConnection(serviceName string, serviceType string) (*grpc.ClientConn, er
 	MUp.Wait()
 	r := getRequiredService(serviceName, serviceType)
 	if r == nil {
-		return nil, &ServiceDownError{}
+		return nil, &sysErrors.ServiceDownError{}
 	}
 	return getConnection(fmt.Sprintf("%s:%d", r.IPAddress, r.Port))
 }

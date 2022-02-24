@@ -6,7 +6,7 @@ type Version struct {
 	Hotfix uint8
 }
 
-func (v Version) HigherThan(c Version) bool {
+func (v Version) GreaterThan(c Version) bool {
 	if v.Major > c.Major {
 		return true
 	} else if v.Major < c.Major {
@@ -28,7 +28,7 @@ func (v Version) HigherThan(c Version) bool {
 	return false
 }
 
-func (v Version) HigherOrEqualThan(c Version) bool {
+func (v Version) GreaterThanOrEqualTo(c Version) bool {
 	if v.Major > c.Major {
 		return true
 	} else if v.Major < c.Major {
@@ -50,7 +50,7 @@ func (v Version) HigherOrEqualThan(c Version) bool {
 	return true
 }
 
-func (v Version) LowerThan(c Version) bool {
+func (v Version) LessThan(c Version) bool {
 	if v.Major < c.Major {
 		return true
 	} else if v.Major > c.Major {
@@ -72,7 +72,7 @@ func (v Version) LowerThan(c Version) bool {
 	return false
 }
 
-func (v Version) LowerOrEqualThan(c Version) bool {
+func (v Version) LessThanOrEqualTo(c Version) bool {
 	if v.Major < c.Major {
 		return true
 	} else if v.Major > c.Major {
@@ -90,7 +90,6 @@ func (v Version) LowerOrEqualThan(c Version) bool {
 	} else if v.Hotfix > c.Hotfix {
 		return false
 	}
-
 	return true
 }
 

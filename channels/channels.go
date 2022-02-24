@@ -16,7 +16,7 @@ type RootCommands struct {
 }
 
 func Setup() {
-	Root.Shutdown = make(chan bool)
-	Root.TermChan = make(chan os.Signal)
+	Root.Shutdown = make(chan bool, 1)
+	Root.TermChan = make(chan os.Signal, 1)
 	signal.Notify(Root.TermChan, syscall.SIGTERM, syscall.SIGINT)
 }
