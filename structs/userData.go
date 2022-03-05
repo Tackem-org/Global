@@ -15,6 +15,8 @@ type UserData struct {
 }
 
 func (u *UserData) HasPermission(name string) bool {
+	logging.Debugf(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.UserData{%s}.HasPermission", u.Name)
+	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] name=%s", name)
 	if u.IsAdmin {
 		return true
 	}
@@ -27,7 +29,8 @@ func (u *UserData) HasPermission(name string) bool {
 }
 
 func GetUserData(in *pb.UserData) *UserData {
-	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[structs.GetUserData(r *http.Request) UserData]")
+	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.GetUserData")
+	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] in=%v", in)
 	return &UserData{
 		ID:          in.UserId,
 		Name:        in.Name,

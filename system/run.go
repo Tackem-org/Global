@@ -2,101 +2,88 @@ package system
 
 import (
 	"fmt"
-	"net"
 	"os"
 	"sync"
 	"time"
 
 	"github.com/Tackem-org/Global/channels"
 	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
-	pbregclient "github.com/Tackem-org/Proto/pb/regclient"
-	pbremoteweb "github.com/Tackem-org/Proto/pb/remoteweb"
-	"google.golang.org/grpc"
+	"github.com/Tackem-org/Global/system/grpcSystem/clients/registration"
+	"github.com/Tackem-org/Global/system/grpcSystem/servers"
+	"github.com/Tackem-org/Global/system/masterData"
+	"github.com/Tackem-org/Global/system/setupData"
+
+	pb "github.com/Tackem-org/Proto/pb/registration"
 )
 
-func Run(data SetupData) {
-	logging.Setup(data.LogFile, data.VerboseLog, data.DebugLevel)
+var (
+	WG *sync.WaitGroup = &sync.WaitGroup{}
+)
+
+func Run(d *setupData.SetupData) {
+	logging.Setup(d.LogFile, d.VerboseLog, d.DebugLevel)
 	defer logging.Shutdown()
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.Run(data SetupData)] {data=%+v}", data)
-	logging.Infof("Starting Tackem %s System", data.BaseData.ServiceName)
-	healthcheckHealthy = true
-	Data = data
+	setupData.Data = d
+	logging.Infof("Starting Tackem %s System", d.Name())
+	if setupData.Data.MainSetup != nil {
+		setupData.Data.MainSetup()
+	}
+	startup()
+	logging.Infof("Started Tackem %s System", d.Name())
+
+	mainLoop()
+
+	logging.Infof("Stopping Tackem %s System", d.Name())
+	Shutdown(true)
+	if setupData.Data.MainShutdown != nil {
+		setupData.Data.MainShutdown()
+	}
+	logging.Infof("Stopped Tackem %s System", d.Name())
+
+	os.Exit(0)
+}
+func startup() {
 	channels.Setup()
-	MUp.StartDown()
-
-	WG = &sync.WaitGroup{}
-
-	logging.Infof("Setup %s System", data.BaseData.ServiceName)
-	if Data.MainSetup != nil {
-		Data.MainSetup()
-	}
-
-	logging.Info("Setup Web Service")
-	if Data.WebSystems != nil {
-		Data.WebSystems()
-	}
-
-	logging.Info("Setup Web Sockets")
-	if Data.WebSockets != nil {
-		Data.WebSockets()
-	}
-
-	logging.Info("Setup Registration Data")
-	RegData().Setup(Data.BaseData)
+	masterData.Setup()
 
 	logging.Info("Setup GRPC Service")
-	grpcServer = grpc.NewServer()
+	servers.Setup(WG, len(setupData.Data.AdminPaths)+len(setupData.Data.Paths)+len(setupData.Data.Sockets) > 0)
 
-	pbregclient.RegisterRegClientServer(grpcServer, &RegClientServer{})
-	if len(adminPagesData)+len(pagesData)+len(webSocketData) > 0 {
-		pbremoteweb.RegisterRemoteWebServer(grpcServer, &RemoteWebSystem{})
+	regData := pb.RegisterRequest{
+		ServiceName:       setupData.Data.ServiceName,
+		ServiceType:       setupData.Data.ServiceType,
+		Version:           setupData.Data.Version.ToProto(),
+		Port:              setupData.FreePort(),
+		Multi:             setupData.Data.Multi,
+		SingleRun:         setupData.Data.SingleRun,
+		ConfigItems:       setupData.Data.ConfigItems,
+		NavItems:          setupData.Data.NavItems,
+		RequiredServices:  setupData.Data.RequiredServices,
+		WebLinkItems:      setupData.Data.PathsToProtos(),
+		AdminWebLinkItems: setupData.Data.AdminPathsToProtos(),
+		WebSocketItems:    setupData.Data.SocketsToProtos(),
 	}
 
-	Data.GRPCSystems(grpcServer)
-
-	WG.Add(1)
-	go func() {
-		bind := ""
-		if val, ok := os.LookupEnv("BIND"); ok {
-			bind = val
-		}
-		listen, err := net.Listen("tcp", fmt.Sprintf("%s:%d", bind, RegData().GetPort()))
-		if err != nil {
-			logging.Errorf("GRPC could not listen on port %d", RegData().GetPort())
-			logging.Fatal(err.Error())
-		}
-		if err := grpcServer.Serve(listen); err != nil {
-			logging.Fatal(err.Error())
-		}
-	}()
-	logging.Info("Starting gRPC server")
-	rd := RegData()
-
 	waitTime := time.Duration(5)
-	for !rd.Connect() {
+	for !connect(&regData) {
 		logging.Infof("Master System Is Down Waiting for %d seconds before retrying", waitTime)
 		time.Sleep(waitTime * time.Second)
 	}
-
-	MUp.Up()
+	masterData.UP.Up()
 	logging.Info("Registration Done")
-	rd.Activate()
-	logging.Info("System Active")
-	mainLoop()
-	WG.Wait()
-	rd.Deactivate()
 
-	if Data.Shutdown != nil {
-		Data.Shutdown()
+	activateResponse, err := registration.Activate(&pb.ActivateRequest{BaseId: setupData.BaseID})
+	if err != nil || !activateResponse.Success {
+		logging.Errorf("failed to Activate service from master: %s", activateResponse.ErrorMessage)
+		Shutdown(false)
+		os.Exit(1)
 	}
-	logging.Info("Shutdown Complete Exiting Cleanly")
-	os.Exit(0)
+
+	logging.Info("System Active")
 }
 
 func mainLoop() {
-	logging.Debug(debug.FUNCTIONCALLS, "CALLED:[system.captureInterupts()]")
-	if Data.MainSystem == nil {
+	if setupData.Data.MainSystem == nil {
 		select {
 		case <-channels.Root.TermChan:
 			fmt.Print("\n")
@@ -105,7 +92,8 @@ func mainLoop() {
 			logging.Info("Shutdown Command received. Shutdown process initiated")
 		}
 
-	} else if !Data.BaseData.SingleRun {
+	} else if !setupData.Data.SingleRun {
+		channels.Setup()
 		loopBool := true
 		for loopBool {
 			select {
@@ -117,23 +105,43 @@ func mainLoop() {
 				logging.Info("Shutdown Command received. Shutdown process initiated")
 				loopBool = false
 			default:
-				Data.MainSystem()
+				setupData.Data.MainSystem()
 			}
 		}
 	} else {
-		Data.MainSystem()
+		setupData.Data.MainSystem()
 	}
-	Shutdown(true)
+
 }
 
 func Shutdown(registered bool) {
-	grpcServer.Stop()
-	WG.Done()
-	logging.Info("Shutdown gRPC Server")
-	logging.Debugf(debug.FUNCTIONCALLS, "CALLED:[system.Shutdown(registered bool)] {registered=%t}", registered)
-	if registered && MUp.Check() {
-		logging.Infof("DeRegistration: %t", MUp.Check())
-		RegData().Disconnect()
-		logging.Info("DeRegistration Done")
+	servers.Shutdown(WG)
+	if registered && masterData.UP.Check() {
+		WG.Add(1)
+		logging.Infof("Disconnect: %t", masterData.UP.Check())
+		disconnectResponse, err := registration.Disconnect(&pb.DisconnectRequest{
+			BaseId: setupData.BaseID,
+		})
+		if err != nil || !disconnectResponse.Success {
+			logging.Warningf("failed to disconnect service from master: %s", disconnectResponse.ErrorMessage)
+		}
+		logging.Info("Disconnect Done")
+		WG.Done()
 	}
+	WG.Wait()
+}
+
+func connect(request *pb.RegisterRequest) bool {
+	response, err := registration.Register(request)
+	if err != nil {
+		logging.Fatal(err.Error())
+	}
+	if response.Success {
+		setupData.BaseID = response.BaseId
+		setupData.ServiceID = response.ServiceId
+		setupData.Key = response.Key
+		return true
+	}
+	logging.Error(response.ErrorMessage)
+	return false
 }

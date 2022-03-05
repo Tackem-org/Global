@@ -8,24 +8,25 @@ import (
 )
 
 type Locker struct {
-	b bool
-	l sync.Mutex
+	Label string
+	b     bool
+	l     sync.Mutex
 }
 
 func (m *Locker) StartDown() {
-	logging.Debug(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "CALLED:[helpers.(m *Locker) StartDown()]")
+	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.StartDown", m.Label)
 	m.b = false
 	m.l.Lock()
 }
 
 func (m *Locker) StartUp() {
-	logging.Debug(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "CALLED:[helpers.(m *Locker) StartUp()]")
+	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.StartUp", m.Label)
 	m.b = true
 	m.l.Unlock()
 }
 
 func (m *Locker) Down() {
-	logging.Debug(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "CALLED:[helpers.(m *Locker) Down()]")
+	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.Down", m.Label)
 	if m.b {
 		m.b = false
 		m.l.Lock()
@@ -33,7 +34,7 @@ func (m *Locker) Down() {
 }
 
 func (m *Locker) Up() {
-	logging.Debug(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "CALLED:[helpers.(m *Locker) Up()]")
+	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.Up", m.Label)
 	if !m.b {
 		m.b = true
 		m.l.Unlock()
@@ -41,7 +42,7 @@ func (m *Locker) Up() {
 }
 
 func (m *Locker) Wait() {
-	logging.Debug(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "CALLED:[helpers.(m *Locker) Wait()]")
+	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.Wait", m.Label)
 	if !m.b {
 		m.l.Lock()
 		defer m.l.Unlock()
@@ -49,12 +50,12 @@ func (m *Locker) Wait() {
 }
 
 func (m *Locker) Check() bool {
-	logging.Debug(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "CALLED:[helpers.(m *Locker) Check() bool]")
+	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.Check", m.Label)
 	return m.b
 }
 
 func (m *Locker) CheckAndWait() bool {
-	logging.Debug(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "CALLED:[helpers.(m *Locker) CheckAndWait() bool]")
+	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.CheckAndWait", m.Label)
 	if !m.b {
 		m.l.Lock()
 		defer m.l.Unlock()
