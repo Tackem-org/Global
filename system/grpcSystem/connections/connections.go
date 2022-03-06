@@ -29,8 +29,10 @@ func MasterForce() (*grpc.ClientConn, error) {
 
 func Master() (*grpc.ClientConn, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.connections.Master")
-	masterData.UP.Wait()
-	return MasterForce()
+	if masterData.UP.Wait(5) {
+		return MasterForce()
+	}
+	return nil, nil
 }
 
 func MasterHeader() (metadata.MD, context.Context, context.CancelFunc) {

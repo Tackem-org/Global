@@ -14,29 +14,24 @@ const (
 )
 
 func (dm Mask) Set(flag Mask) {
-	dm = dm | flag
+	dm |= flag
 }
 
 func (dm Mask) Clear(flag Mask) {
-	dm = dm &^ flag
+	dm &= ^flag
 }
 
 func (dm Mask) Toggle(flag Mask) {
-	dm = dm ^ flag
+	dm ^= flag
 }
 
-func (dm Mask) Has(flags ...Mask) bool {
-	for _, flag := range flags {
-		if dm&flag == flag {
-			return true
-		}
-	}
-	return false
+func (dm Mask) Has(mask Mask) bool {
+	return (mask & dm) > 0
 }
 
-func (dm Mask) HasAny(flag Mask) bool {
+func (dm Mask) HasAny(mask Mask) bool {
 	for i := FUNCTIONCALLS; i < ALL; i <<= 1 {
-		if dm.Has(i) && flag.Has(i) {
+		if dm.Has(i) && mask.Has(i) {
 			return true
 		}
 	}

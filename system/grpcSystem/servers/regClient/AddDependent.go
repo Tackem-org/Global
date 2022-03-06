@@ -9,11 +9,11 @@ import (
 	pb "github.com/Tackem-org/Proto/pb/regclient"
 )
 
-func (r *RegClientServer) AddDependant(ctx context.Context, in *pb.AddDependantRequest) (*pb.AddDependantResponse, error) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.regClient.RegClientServer{}.AddDependant")
+func (r *RegClientServer) AddDependent(ctx context.Context, in *pb.AddDependentRequest) (*pb.AddDependentResponse, error) {
+	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.regClient.RegClientServer{}.AddDependent")
 	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
 	if s := dependentServices.GetByBaseID(in.BaseId); s != nil {
-		return &pb.AddDependantResponse{
+		return &pb.AddDependentResponse{
 			Success: true,
 		}, nil
 	}
@@ -25,7 +25,7 @@ func (r *RegClientServer) AddDependant(ctx context.Context, in *pb.AddDependantR
 		Port:      in.Port,
 		SingleRun: in.SingleRun,
 	})
-	return &pb.AddDependantResponse{
+	return &pb.AddDependentResponse{
 		Success: true,
 	}, nil
 }

@@ -2,64 +2,56 @@ package helpers
 
 import (
 	"sync"
+	"time"
 
 	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/logging/debug"
 )
 
 type Locker struct {
-	Label string
-	b     bool
-	l     sync.Mutex
+	setupOnce sync.Once
+	Label     string
+	l         chan struct{}
 }
 
-func (m *Locker) StartDown() {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.StartDown", m.Label)
-	m.b = false
-	m.l.Lock()
+func (m *Locker) setup() {
+	m.l = make(chan struct{}, 1)
 }
 
-func (m *Locker) StartUp() {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.StartUp", m.Label)
-	m.b = true
-	m.l.Unlock()
-}
-
-func (m *Locker) Down() {
+func (m *Locker) Down() { //lock
 	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.Down", m.Label)
-	if m.b {
-		m.b = false
-		m.l.Lock()
-	}
+	m.setupOnce.Do(m.setup)
+	m.l <- struct{}{}
 }
 
-func (m *Locker) Up() {
+func (m *Locker) Up() { //unlock
 	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.Up", m.Label)
-	if !m.b {
-		m.b = true
-		m.l.Unlock()
-	}
-}
+	m.setupOnce.Do(m.setup)
+	<-m.l
 
-func (m *Locker) Wait() {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.Wait", m.Label)
-	if !m.b {
-		m.l.Lock()
-		defer m.l.Unlock()
-	}
 }
 
 func (m *Locker) Check() bool {
 	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.Check", m.Label)
-	return m.b
+	m.setupOnce.Do(m.setup)
+	select {
+	case m.l <- struct{}{}:
+		<-m.l
+		return true
+	default:
+		return false
+	}
 }
 
-func (m *Locker) CheckAndWait() bool {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.CheckAndWait", m.Label)
-	if !m.b {
-		m.l.Lock()
-		defer m.l.Unlock()
+func (m *Locker) Wait(timeout time.Duration) bool {
+	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.TimeoutCheck", m.Label)
+	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] timeout=%d", timeout)
+	m.setupOnce.Do(m.setup)
+	select {
+	case m.l <- struct{}{}:
+		<-m.l
 		return true
+	case <-time.After(timeout):
+		return false
 	}
-	return false
 }

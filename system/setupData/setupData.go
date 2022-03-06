@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"sync"
 
 	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/logging/debug"
@@ -15,6 +16,7 @@ import (
 )
 
 var (
+	mu        sync.RWMutex
 	Data      *SetupData
 	Active    bool = false
 	BaseID    string
@@ -24,6 +26,7 @@ var (
 )
 
 type SetupData struct {
+	mu               sync.RWMutex
 	ServiceName      string
 	ServiceType      string
 	Version          structs.Version
@@ -77,6 +80,8 @@ type SocketItem struct {
 
 func FreePort() uint32 {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.FreePort")
+	mu.Lock()
+	defer mu.Unlock()
 	bind := ""
 	if val, ok := os.LookupEnv("BIND"); ok {
 		bind = val

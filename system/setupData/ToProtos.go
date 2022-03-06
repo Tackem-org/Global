@@ -7,10 +7,12 @@ import (
 	pb "github.com/Tackem-org/Proto/pb/registration"
 )
 
-func (s SetupData) AdminPathsToProtos() []*pb.AdminWebLinkItem {
+func (d SetupData) AdminPathsToProtos() []*pb.AdminWebLinkItem {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.AdminPathsToProtos")
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 	var r []*pb.AdminWebLinkItem
-	for _, p := range s.AdminPaths {
+	for _, p := range d.AdminPaths {
 		if helpers.CheckPath(p.Path) {
 			r = append(r, &pb.AdminWebLinkItem{
 				Path:        p.Path,
@@ -22,10 +24,12 @@ func (s SetupData) AdminPathsToProtos() []*pb.AdminWebLinkItem {
 	return r
 }
 
-func (s SetupData) PathsToProtos() []*pb.WebLinkItem {
+func (d SetupData) PathsToProtos() []*pb.WebLinkItem {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.PathsToProtos")
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 	var r []*pb.WebLinkItem
-	for _, p := range s.Paths {
+	for _, p := range d.Paths {
 		if helpers.CheckPath(p.Path) {
 			r = append(r, &pb.WebLinkItem{
 				Path:        p.Path,
@@ -38,10 +42,12 @@ func (s SetupData) PathsToProtos() []*pb.WebLinkItem {
 	return r
 }
 
-func (s SetupData) SocketsToProtos() []*pb.WebSocketItem {
+func (d SetupData) SocketsToProtos() []*pb.WebSocketItem {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.SocketsToProtos")
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 	var r []*pb.WebSocketItem
-	for _, p := range s.Sockets {
+	for _, p := range d.Sockets {
 		//TODO Add In Checks Here
 		r = append(r, &pb.WebSocketItem{
 			Command:           p.Command,

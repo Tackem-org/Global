@@ -62,7 +62,7 @@ func Setup() {
 		Port = data.Port
 		URL = data.URL
 		RegistrationKey = data.RegistrationKey
-		UP.StartDown()
+		UP.Down()
 	})
 
 }
