@@ -1,8 +1,7 @@
 package structs
 
 type WebRequest struct {
-	FullPath      string
-	CleanPath     string
+	Path          string
 	BasePath      string
 	User          *UserData
 	SessionToken  string

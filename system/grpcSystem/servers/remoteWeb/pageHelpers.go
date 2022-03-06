@@ -14,16 +14,13 @@ import (
 func makeWebRequest(in *pb.PageRequest) *structs.WebRequest {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.remoteWeb.makeWebRequest")
 	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] in=%+v", in)
-	cleanPath := in.Path
-	if cleanPath == "" {
-		cleanPath = "/"
-	}
+
 	user := structs.GetUserData(in.User)
 	webRequest := structs.WebRequest{
-		FullPath:  in.Path,
-		CleanPath: cleanPath,
-		User:      user,
-		Method:    in.Method,
+		Path:     in.Path,
+		BasePath: in.BasePath,
+		User:     user,
+		Method:   in.Method,
 	}
 
 	json.Unmarshal([]byte(in.QueryParamsJson), &webRequest.QueryParams)

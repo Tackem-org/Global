@@ -56,6 +56,7 @@ func startup() {
 		Port:              setupData.FreePort(),
 		Multi:             setupData.Data.Multi,
 		SingleRun:         setupData.Data.SingleRun,
+		StartActive:       setupData.Data.StartActive,
 		ConfigItems:       setupData.Data.ConfigItems,
 		NavItems:          setupData.Data.NavItems,
 		RequiredServices:  setupData.Data.RequiredServices,
@@ -69,17 +70,12 @@ func startup() {
 		logging.Infof("Master System Is Down Waiting for %d seconds before retrying", waitTime)
 		time.Sleep(waitTime * time.Second)
 	}
+
 	masterData.UP.Up()
 	logging.Info("Registration Done")
-
-	activateResponse, err := registration.Activate(&pb.ActivateRequest{BaseId: setupData.BaseID})
-	if err != nil || !activateResponse.Success {
-		logging.Errorf("failed to Activate service from master: %s", activateResponse.ErrorMessage)
-		Shutdown(false)
-		os.Exit(1)
+	if setupData.Data.StartActive {
+		logging.Info("System Active")
 	}
-
-	logging.Info("System Active")
 }
 
 func mainLoop() {

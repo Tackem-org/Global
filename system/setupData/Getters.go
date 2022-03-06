@@ -7,7 +7,7 @@ import (
 	"github.com/Tackem-org/Global/logging/debug"
 )
 
-func (d SetupData) GetPath(path string) *PathItem {
+func (d *SetupData) GetPath(path string) *PathItem {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.GetPath")
 	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] path=%s", path)
 	d.mu.RLock()
@@ -20,7 +20,7 @@ func (d SetupData) GetPath(path string) *PathItem {
 	return nil
 }
 
-func (d SetupData) GetAdminPath(path string) *AdminPathItem {
+func (d *SetupData) GetAdminPath(path string) *AdminPathItem {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.GetAdminPath")
 	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] path=%s", path)
 	d.mu.RLock()
@@ -33,7 +33,7 @@ func (d SetupData) GetAdminPath(path string) *AdminPathItem {
 	return nil
 }
 
-func (d SetupData) GetSocket(command string) *SocketItem {
+func (d *SetupData) GetSocket(command string) *SocketItem {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.GetSocket")
 	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] command=%s", command)
 	d.mu.RLock()
@@ -46,7 +46,7 @@ func (d SetupData) GetSocket(command string) *SocketItem {
 	return nil
 }
 
-func (d SetupData) Name() string {
+func (d *SetupData) Name() string {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.Name")
 	d.mu.RLock()
 	defer d.mu.RUnlock()

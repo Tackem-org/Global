@@ -7,7 +7,7 @@ import (
 	pb "github.com/Tackem-org/Proto/pb/registration"
 )
 
-func (d SetupData) AdminPathsToProtos() []*pb.AdminWebLinkItem {
+func (d *SetupData) AdminPathsToProtos() []*pb.AdminWebLinkItem {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.AdminPathsToProtos")
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -24,7 +24,7 @@ func (d SetupData) AdminPathsToProtos() []*pb.AdminWebLinkItem {
 	return r
 }
 
-func (d SetupData) PathsToProtos() []*pb.WebLinkItem {
+func (d *SetupData) PathsToProtos() []*pb.WebLinkItem {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.PathsToProtos")
 	d.mu.RLock()
 	defer d.mu.RUnlock()
@@ -42,7 +42,7 @@ func (d SetupData) PathsToProtos() []*pb.WebLinkItem {
 	return r
 }
 
-func (d SetupData) SocketsToProtos() []*pb.WebSocketItem {
+func (d *SetupData) SocketsToProtos() []*pb.WebSocketItem {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.SocketsToProtos")
 	d.mu.RLock()
 	defer d.mu.RUnlock()

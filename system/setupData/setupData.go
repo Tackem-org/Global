@@ -32,6 +32,7 @@ type SetupData struct {
 	Version          structs.Version
 	Multi            bool
 	SingleRun        bool
+	StartActive      bool
 	NavItems         []*pb.NavItem
 	ConfigItems      []*pb.ConfigItem
 	RequiredServices []*pb.RequiredService
