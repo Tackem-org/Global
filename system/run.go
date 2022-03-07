@@ -49,24 +49,8 @@ func startup() {
 	logging.Info("Setup GRPC Service")
 	servers.Setup(WG, len(setupData.Data.AdminPaths)+len(setupData.Data.Paths)+len(setupData.Data.Sockets) > 0)
 
-	regData := pb.RegisterRequest{
-		ServiceName:       setupData.Data.ServiceName,
-		ServiceType:       setupData.Data.ServiceType,
-		Version:           setupData.Data.Version.ToProto(),
-		Port:              setupData.FreePort(),
-		Multi:             setupData.Data.Multi,
-		SingleRun:         setupData.Data.SingleRun,
-		StartActive:       setupData.Data.StartActive,
-		ConfigItems:       setupData.Data.ConfigItems,
-		NavItems:          setupData.Data.NavItems,
-		RequiredServices:  setupData.Data.RequiredServices,
-		WebLinkItems:      setupData.Data.PathsToProtos(),
-		AdminWebLinkItems: setupData.Data.AdminPathsToProtos(),
-		WebSocketItems:    setupData.Data.SocketsToProtos(),
-	}
-
 	waitTime := time.Duration(5)
-	for !connect(&regData) {
+	for !connect(setupData.Data.RegisterProto()) {
 		logging.Infof("Master System Is Down Waiting for %d seconds before retrying", waitTime)
 		time.Sleep(waitTime * time.Second)
 	}
@@ -75,6 +59,7 @@ func startup() {
 	logging.Info("Registration Done")
 	if setupData.Data.StartActive {
 		logging.Info("System Active")
+		setupData.Active = true
 	}
 }
 

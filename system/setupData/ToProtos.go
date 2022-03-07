@@ -7,6 +7,24 @@ import (
 	pb "github.com/Tackem-org/Proto/pb/registration"
 )
 
+func (d *SetupData) RegisterProto() *pb.RegisterRequest {
+	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.RegisterProto")
+	return &pb.RegisterRequest{
+		ServiceName:       d.ServiceName,
+		ServiceType:       d.ServiceType,
+		Version:           d.Version.ToProto(),
+		Port:              FreePort(),
+		Multi:             d.Multi,
+		SingleRun:         d.SingleRun,
+		StartActive:       d.StartActive,
+		ConfigItems:       d.ConfigItems,
+		NavItems:          d.NavItems,
+		RequiredServices:  d.RequiredServices,
+		WebLinkItems:      d.PathsToProtos(),
+		AdminWebLinkItems: d.AdminPathsToProtos(),
+		WebSocketItems:    d.SocketsToProtos(),
+	}
+}
 func (d *SetupData) AdminPathsToProtos() []*pb.AdminWebLinkItem {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.AdminPathsToProtos")
 	d.mu.RLock()

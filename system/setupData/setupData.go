@@ -93,6 +93,9 @@ func FreePort() uint32 {
 		if err == nil {
 			break
 		}
+		if ln != nil {
+			ln.Close()
+		}
 		Port++
 		ln, err = net.Listen("tcp", fmt.Sprintf("%s:%d", bind, Port))
 	}

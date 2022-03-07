@@ -23,5 +23,7 @@ func (r *RegClientServer) MasterBackUp(ctx context.Context, in *pb.MasterBackUpR
 		Success:      ok,
 		ErrorMessage: err,
 		Active:       setupData.Active,
+		RegData:      setupData.Data.RegisterProto(),
 	}, nil
+
 }

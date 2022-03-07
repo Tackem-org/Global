@@ -6,6 +6,7 @@ replace github.com/Tackem-org/Proto => ../Proto
 
 require (
 	github.com/Tackem-org/Proto v0.0.0-00010101000000-000000000000
+	github.com/viney-shih/go-lock v1.1.1
 	github.com/xhit/go-str2duration/v2 v2.0.0
 	google.golang.org/grpc v1.42.0
 )
@@ -13,6 +14,7 @@ require (
 require (
 	github.com/golang/protobuf v1.5.0 // indirect
 	golang.org/x/net v0.0.0-20200822124328-c89045814202 // indirect
+	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a // indirect
 	golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd // indirect
 	golang.org/x/text v0.3.0 // indirect
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
