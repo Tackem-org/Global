@@ -36,6 +36,8 @@ type SetupData struct {
 	NavItems         []*pb.NavItem
 	ConfigItems      []*pb.ConfigItem
 	RequiredServices []*pb.RequiredService
+	Groups           []string
+	Permissions      []string
 
 	MasterConf  string
 	LogFile     string

@@ -23,6 +23,8 @@ func (d *SetupData) RegisterProto() *pb.RegisterRequest {
 		WebLinkItems:      d.PathsToProtos(),
 		AdminWebLinkItems: d.AdminPathsToProtos(),
 		WebSocketItems:    d.SocketsToProtos(),
+		Groups:            d.Groups,
+		Permissions:       d.Permissions,
 	}
 }
 func (d *SetupData) AdminPathsToProtos() []*pb.AdminWebLinkItem {
