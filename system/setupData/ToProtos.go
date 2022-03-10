@@ -13,7 +13,7 @@ func (d *SetupData) RegisterProto() *pb.RegisterRequest {
 		ServiceName:       d.ServiceName,
 		ServiceType:       d.ServiceType,
 		Version:           d.Version.ToProto(),
-		Port:              FreePort(),
+		Port:              Port,
 		Multi:             d.Multi,
 		SingleRun:         d.SingleRun,
 		StartActive:       d.StartActive,

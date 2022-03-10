@@ -1,8 +1,10 @@
 package dependentServices
 
 import (
+	"fmt"
 	"sync"
 
+	"github.com/Tackem-org/Global/helpers"
 	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/logging/debug"
 )
@@ -12,19 +14,23 @@ var (
 	ds []*DependentService
 )
 
-//TODO use helper locker to work this magic
 type DependentService struct {
-	BaseID    string
-	Key       string
-	IPAddress string
-	Port      uint32
-	SingleRun bool
-	down      bool
+	UP          helpers.Locker
+	setupOnce   sync.Once
+	ServiceName string
+	ServiceType string
+	ServiceID   uint64
+	BaseID      string
+	Key         string
+	IPAddress   string
+	Port        uint32
+	SingleRun   bool
 }
 
-func (ds DependentService) Active() bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.dependentServices.DependentService{%s}.Active", ds.BaseID)
-	return !ds.down
+func (ds *DependentService) setup() {
+	logging.Debugf(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.dependentServices.DependentService{%s %s}.setup", ds.ServiceType, ds.ServiceName)
+	ds.UP.Up()
+	ds.UP.Label = fmt.Sprintf("[Dependent] %s %s", ds.ServiceType, ds.ServiceName)
 }
 
 func GetActive() []*DependentService {
@@ -34,13 +40,14 @@ func GetActive() []*DependentService {
 	var rd []*DependentService
 
 	for _, s := range ds {
-		if s.down {
+		if s.UP.Check() {
 			continue
 		}
 		rd = append(rd, s)
 	}
 	return rd
 }
+
 func GetByBaseID(baseID string) *DependentService {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.dependentServices.GetByBaseID")
 	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] baseID=%s", baseID)
@@ -64,6 +71,7 @@ func Add(d *DependentService) {
 			return
 		}
 	}
+	d.setupOnce.Do(d.setup)
 	ds = append(ds, d)
 }
 
@@ -88,7 +96,7 @@ func Up(baseID string) bool {
 	defer mu.Unlock()
 	for _, s := range ds {
 		if s.BaseID == baseID {
-			s.down = false
+			s.UP.Up()
 			return true
 		}
 	}
@@ -102,7 +110,7 @@ func Down(baseID string) bool {
 	defer mu.Unlock()
 	for _, s := range ds {
 		if s.BaseID == baseID {
-			s.down = true
+			s.UP.Down()
 			return true
 		}
 	}

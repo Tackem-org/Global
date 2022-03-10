@@ -115,7 +115,7 @@ func Shutdown(registered bool) {
 func connect(request *pb.RegisterRequest) bool {
 	response, err := registration.Register(request)
 	if err != nil {
-		logging.Fatal(err.Error())
+		logging.Error(err.Error())
 	}
 	if response.Success {
 		setupData.BaseID = response.BaseId

@@ -19,11 +19,14 @@ func (r *RegClientServer) AddDependent(ctx context.Context, in *pb.AddDependentR
 	}
 
 	dependentServices.Add(&dependentServices.DependentService{
-		BaseID:    in.BaseId,
-		Key:       in.Key,
-		IPAddress: in.IpAddress,
-		Port:      in.Port,
-		SingleRun: in.SingleRun,
+		ServiceType: in.Type,
+		ServiceName: in.Name,
+		ServiceID:   in.Id,
+		BaseID:      in.BaseId,
+		Key:         in.Key,
+		IPAddress:   in.IpAddress,
+		Port:        in.Port,
+		SingleRun:   in.SingleRun,
 	})
 	return &pb.AddDependentResponse{
 		Success: true,

@@ -22,7 +22,7 @@ var (
 	BaseID    string
 	ServiceID uint64
 	Key       string
-	Port      uint32
+	Port      uint32 = 50001
 )
 
 type SetupData struct {
@@ -79,7 +79,7 @@ type SocketItem struct {
 	Call              SocketFunc
 }
 
-func FreePort() uint32 {
+func FreeTCPPort() (net.Listener, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.FreePort")
 	mu.Lock()
 	defer mu.Unlock()
@@ -87,18 +87,11 @@ func FreePort() uint32 {
 	if val, ok := os.LookupEnv("BIND"); ok {
 		bind = val
 	}
-	Port = 50001
-	ln, err := net.Listen("tcp", fmt.Sprintf("%s:%d", bind, Port))
 	for {
+		ln, err := net.Listen("tcp", fmt.Sprintf("%s:%d", bind, Port))
 		if err == nil {
-			break
-		}
-		if ln != nil {
-			ln.Close()
+			return ln, nil
 		}
 		Port++
-		ln, err = net.Listen("tcp", fmt.Sprintf("%s:%d", bind, Port))
 	}
-	ln.Close()
-	return Port
 }

@@ -14,22 +14,21 @@ var (
 	rs []*RequiredService
 )
 
-//TODO add in the ways to grab a system from here that can timeout and fail
 type RequiredService struct {
 	UP          helpers.Locker
 	setupOnce   sync.Once
 	ServiceName string
 	ServiceType string
+	ServiceID   uint64
 	BaseID      string
 	Key         string
 	IPAddress   string
 	Port        uint32
-	SingleRun   bool
 }
 
 func (rs *RequiredService) setup() {
 	rs.UP.Up()
-	rs.UP.Label = fmt.Sprintf("%s %s", rs.ServiceType, rs.ServiceName)
+	rs.UP.Label = fmt.Sprintf("[Required] %s %s", rs.ServiceType, rs.ServiceName)
 }
 
 func Get(serviceName string, serviceType string) *RequiredService {
