@@ -68,7 +68,6 @@ func (d *SetupData) SocketsToProtos() []*pb.WebSocketItem {
 	defer d.mu.RUnlock()
 	var r []*pb.WebSocketItem
 	for _, p := range d.Sockets {
-		//TODO Add In Checks Here
 		r = append(r, &pb.WebSocketItem{
 			Command:           p.Command,
 			Permission:        p.Permission,
