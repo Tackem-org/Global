@@ -9,7 +9,7 @@ import (
 
 func QuickWebReturn(statusCode uint32, errorMessage string) (*WebReturn, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.QuickWebReturn")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] statusCode=%d, errorMessage=%s", statusCode, errorMessage)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] statusCode=%d, errorMessage=%s", statusCode, errorMessage)
 	return &WebReturn{
 		StatusCode:   statusCode,
 		ErrorMessage: errorMessage,

@@ -11,7 +11,7 @@ import (
 
 func (r *RegClientServer) RequiredUp(ctx context.Context, in *pb.RequiredUpRequest) (*pb.RequiredUpResponse, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.regClient.RegClientServer{}.RequiredUp")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
 	if requiredServices.Up(in.BaseId) {
 		return &pb.RequiredUpResponse{
 			Success: true,

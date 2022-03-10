@@ -20,19 +20,19 @@ func (m *Locker) setup() {
 }
 
 func (m *Locker) Down() {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.Down", m.Label)
+	logging.Debug(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.Down", m.Label)
 	m.setupOnce.Do(m.setup)
 	m.l.Lock()
 }
 
 func (m *Locker) Up() {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.Up", m.Label)
+	logging.Debug(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.Up", m.Label)
 	m.setupOnce.Do(m.setup)
 	m.l.Unlock()
 }
 
 func (m *Locker) Check() bool {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.Check", m.Label)
+	logging.Debug(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.Check", m.Label)
 	m.setupOnce.Do(m.setup)
 	if m.l.TryLock() {
 		m.l.Unlock()
@@ -42,8 +42,8 @@ func (m *Locker) Check() bool {
 }
 
 func (m *Locker) Wait(timeout time.Duration) bool {
-	logging.Debugf(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.TimeoutCheck", m.Label)
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] timeout=%d", timeout)
+	logging.Debug(debug.FUNCTIONCALLS|debug.HELPERLOCKER, "[FUNCTIONCALL] Global.helpers.Locker{%s}.TimeoutCheck", m.Label)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] timeout=%d", timeout)
 	m.setupOnce.Do(m.setup)
 	if m.l.TryLockWithTimeout(timeout) {
 		m.l.Unlock()

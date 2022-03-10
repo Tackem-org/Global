@@ -29,7 +29,7 @@ func Issues() []string {
 
 func SetIssue(issue string) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.healthCheck.SetIssues")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] issue=%s", issue)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] issue=%s", issue)
 	mu.Lock()
 	defer mu.Unlock()
 	issues = append(issues, issue)

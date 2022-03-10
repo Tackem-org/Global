@@ -11,7 +11,7 @@ import (
 
 func (r *RegClientServer) AddDependent(ctx context.Context, in *pb.AddDependentRequest) (*pb.AddDependentResponse, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.regClient.RegClientServer{}.AddDependent")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
 	if s := dependentServices.GetByBaseID(in.BaseId); s != nil {
 		return &pb.AddDependentResponse{
 			Success: true,

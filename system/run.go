@@ -24,21 +24,21 @@ func Run(d *setupData.SetupData) {
 	logging.Setup(d.LogFile, d.VerboseLog, d.DebugLevel)
 	defer logging.Shutdown()
 	setupData.Data = d
-	logging.Infof("Starting Tackem %s System", d.Name())
+	logging.Info("Starting Tackem %s System", d.Name())
 	if setupData.Data.MainSetup != nil {
 		setupData.Data.MainSetup()
 	}
 	startup()
-	logging.Infof("Started Tackem %s System", d.Name())
+	logging.Info("Started Tackem %s System", d.Name())
 
 	mainLoop()
 
-	logging.Infof("Stopping Tackem %s System", d.Name())
+	logging.Info("Stopping Tackem %s System", d.Name())
 	Shutdown(true)
 	if setupData.Data.MainShutdown != nil {
 		setupData.Data.MainShutdown()
 	}
-	logging.Infof("Stopped Tackem %s System", d.Name())
+	logging.Info("Stopped Tackem %s System", d.Name())
 
 	os.Exit(0)
 }
@@ -51,7 +51,7 @@ func startup() {
 
 	waitTime := time.Duration(5)
 	for !connect(setupData.Data.RegisterProto()) {
-		logging.Infof("Master System Is Down Waiting for %d seconds before retrying", waitTime)
+		logging.Info("Master System Is Down Waiting for %d seconds before retrying", waitTime)
 		time.Sleep(waitTime * time.Second)
 	}
 
@@ -99,12 +99,12 @@ func Shutdown(registered bool) {
 	servers.Shutdown(WG)
 	if registered && masterData.UP.Check() {
 		WG.Add(1)
-		logging.Infof("Disconnect: %t", masterData.UP.Check())
+		logging.Info("Disconnect: %t", masterData.UP.Check())
 		disconnectResponse, err := registration.Disconnect(&pb.DisconnectRequest{
 			BaseId: setupData.BaseID,
 		})
 		if err != nil || !disconnectResponse.Success {
-			logging.Warningf("failed to disconnect service from master: %s", disconnectResponse.ErrorMessage)
+			logging.Warning("failed to disconnect service from master: %s", disconnectResponse.ErrorMessage)
 		}
 		logging.Info("Disconnect Done")
 		WG.Done()

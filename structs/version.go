@@ -15,12 +15,12 @@ type Version struct {
 }
 
 func (v Version) String() string {
-	logging.Debugf(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.Version{%d.%d.%d}.String", v.Major, v.Minor, v.Hotfix)
+	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.Version{%d.%d.%d}.String", v.Major, v.Minor, v.Hotfix)
 	return fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Hotfix)
 }
 func (v Version) GreaterThan(c Version) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.Version{%s}.GreaterThan", v.String())
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] version=%v", c.String())
+	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.Version{%s}.GreaterThan", v.String())
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] version=%v", c.String())
 	if v.Major > c.Major {
 		return true
 	} else if v.Major < c.Major {
@@ -43,8 +43,8 @@ func (v Version) GreaterThan(c Version) bool {
 }
 
 func (v Version) GreaterThanOrEqualTo(c Version) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.Version{%s}.GreaterThanOrEqualTo", v.String())
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] version=%v", c.String())
+	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.Version{%s}.GreaterThanOrEqualTo", v.String())
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] version=%v", c.String())
 	if v.Major > c.Major {
 		return true
 	} else if v.Major < c.Major {
@@ -67,8 +67,8 @@ func (v Version) GreaterThanOrEqualTo(c Version) bool {
 }
 
 func (v Version) LessThan(c Version) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.Version{%s}.LessThan", v.String())
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] version=%v", c.String())
+	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.Version{%s}.LessThan", v.String())
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] version=%v", c.String())
 	if v.Major < c.Major {
 		return true
 	} else if v.Major > c.Major {
@@ -91,8 +91,8 @@ func (v Version) LessThan(c Version) bool {
 }
 
 func (v Version) LessThanOrEqualTo(c Version) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.Version{%s}.LessThanOrEqual", v.String())
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] version=%v", c.String())
+	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.Version{%s}.LessThanOrEqual", v.String())
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] version=%v", c.String())
 	if v.Major < c.Major {
 		return true
 	} else if v.Major > c.Major {
@@ -114,8 +114,8 @@ func (v Version) LessThanOrEqualTo(c Version) bool {
 }
 
 func (v Version) EqualTo(c Version) bool {
-	logging.Debugf(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.Version{%s}.EqualTo", v.String())
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] version=%v", c.String())
+	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.Version{%s}.EqualTo", v.String())
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] version=%v", c.String())
 	if v.Major == c.Major && v.Minor == c.Minor && v.Hotfix >= c.Hotfix {
 		return true
 	}
@@ -123,7 +123,7 @@ func (v Version) EqualTo(c Version) bool {
 }
 
 func (v Version) ToProto() *pb.Version {
-	logging.Debugf(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.Version{%s}.ToProto", v.String())
+	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.Version{%s}.ToProto", v.String())
 	return &pb.Version{
 		Major:  uint32(v.Major),
 		Minor:  uint32(v.Minor),

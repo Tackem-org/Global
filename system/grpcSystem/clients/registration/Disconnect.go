@@ -11,7 +11,7 @@ import (
 
 func Disconnect(request *pb.DisconnectRequest) (*pb.DisconnectResponse, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.client.registration.Disconnect")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] request=%+v", request)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] request=%+v", request)
 	conn, err := connections.Master()
 	if err != nil {
 		return &pb.DisconnectResponse{

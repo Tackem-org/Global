@@ -11,7 +11,7 @@ import (
 
 func (r *RegClientServer) DependentDown(ctx context.Context, in *pb.DependentDownRequest) (*pb.DependentDownResponse, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.regClient.RegClientServer{}.DependentDown")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
 	if dependentServices.Down(in.BaseId) {
 		return &pb.DependentDownResponse{
 			Success: true,

@@ -13,7 +13,7 @@ import (
 
 func makeWebRequest(in *pb.PageRequest) *structs.WebRequest {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.remoteWeb.makeWebRequest")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] in=%+v", in)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] in=%+v", in)
 
 	user := structs.GetUserData(in.User)
 	webRequest := structs.WebRequest{
@@ -32,9 +32,9 @@ func makeWebRequest(in *pb.PageRequest) *structs.WebRequest {
 
 func makePageResponse(in *pb.PageRequest, webReturn *structs.WebReturn, err error) *pb.PageResponse {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.remoteWeb.makePageRequest")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] in=%+v, webReturn=%+v", in, webReturn)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] in=%+v, webReturn=%+v", in, webReturn)
 	if err != nil {
-		logging.Errorf("[GRPC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
+		logging.Error("[GRPC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
 		return &pb.PageResponse{
 			StatusCode:   http.StatusInternalServerError,
 			ErrorMessage: "ERROR WITH THE SYSTEM",
@@ -53,7 +53,7 @@ func makePageResponse(in *pb.PageRequest, webReturn *structs.WebReturn, err erro
 		return pageString(webReturn, in)
 	}
 
-	logging.Errorf("[GRPC Remote Web System Page Request] %s: Function returned no html Data", in.GetPath())
+	logging.Error("[GRPC Remote Web System Page Request] %s: Function returned no html Data", in.GetPath())
 	return &pb.PageResponse{
 		StatusCode:   http.StatusInternalServerError,
 		ErrorMessage: "ERROR WITH THE SYSTEM",
@@ -62,11 +62,11 @@ func makePageResponse(in *pb.PageRequest, webReturn *structs.WebReturn, err erro
 
 func pageString(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageResponse {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.remoteWeb.pageString")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] returnData=%+v, in=%+v", returnData, in)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] returnData=%+v, in=%+v", returnData, in)
 	var pageData []byte
 	pageData, err := json.Marshal(returnData.PageData)
 	if err != nil {
-		logging.Errorf("[GRPC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
+		logging.Error("[GRPC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
 		return &pb.PageResponse{
 			StatusCode:   http.StatusInternalServerError,
 			ErrorMessage: "ERROR WITH THE SYSTEM",
@@ -85,10 +85,10 @@ func pageString(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageRespo
 
 func pageFile(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageResponse {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.remoteWeb.pageFile")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] returnData=%+v, in=%+v", returnData, in)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] returnData=%+v, in=%+v", returnData, in)
 	templateHtml, err := setupData.Data.StaticFS.ReadFile("pages/" + returnData.FilePath + ".html")
 	if err != nil {
-		logging.Errorf("[GRPC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
+		logging.Error("[GRPC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
 		return &pb.PageResponse{
 			StatusCode:   http.StatusInternalServerError,
 			ErrorMessage: "ERROR WITH THE SYSTEM",
@@ -98,7 +98,7 @@ func pageFile(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageRespons
 	var pageData []byte
 	pageData, err = json.Marshal(returnData.PageData)
 	if err != nil {
-		logging.Errorf("[GRPC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
+		logging.Error("[GRPC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
 		return &pb.PageResponse{
 			StatusCode:   http.StatusInternalServerError,
 			ErrorMessage: "ERROR WITH THE SYSTEM",
@@ -117,7 +117,7 @@ func pageFile(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageRespons
 
 func getBaseCSSandJS(path string) (css []string, js []string) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.remoteWeb.getBaseCSSandJS")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] path=%s", path)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] path=%s", path)
 	baseurl := ""
 	if setupData.Data.ServiceType != "system" {
 		baseurl += setupData.Data.ServiceType + "/"

@@ -11,7 +11,7 @@ import (
 
 func Set(request *pb.SetConfigRequest) (*pb.SetConfigResponse, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.client.config.Set")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] request=%+v", request)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] request=%+v", request)
 	conn, err := connections.Master()
 	if err != nil {
 		return &pb.SetConfigResponse{

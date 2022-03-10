@@ -20,7 +20,7 @@ var (
 
 func Setup(wg *sync.WaitGroup, webEnabled bool) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Master.grpcSystem.servers.Setup")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] WaitGroup webEnabled=%T", webEnabled)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] WaitGroup webEnabled=%T", webEnabled)
 	server = grpc.NewServer()
 	pbrc.RegisterRegClientServer(server, &regClient.RegClientServer{})
 	if webEnabled {
@@ -32,13 +32,13 @@ func Setup(wg *sync.WaitGroup, webEnabled bool) {
 	go func() {
 		listen, err := setupData.FreeTCPPort()
 		if err != nil {
-			logging.Fatalf("GRPC Error: %s", err.Error())
+			logging.Fatal("GRPC Error: %s", err.Error())
 		}
 		if listen == nil {
 			logging.Fatal("GRPC Error NO TCP LISTENER")
 		}
 		if err := server.Serve(listen); err != nil {
-			logging.Fatalf("GRPC Error CANNOT SERVER ON LISTENER: %s", err.Error())
+			logging.Fatal("GRPC Error CANNOT SERVER ON LISTENER: %s", err.Error())
 		}
 	}()
 }

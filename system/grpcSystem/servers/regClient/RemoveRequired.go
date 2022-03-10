@@ -11,7 +11,7 @@ import (
 
 func (r *RegClientServer) RemoveRequired(ctx context.Context, in *pb.RemoveRequiredRequest) (*pb.RemoveRequiredResponse, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.regClient.RegClientServer{}.RemoveRequired")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
 	if requiredServices.Remove(in.BaseId) {
 		return &pb.RemoveRequiredResponse{
 			Success: true,

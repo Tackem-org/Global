@@ -11,7 +11,7 @@ import (
 
 func Deactivate(request *pb.DeactivateRequest) (*pb.DeactivateResponse, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.client.registration.Deactivate")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] request=%+v", request)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] request=%+v", request)
 	conn, err := connections.Master()
 	if err != nil {
 		return &pb.DeactivateResponse{

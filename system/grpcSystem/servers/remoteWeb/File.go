@@ -13,10 +13,10 @@ import (
 
 func (r *RemoteWebServer) File(ctx context.Context, in *pb.FileRequest) (*pb.FileResponse, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.remoteWeb.RemoteWebServer{}.File")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
 	data, err := setupData.Data.StaticFS.ReadFile(in.Path)
 	if err != nil {
-		logging.Errorf("[GRPC Remote Web System File Request] %s:%s", in.GetPath(), err.Error())
+		logging.Error("[GRPC Remote Web System File Request] %s:%s", in.GetPath(), err.Error())
 		sc := http.StatusInternalServerError
 		em := "Internal Error"
 		switch err.(type) {

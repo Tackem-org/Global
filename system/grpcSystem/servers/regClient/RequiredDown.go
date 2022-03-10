@@ -11,7 +11,7 @@ import (
 
 func (r *RegClientServer) RequiredDown(ctx context.Context, in *pb.RequiredDownRequest) (*pb.RequiredDownResponse, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.regClient.RegClientServer{}.RequiredDown")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
 	if requiredServices.Down(in.BaseId) {
 		return &pb.RequiredDownResponse{
 			Success: true,

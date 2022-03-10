@@ -102,127 +102,57 @@ func CustomLogger(prefix string) *log.Logger {
 	return log.New(mw, prefix+": ", logSettings)
 }
 
-func Custom(prefix string, message string) {
+func Custom(prefix string, message string, values ...interface{}) {
 	mu.Lock()
 	defer mu.Unlock()
-	custom(prefix, message)
-}
-
-func Customf(prefix string, message string, values ...interface{}) {
-	mu.Lock()
-	defer mu.Unlock()
-	custom(prefix, fmt.Sprintf(message, values...))
-}
-
-func custom(prefix string, message string) {
 	t := log.New(mw, prefix+": ", logSettings)
-	t.Println(message)
+	t.Println(fmt.Sprintf(message, values...))
 }
 
-func Info(message string) {
+func Info(message string, values ...interface{}) {
 	mu.Lock()
 	defer mu.Unlock()
-	info(message)
-}
-
-func Infof(message string, values ...interface{}) {
-	mu.Lock()
-	defer mu.Unlock()
-	info(fmt.Sprintf(message, values...))
-}
-
-func info(message string) {
-	i.Println(message)
+	i.Println(fmt.Sprintf(message, values...))
 	checkLogSize()
 }
 
-func Debug(debugMask debug.Mask, message string) {
+func Debug(debugMask debug.Mask, message string, values ...interface{}) {
 	mu.Lock()
 	defer mu.Unlock()
-	debugBack(debugMask, message)
-}
-
-func Debugf(debugMask debug.Mask, message string, values ...interface{}) {
-	mu.Lock()
-	defer mu.Unlock()
-	debugBack(debugMask, fmt.Sprintf(message, values...))
-}
-
-func debugBack(debugMask debug.Mask, message string) {
 	if dm == 0 {
 		return
 	}
 	if !dm.HasAny(debugMask) {
 		return
 	}
-	d.Println(message)
+	d.Println(fmt.Sprintf(message, values...))
 	checkLogSize()
 }
 
-func Warning(message string) {
+func Warning(message string, values ...interface{}) {
 	mu.Lock()
 	defer mu.Unlock()
-	warning(message)
-}
-
-func Warningf(message string, values ...interface{}) {
-	mu.Lock()
-	defer mu.Unlock()
-	warning(fmt.Sprintf(message, values...))
-}
-
-func warning(message string) {
-	w.Println(message)
+	w.Println(fmt.Sprintf(message, values...))
 	checkLogSize()
 }
 
-func Error(message string) {
+func Error(message string, values ...interface{}) {
 	mu.Lock()
 	defer mu.Unlock()
-	error(message)
-}
-
-func Errorf(message string, values ...interface{}) {
-	mu.Lock()
-	defer mu.Unlock()
-	error(fmt.Sprintf(message, values...))
-}
-
-func error(message string) {
-	e.Println(message)
+	e.Println(fmt.Sprintf(message, values...))
 	checkLogSize()
 }
 
-func Todo(message string) {
+func Todo(message string, values ...interface{}) {
 	mu.Lock()
 	defer mu.Unlock()
-	todo(message)
-}
-
-func Todof(message string, values ...interface{}) {
-	mu.Lock()
-	defer mu.Unlock()
-	todo(fmt.Sprintf(message, values...))
-}
-
-func todo(message string) {
-	t.Println(message)
+	t.Println(fmt.Sprintf(message, values...))
 	checkLogSize()
 }
 
-func Fatal(message string) {
+func Fatal(message string, values ...interface{}) {
 	mu.Lock()
 	defer mu.Unlock()
-	fatal(message)
-}
-
-func Fatalf(message string, values ...interface{}) {
-	mu.Lock()
-	defer mu.Unlock()
-	fatal(fmt.Sprintf(message, values...))
-}
-
-func fatal(message string) {
-	f.Println(message)
-	panic(errors.New(message))
+	f.Println(fmt.Sprintf(message, values...))
+	panic(errors.New(fmt.Sprintf(message, values...)))
 }

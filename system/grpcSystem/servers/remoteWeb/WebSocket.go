@@ -14,7 +14,7 @@ import (
 
 func (r *RemoteWebServer) WebSocket(ctx context.Context, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.remoteWeb.RemoteWebServer{}.WebSocket")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
 	var d map[string]interface{}
 	json.Unmarshal([]byte(in.DataJson), &d)
 
@@ -34,7 +34,7 @@ func (r *RemoteWebServer) WebSocket(ctx context.Context, in *pb.WebSocketRequest
 	response, err := socketItem.Call(&webSocketRequest)
 
 	if err != nil {
-		logging.Errorf("[GRPC Remote Web Socket Request] %s:%s", in.Command, err.Error())
+		logging.Error("[GRPC Remote Web Socket Request] %s:%s", in.Command, err.Error())
 		return &pb.WebSocketResponse{
 			StatusCode:   http.StatusInternalServerError,
 			ErrorMessage: "ERROR WITH THE SYSTEM",

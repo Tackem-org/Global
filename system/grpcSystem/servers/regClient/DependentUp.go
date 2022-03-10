@@ -11,7 +11,7 @@ import (
 
 func (r *RegClientServer) DependentUp(ctx context.Context, in *pb.DependentUpRequest) (*pb.DependentUpResponse, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.regClient.RegClientServer{}.DependentUp")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
 	if dependentServices.Up(in.BaseId) {
 		return &pb.DependentUpResponse{
 			Success: true,

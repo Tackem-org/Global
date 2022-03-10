@@ -10,7 +10,7 @@ import (
 
 func RandStr(length int) string {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.helpers.RandStr")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] length=%d", length)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] length=%d", length)
 	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 	rand.Seed(time.Now().UnixNano())
 	r := make([]rune, length)

@@ -11,7 +11,7 @@ import (
 
 func Deregister(request *pb.DeregisterRequest) (*pb.DeregisterResponse, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.client.registration.Deregister")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] request=%+v", request)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] request=%+v", request)
 	conn, err := connections.Master()
 	if err != nil {
 		return &pb.DeregisterResponse{

@@ -16,7 +16,7 @@ import (
 
 func GetBool(key string) (bool, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.config.GetBool")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
 		return false, err
@@ -30,7 +30,7 @@ func GetBool(key string) (bool, error) {
 
 func GetFloat64(key string) (float64, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.config.GetFloat64")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
 		return 0.0, err
@@ -44,7 +44,7 @@ func GetFloat64(key string) (float64, error) {
 
 func GetInt(key string) (int, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.config.GetInt")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
 		return 0, err
@@ -58,7 +58,7 @@ func GetInt(key string) (int, error) {
 
 func GetInt32(key string) (int32, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.config.GetInt32")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
 		return 0, err
@@ -72,7 +72,7 @@ func GetInt32(key string) (int32, error) {
 
 func GetInt64(key string) (int64, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.config.GetInt64")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
 		return 0, err
@@ -86,7 +86,7 @@ func GetInt64(key string) (int64, error) {
 
 func GetUint(key string) (uint, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.config.GetUint")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
 		return 0, err
@@ -100,7 +100,7 @@ func GetUint(key string) (uint, error) {
 
 func GetUint32(key string) (uint32, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.config.GetUint32")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
 		return 0, err
@@ -114,7 +114,7 @@ func GetUint32(key string) (uint32, error) {
 
 func GetUint64(key string) (uint64, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.config.GetUint64")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
 		return 0, err
@@ -128,7 +128,7 @@ func GetUint64(key string) (uint64, error) {
 
 func GetIntSlice(key string) ([]int, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.config.GetIntSlice")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
 		return []int{}, err
@@ -146,7 +146,7 @@ func GetIntSlice(key string) ([]int, error) {
 
 func GetString(key string) (string, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.config.GetString")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
 		return "", err
@@ -156,7 +156,7 @@ func GetString(key string) (string, error) {
 
 func GetStringMap(key string) (map[string]interface{}, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.config.GetStringMap")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
 	r := map[string]interface{}{}
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
@@ -171,7 +171,7 @@ func GetStringMap(key string) (map[string]interface{}, error) {
 
 func GetStringMapString(key string) (map[string]string, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.config.GetStringMapString")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
 	r := map[string]string{}
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
@@ -186,7 +186,7 @@ func GetStringMapString(key string) (map[string]string, error) {
 
 func GetStringSlice(key string) ([]string, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.config.GetStringSlice")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
 		return []string{}, err
@@ -196,7 +196,7 @@ func GetStringSlice(key string) ([]string, error) {
 
 func GetTime(key string) (time.Time, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.config.GetTime")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
 		return time.Now(), err
@@ -211,7 +211,7 @@ func GetTime(key string) (time.Time, error) {
 
 func GetDuration(key string) (time.Duration, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.config.GetDuration")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] key=%s", key)
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
 		return time.Duration(0), err

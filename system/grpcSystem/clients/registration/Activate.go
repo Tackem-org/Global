@@ -11,7 +11,7 @@ import (
 
 func Activate(request *pb.ActivateRequest) (*pb.ActivateResponse, error) {
 	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.client.registration.Activate")
-	logging.Debugf(debug.FUNCTIONARGS, "[FUNCTIONARGS] request=%+v", request)
+	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] request=%+v", request)
 	conn, err := connections.Master()
 	if err != nil {
 		return &pb.ActivateResponse{
