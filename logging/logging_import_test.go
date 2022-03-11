@@ -24,7 +24,7 @@ func SetupTest(t *testing.T) (*bufio.Scanner, *os.File, *os.File) {
 	return bufio.NewScanner(r), r, w
 }
 
-func ShutdownTest(t *testing.T, r *os.File, w *os.File) {
+func ShutdownPipe(t *testing.T, r *os.File, w *os.File) {
 	err := r.Close()
 	if err != nil {
 		assert.Fail(t, "error closing reader was: %v ", err)
@@ -45,4 +45,12 @@ func MaxSize(size int64) {
 func FileSize() int64 {
 	fhandler, _ := os.Stat(filePath)
 	return fhandler.Size()
+}
+
+func FileClosed() bool {
+	return file == nil
+}
+
+func FileCountLimit(limit uint8) {
+	fileCountLimit = limit
 }

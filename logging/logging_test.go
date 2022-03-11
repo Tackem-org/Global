@@ -12,22 +12,6 @@ import (
 
 //https://stackoverflow.com/questions/44119951/how-to-check-a-log-output-in-go-test
 
-// func TestsetupBackend(t *testing.T) {
-
-// }
-
-// func TestcheckLogSize(t *testing.T) {
-
-// }
-
-// func TestmoveBackupLogFiles(t *testing.T) {
-
-// }
-
-// func TestfileExists(t *testing.T) {
-
-// }
-
 func TestCustomLogger(t *testing.T) {
 	tests := []string{
 		"TEST",
@@ -44,7 +28,7 @@ func TestCustomLogger(t *testing.T) {
 
 func TestCustom(t *testing.T) {
 	s, r, w := logging.SetupTest(t)
-	defer logging.ShutdownTest(t, r, w)
+	defer logging.ShutdownPipe(t, r, w)
 	logging.Custom("TESTING", "TEST")
 	s.Scan()
 	got := s.Text()
@@ -53,7 +37,7 @@ func TestCustom(t *testing.T) {
 
 func TestInfo(t *testing.T) {
 	s, r, w := logging.SetupTest(t)
-	defer logging.ShutdownTest(t, r, w)
+	defer logging.ShutdownPipe(t, r, w)
 	logging.Info("TEST")
 	s.Scan()
 	got := s.Text()
@@ -62,7 +46,7 @@ func TestInfo(t *testing.T) {
 
 func TestDebug(t *testing.T) {
 	s, r, w := logging.SetupTest(t)
-	defer logging.ShutdownTest(t, r, w)
+	defer logging.ShutdownPipe(t, r, w)
 	logging.DM(debug.FUNCTIONCALLS)
 	logging.Debug(debug.FUNCTIONCALLS, "TEST")
 	s.Scan()
@@ -77,7 +61,7 @@ func TestDebug(t *testing.T) {
 
 func TestWarning(t *testing.T) {
 	s, r, w := logging.SetupTest(t)
-	defer logging.ShutdownTest(t, r, w)
+	defer logging.ShutdownPipe(t, r, w)
 	logging.Warning("TEST")
 	s.Scan()
 	got := s.Text()
@@ -86,7 +70,7 @@ func TestWarning(t *testing.T) {
 
 func TestError(t *testing.T) {
 	s, r, w := logging.SetupTest(t)
-	defer logging.ShutdownTest(t, r, w)
+	defer logging.ShutdownPipe(t, r, w)
 	logging.Error("TEST")
 	s.Scan()
 	got := s.Text()
@@ -95,7 +79,7 @@ func TestError(t *testing.T) {
 
 func TestTodo(t *testing.T) {
 	s, r, w := logging.SetupTest(t)
-	defer logging.ShutdownTest(t, r, w)
+	defer logging.ShutdownPipe(t, r, w)
 	logging.Todo("TEST")
 	s.Scan()
 	got := s.Text()
@@ -104,7 +88,7 @@ func TestTodo(t *testing.T) {
 
 func TestFatal(t *testing.T) {
 	s, r, w := logging.SetupTest(t)
-	defer logging.ShutdownTest(t, r, w)
+	defer logging.ShutdownPipe(t, r, w)
 	logging.Fatal("TEST")
 	s.Scan()
 	got := s.Text()
@@ -119,15 +103,23 @@ func exists(path string) bool {
 func TestCheckLogSize(t *testing.T) {
 	file := "temptest.log"
 	os.Remove(file)
-	logging.Setup(file, false, debug.NONE)
 	logging.MaxSize(100)
-	logging.Info("logging Time1")
-	logging.Info("logging Time2")
-	logging.Info("logging Time3")
-	logging.Info("logging Time4")
-	logging.Info("logging Time5")
-	logging.Info("logging Time6")
-	logging.Info("logging Time7")
+	logging.FileCountLimit(2)
+	logging.Setup(file, false, debug.NONE)
+	logging.Info("aaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa")
+	logging.Info("aaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa")
+	logging.Info("aaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa")
+	logging.Info("aaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa")
+	logging.Info("aaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa")
 	assert.True(t, exists(file+".0.bak"))
-	os.Remove(file + "*")
+	assert.True(t, exists(file+".1.bak"))
+	assert.False(t, exists(file+".2.bak"))
+	os.Remove(file)
+	os.Remove(file + ".0.bak")
+	os.Remove(file + ".1.bak")
+	// logging.Shutdown()
+	// assert.True(t, logging.FileClosed())
 }
+
+// go test -cover -v -coverprofile=cover.out
+// go tool cover -html=cover.out -o coverage.html

@@ -53,6 +53,7 @@ func Shutdown() {
 	mu.Lock()
 	defer mu.Unlock()
 	file.Close()
+	file = nil
 }
 
 func openFile() {
