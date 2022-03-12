@@ -9,8 +9,6 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-//TODO TEST THE INTERFACE IN HERE. you are going to aim for 100% coverage for this file by calling everything once (Setup Last) then everything again
-
 func TestLoggingInterface(t *testing.T) {
 	suite.Run(t, new(LoggingInterfaceNilSuite))
 	suite.Run(t, new(LoggingInterfaceSuite))

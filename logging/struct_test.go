@@ -155,6 +155,3 @@ func TestLogVerboseMode(t *testing.T) {
 	l.Shutdown()
 	assert.True(t, l.FileClosed())
 }
-
-// go test -cover -v -coverprofile=cover.out
-// go tool cover -html=cover.out -o coverage.html
