@@ -3,14 +3,11 @@ package regClient
 import (
 	"context"
 
-	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/Tackem-org/Global/system/setupData"
 	"google.golang.org/grpc/metadata"
 )
 
 func checkKey(ctx context.Context) (bool, string) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.regClient.RegClientServer{}.checkKey")
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return false, "error retrieving header"

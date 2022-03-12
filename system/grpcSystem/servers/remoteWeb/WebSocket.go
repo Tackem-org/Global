@@ -6,15 +6,12 @@ import (
 	"net/http"
 
 	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/Tackem-org/Global/structs"
 	"github.com/Tackem-org/Global/system/setupData"
 	pb "github.com/Tackem-org/Proto/pb/remoteweb"
 )
 
 func (r *RemoteWebServer) WebSocket(ctx context.Context, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.remoteWeb.RemoteWebServer{}.WebSocket")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
 	var d map[string]interface{}
 	json.Unmarshal([]byte(in.DataJson), &d)
 

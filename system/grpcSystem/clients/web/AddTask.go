@@ -2,15 +2,12 @@ package web
 
 import (
 	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/Tackem-org/Global/system/grpcSystem/connections"
 	pb "github.com/Tackem-org/Proto/pb/web"
 	"google.golang.org/grpc"
 )
 
 func AddTask(request *pb.TaskMessage) bool {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.client.web.AddTask")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] request=%+v", request)
 	conn, err := connections.Master()
 	if err != nil {
 		logging.Error("[Add Task] Cannot Connect to Master: %s", err.Error())

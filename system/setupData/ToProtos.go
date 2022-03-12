@@ -2,13 +2,10 @@ package setupData
 
 import (
 	"github.com/Tackem-org/Global/helpers"
-	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 	pb "github.com/Tackem-org/Proto/pb/registration"
 )
 
 func (d *SetupData) RegisterProto() *pb.RegisterRequest {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.RegisterProto")
 	return &pb.RegisterRequest{
 		ServiceName:       d.ServiceName,
 		ServiceType:       d.ServiceType,
@@ -28,7 +25,6 @@ func (d *SetupData) RegisterProto() *pb.RegisterRequest {
 	}
 }
 func (d *SetupData) AdminPathsToProtos() []*pb.AdminWebLinkItem {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.AdminPathsToProtos")
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 	var r []*pb.AdminWebLinkItem
@@ -45,7 +41,6 @@ func (d *SetupData) AdminPathsToProtos() []*pb.AdminWebLinkItem {
 }
 
 func (d *SetupData) PathsToProtos() []*pb.WebLinkItem {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.PathsToProtos")
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 	var r []*pb.WebLinkItem
@@ -63,7 +58,6 @@ func (d *SetupData) PathsToProtos() []*pb.WebLinkItem {
 }
 
 func (d *SetupData) SocketsToProtos() []*pb.WebSocketItem {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.SocketsToProtos")
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 	var r []*pb.WebSocketItem

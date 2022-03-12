@@ -6,14 +6,11 @@ import (
 	"net/http"
 
 	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/Tackem-org/Global/system/setupData"
 	pb "github.com/Tackem-org/Proto/pb/remoteweb"
 )
 
 func (r *RemoteWebServer) File(ctx context.Context, in *pb.FileRequest) (*pb.FileResponse, error) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.remoteWeb.RemoteWebServer{}.File")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] ctx in=%+v", in)
 	data, err := setupData.Data.StaticFS.ReadFile(in.Path)
 	if err != nil {
 		logging.Error("[GRPC Remote Web System File Request] %s:%s", in.GetPath(), err.Error())

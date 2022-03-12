@@ -5,15 +5,12 @@ import (
 	"net/http"
 
 	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/Tackem-org/Global/structs"
 	"github.com/Tackem-org/Global/system/setupData"
 	pb "github.com/Tackem-org/Proto/pb/remoteweb"
 )
 
 func makeWebRequest(in *pb.PageRequest) *structs.WebRequest {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.remoteWeb.makeWebRequest")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] in=%+v", in)
 
 	user := structs.GetUserData(in.User)
 	webRequest := structs.WebRequest{
@@ -31,8 +28,6 @@ func makeWebRequest(in *pb.PageRequest) *structs.WebRequest {
 }
 
 func makePageResponse(in *pb.PageRequest, webReturn *structs.WebReturn, err error) *pb.PageResponse {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.remoteWeb.makePageRequest")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] in=%+v, webReturn=%+v", in, webReturn)
 	if err != nil {
 		logging.Error("[GRPC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
 		return &pb.PageResponse{
@@ -61,8 +56,6 @@ func makePageResponse(in *pb.PageRequest, webReturn *structs.WebReturn, err erro
 }
 
 func pageString(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageResponse {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.remoteWeb.pageString")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] returnData=%+v, in=%+v", returnData, in)
 	var pageData []byte
 	pageData, err := json.Marshal(returnData.PageData)
 	if err != nil {
@@ -84,8 +77,6 @@ func pageString(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageRespo
 }
 
 func pageFile(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageResponse {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.remoteWeb.pageFile")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] returnData=%+v, in=%+v", returnData, in)
 	templateHtml, err := setupData.Data.StaticFS.ReadFile("pages/" + returnData.FilePath + ".html")
 	if err != nil {
 		logging.Error("[GRPC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
@@ -116,8 +107,6 @@ func pageFile(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageRespons
 }
 
 func getBaseCSSandJS(path string) (css []string, js []string) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.servers.remoteWeb.getBaseCSSandJS")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] path=%s", path)
 	baseurl := ""
 	if setupData.Data.ServiceType != "system" {
 		baseurl += setupData.Data.ServiceType + "/"

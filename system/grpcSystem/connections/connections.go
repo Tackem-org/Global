@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/Tackem-org/Global/sysErrors"
 	"github.com/Tackem-org/Global/system/dependentServices"
 	"github.com/Tackem-org/Global/system/masterData"
@@ -17,20 +15,16 @@ import (
 )
 
 func getConnection(url string) (*grpc.ClientConn, error) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.connections.getConnection")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] url=%s", url)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 	return grpc.DialContext(ctx, url, grpc.WithInsecure(), grpc.WithBlock())
 }
 
 func MasterForce() (*grpc.ClientConn, error) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.connections.MasterForce")
 	return getConnection(fmt.Sprintf("%s:%d", masterData.URL, masterData.Port))
 }
 
 func Master() (*grpc.ClientConn, error) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.connections.Master")
 	if masterData.UP.Wait(5) {
 		return MasterForce()
 	}
@@ -38,7 +32,6 @@ func Master() (*grpc.ClientConn, error) {
 }
 
 func MasterHeader() (metadata.MD, context.Context, context.CancelFunc) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.connections.MasterHeader")
 	header := metadata.New(map[string]string{
 		"baseID": setupData.BaseID,
 		"key":    setupData.Key,
@@ -49,7 +42,6 @@ func MasterHeader() (metadata.MD, context.Context, context.CancelFunc) {
 }
 
 func RegistrationHeader() (metadata.MD, context.Context, context.CancelFunc) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.connections.RegistrationHeader")
 	header := metadata.New(map[string]string{
 		"registrationkey": masterData.RegistrationKey,
 	})
@@ -59,8 +51,6 @@ func RegistrationHeader() (metadata.MD, context.Context, context.CancelFunc) {
 }
 
 func RequiredServiceHeader(requiredService *requiredServices.RequiredService) metadata.MD {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.connections.RequiredServiceHeader")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] requiredService=%+v", requiredService)
 	return metadata.New(map[string]string{
 		"baseID": setupData.BaseID,
 		"key":    requiredService.Key,
@@ -68,8 +58,6 @@ func RequiredServiceHeader(requiredService *requiredServices.RequiredService) me
 }
 
 func RequiredServiceConnection(requiredService *requiredServices.RequiredService) (*grpc.ClientConn, error) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.connections.RequiredServiceConnection")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] requiredService=%+v", requiredService)
 	if requiredService.UP.Check() {
 		return getConnection(fmt.Sprintf("%s:%d", requiredService.IPAddress, requiredService.Port))
 	}
@@ -77,8 +65,6 @@ func RequiredServiceConnection(requiredService *requiredServices.RequiredService
 }
 
 func DependentServiceHeader(dependentService *dependentServices.DependentService) metadata.MD {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.connections.DependentServiceHeader")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] dependentService=%+v", dependentService)
 	return metadata.New(map[string]string{
 		"baseID": setupData.BaseID,
 		"key":    dependentService.Key,
@@ -86,8 +72,6 @@ func DependentServiceHeader(dependentService *dependentServices.DependentService
 }
 
 func DependentServiceConnection(dependentService *dependentServices.DependentService) (*grpc.ClientConn, error) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.connections.DependentServiceConnection")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] dependentService=%+v", dependentService)
 	if dependentService.UP.Check() {
 		return getConnection(fmt.Sprintf("%s:%d", dependentService.IPAddress, dependentService.Port))
 	}

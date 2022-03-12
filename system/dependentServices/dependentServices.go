@@ -5,8 +5,6 @@ import (
 	"sync"
 
 	"github.com/Tackem-org/Global/helpers"
-	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 )
 
 var (
@@ -28,13 +26,11 @@ type DependentService struct {
 }
 
 func (ds *DependentService) setup() {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.dependentServices.DependentService{%s %s}.setup", ds.ServiceType, ds.ServiceName)
 	ds.UP.Up()
 	ds.UP.Label = fmt.Sprintf("[Dependent] %s %s", ds.ServiceType, ds.ServiceName)
 }
 
 func GetActive() []*DependentService {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.dependentServices.GetActive")
 	mu.RLock()
 	defer mu.RUnlock()
 	var rd []*DependentService
@@ -49,8 +45,6 @@ func GetActive() []*DependentService {
 }
 
 func GetByBaseID(baseID string) *DependentService {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.dependentServices.GetByBaseID")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] baseID=%s", baseID)
 	mu.RLock()
 	defer mu.RUnlock()
 	for _, s := range ds {
@@ -62,8 +56,6 @@ func GetByBaseID(baseID string) *DependentService {
 }
 
 func Add(d *DependentService) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.dependentServices.Add")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] dependentService=%+v", d)
 	mu.Lock()
 	defer mu.Unlock()
 	for _, s := range ds {
@@ -76,8 +68,6 @@ func Add(d *DependentService) {
 }
 
 func Remove(baseID string) bool {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.dependentServices.Remove")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] baseID=%s", baseID)
 	mu.Lock()
 	defer mu.Unlock()
 	for index, s := range ds {
@@ -90,8 +80,6 @@ func Remove(baseID string) bool {
 }
 
 func Up(baseID string) bool {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.dependentServices.Up")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] baseID=%s", baseID)
 	mu.Lock()
 	defer mu.Unlock()
 	for _, s := range ds {
@@ -104,8 +92,6 @@ func Up(baseID string) bool {
 }
 
 func Down(baseID string) bool {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.dependentServices.Down")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] baseID=%s", baseID)
 	mu.Lock()
 	defer mu.Unlock()
 	for _, s := range ds {

@@ -7,8 +7,6 @@ import (
 	"os"
 	"sync"
 
-	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/Tackem-org/Global/structs"
 	pb "github.com/Tackem-org/Proto/pb/registration"
 	pbw "github.com/Tackem-org/Proto/pb/web"
@@ -42,7 +40,6 @@ type SetupData struct {
 	MasterConf  string
 	LogFile     string
 	VerboseLog  bool
-	DebugLevel  debug.Mask
 	GRPCSystems func(server *grpc.Server)
 
 	StaticFS     *embed.FS
@@ -82,7 +79,6 @@ type SocketItem struct {
 }
 
 func FreeTCPPort() (net.Listener, error) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.setupData.FreePort")
 	mu.Lock()
 	defer mu.Unlock()
 	bind := ""

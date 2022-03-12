@@ -21,7 +21,7 @@ var (
 )
 
 func Run(d *setupData.SetupData) {
-	logging.Setup(d.LogFile, d.VerboseLog, d.DebugLevel)
+	logging.Setup(d.LogFile, d.VerboseLog)
 	defer logging.Shutdown()
 	setupData.Data = d
 	logging.Info("Starting Tackem %s System", d.Name())

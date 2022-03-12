@@ -5,9 +5,6 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
-
-	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 )
 
 var (
@@ -21,7 +18,6 @@ type RootCommands struct {
 }
 
 func Setup() {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.channels.Setup")
 	setupOnce.Do(func() {
 		Root.Shutdown = make(chan bool, 1)
 		Root.TermChan = make(chan os.Signal, 1)

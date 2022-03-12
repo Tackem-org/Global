@@ -2,14 +2,9 @@ package structs
 
 import (
 	"net/http"
-
-	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 )
 
 func QuickWebReturn(statusCode uint32, errorMessage string) (*WebReturn, error) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.QuickWebReturn")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] statusCode=%d, errorMessage=%s", statusCode, errorMessage)
 	return &WebReturn{
 		StatusCode:   statusCode,
 		ErrorMessage: errorMessage,
@@ -17,7 +12,6 @@ func QuickWebReturn(statusCode uint32, errorMessage string) (*WebReturn, error) 
 }
 
 func ForbiddenWebReturn() (*WebReturn, error) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.structs.ForbiddenWebReturn")
 	return &WebReturn{
 		StatusCode:   http.StatusForbidden,
 		ErrorMessage: "user not authorised to view this page",

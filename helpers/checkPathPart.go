@@ -5,12 +5,9 @@ import (
 	"strings"
 
 	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 )
 
 func CheckPath(path string) bool {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.helpers.CheckPath")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] path=%s", path)
 	if strings.HasPrefix(path, "/") {
 		path = strings.Replace(path, "/", "", 1)
 	}
@@ -33,8 +30,6 @@ func CheckPath(path string) bool {
 }
 
 func CheckPathPart(part string) (ok bool, isVarData []string) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.helpers.CheckPathPart")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] part=%s", part)
 	startCount := strings.Count(part, "{")
 	endCount := strings.Count(part, "}")
 	if startCount == 0 && endCount == 0 {

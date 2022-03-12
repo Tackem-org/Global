@@ -8,8 +8,6 @@ import (
 	"sync"
 
 	"github.com/Tackem-org/Global/helpers"
-	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/Tackem-org/Global/system/setupData"
 )
 
@@ -27,7 +25,6 @@ const (
 )
 
 func Setup() {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.masterData.Setup")
 	setupOnce.Do(func() {
 		data := struct {
 			URL             string

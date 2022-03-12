@@ -2,15 +2,12 @@ package web
 
 import (
 	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/Tackem-org/Global/system/grpcSystem/connections"
 	pb "github.com/Tackem-org/Proto/pb/web"
 	"google.golang.org/grpc"
 )
 
 func RemoveTask(request *pb.RemoveTaskRequest) bool {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.client.web.RemoveTask")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] request=%+v", request)
 	conn, err := connections.Master()
 	if err != nil {
 		logging.Error("[Remove Task] Cannot Connect to Master: %s", err.Error())

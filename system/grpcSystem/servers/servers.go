@@ -4,7 +4,6 @@ import (
 	"sync"
 
 	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/regClient"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/remoteWeb"
 	"github.com/Tackem-org/Global/system/setupData"
@@ -19,8 +18,6 @@ var (
 )
 
 func Setup(wg *sync.WaitGroup, webEnabled bool) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Master.grpcSystem.servers.Setup")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] WaitGroup webEnabled=%T", webEnabled)
 	server = grpc.NewServer()
 	pbrc.RegisterRegClientServer(server, &regClient.RegClientServer{})
 	if webEnabled {
@@ -44,7 +41,6 @@ func Setup(wg *sync.WaitGroup, webEnabled bool) {
 }
 
 func Shutdown(wg *sync.WaitGroup) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Master.grpcSystem.servers.Shutdown")
 	server.Stop()
 	wg.Done()
 	logging.Info("Shutdown gRPC Server")

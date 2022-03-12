@@ -5,8 +5,6 @@ import (
 	"sync"
 
 	"github.com/Tackem-org/Global/helpers"
-	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 )
 
 var (
@@ -32,8 +30,6 @@ func (rs *RequiredService) setup() {
 }
 
 func Get(serviceName string, serviceType string) *RequiredService {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.requiredServices.Get")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] serviceName=%s, serviceType=%s", serviceName, serviceType)
 	mu.RLock()
 	defer mu.RUnlock()
 	for _, s := range rs {
@@ -45,8 +41,6 @@ func Get(serviceName string, serviceType string) *RequiredService {
 }
 
 func GetByBaseID(baseID string) *RequiredService {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.requiredServices.GetByBaseID")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] baseID=%s", baseID)
 	mu.RLock()
 	defer mu.RUnlock()
 	for _, s := range rs {
@@ -58,8 +52,6 @@ func GetByBaseID(baseID string) *RequiredService {
 }
 
 func Add(r *RequiredService) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.requiredServices.Add")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] RequiredService=%+v", r)
 	mu.Lock()
 	defer mu.Unlock()
 	for _, s := range rs {
@@ -72,8 +64,6 @@ func Add(r *RequiredService) {
 }
 
 func Remove(baseID string) bool {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.requiredServices.Remove")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] baseID=%s", baseID)
 	mu.Lock()
 	defer mu.Unlock()
 	for index, s := range rs {
@@ -86,8 +76,6 @@ func Remove(baseID string) bool {
 }
 
 func Up(baseID string) bool {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.requiredServices.Up")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] baseID=%s", baseID)
 	mu.Lock()
 	defer mu.Unlock()
 	for _, s := range rs {
@@ -100,8 +88,6 @@ func Up(baseID string) bool {
 }
 
 func Down(baseID string) bool {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.requiredServices.Down")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] baseID=%s", baseID)
 	mu.Lock()
 	defer mu.Unlock()
 	for _, s := range rs {

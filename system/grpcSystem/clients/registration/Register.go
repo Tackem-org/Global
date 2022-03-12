@@ -1,8 +1,6 @@
 package registration
 
 import (
-	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/Tackem-org/Global/system/grpcSystem/connections"
 
 	pb "github.com/Tackem-org/Proto/pb/registration"
@@ -10,8 +8,6 @@ import (
 )
 
 func Register(request *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-	logging.Debug(debug.FUNCTIONCALLS, "[FUNCTIONCALL] Global.system.grpcSystem.client.registration.Register")
-	logging.Debug(debug.FUNCTIONARGS, "[FUNCTIONARGS] request=%+v", request)
 	conn, err := connections.MasterForce()
 	if err != nil {
 		return &pb.RegisterResponse{

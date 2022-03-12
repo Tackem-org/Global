@@ -1,125 +1,108 @@
 package logging_test
 
 import (
-	"errors"
 	"os"
 	"testing"
 
 	"github.com/Tackem-org/Global/logging"
-	"github.com/Tackem-org/Global/logging/debug"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-//https://stackoverflow.com/questions/44119951/how-to-check-a-log-output-in-go-test
+//TODO TEST THE INTERFACE IN HERE. you are going to aim for 100% coverage for this file by calling everything once (Setup Last) then everything again
 
-func TestCustomLogger(t *testing.T) {
-	tests := []string{
-		"TEST",
-		"Custom",
-		"GORM",
-	}
-
-	for _, v := range tests {
-		logger := logging.CustomLogger(v)
-		assert.NotNil(t, logger)
-		assert.Equal(t, v+": ", logger.Prefix())
-	}
+func TestLoggingInterface(t *testing.T) {
+	suite.Run(t, new(LoggingInterfaceNilSuite))
+	suite.Run(t, new(LoggingInterfaceSuite))
 }
 
-func TestCustom(t *testing.T) {
-	s, r, w := logging.SetupTest(t)
-	defer logging.ShutdownPipe(t, r, w)
-	logging.Custom("TESTING", "TEST")
-	s.Scan()
-	got := s.Text()
-	assert.Equal(t, "TESTING: TEST", got)
+type LoggingInterfaceNilSuite struct {
+	suite.Suite
 }
 
-func TestInfo(t *testing.T) {
-	s, r, w := logging.SetupTest(t)
-	defer logging.ShutdownPipe(t, r, w)
-	logging.Info("TEST")
-	s.Scan()
-	got := s.Text()
-	assert.Equal(t, "INFO: TEST", got)
+func (s *LoggingInterfaceNilSuite) SetupTest() {
+	logging.LI = nil
 }
 
-func TestDebug(t *testing.T) {
-	s, r, w := logging.SetupTest(t)
-	defer logging.ShutdownPipe(t, r, w)
-	logging.DM(debug.FUNCTIONCALLS)
-	logging.Debug(debug.FUNCTIONCALLS, "TEST")
-	s.Scan()
-	got := s.Text()
-	assert.Equal(t, "DEBUG: TEST", got)
-	logging.DM(debug.FUNCTIONCALLS | debug.FUNCTIONARGS)
-	logging.Debug(debug.FUNCTIONCALLS, "TEST")
-	s.Scan()
-	got = s.Text()
-	assert.Equal(t, "DEBUG: TEST", got)
+func (s *LoggingInterfaceNilSuite) TearDownTest() {
+	assert.Nil(s.T(), logging.LI)
 }
 
-func TestWarning(t *testing.T) {
-	s, r, w := logging.SetupTest(t)
-	defer logging.ShutdownPipe(t, r, w)
-	logging.Warning("TEST")
-	s.Scan()
-	got := s.Text()
-	assert.Equal(t, "WARNING: TEST", got)
+func (s *LoggingInterfaceNilSuite) TestInterfaceShutdown() {
+	assert.NotPanics(s.T(), func() { logging.Shutdown() })
+}
+func (s *LoggingInterfaceNilSuite) TestInterfaceCustomLogger() {
+	assert.NotPanics(s.T(), func() { assert.Nil(s.T(), logging.CustomLogger("Test")) })
 }
 
-func TestError(t *testing.T) {
-	s, r, w := logging.SetupTest(t)
-	defer logging.ShutdownPipe(t, r, w)
-	logging.Error("TEST")
-	s.Scan()
-	got := s.Text()
-	assert.Equal(t, "ERROR: TEST", got)
+func (s *LoggingInterfaceNilSuite) TestInterfaceCustom() {
+	assert.NotPanics(s.T(), func() { logging.Custom("Test", "Test") })
+
 }
 
-func TestTodo(t *testing.T) {
-	s, r, w := logging.SetupTest(t)
-	defer logging.ShutdownPipe(t, r, w)
-	logging.Todo("TEST")
-	s.Scan()
-	got := s.Text()
-	assert.Equal(t, "TODO: TEST", got)
+func (s *LoggingInterfaceNilSuite) TestInterfaceInfo() {
+	assert.NotPanics(s.T(), func() { logging.Info("Test") })
 }
 
-func TestFatal(t *testing.T) {
-	s, r, w := logging.SetupTest(t)
-	defer logging.ShutdownPipe(t, r, w)
-	logging.Fatal("TEST")
-	s.Scan()
-	got := s.Text()
-	assert.Equal(t, "FATAL: TEST", got)
+func (s *LoggingInterfaceNilSuite) TestInterfaceWarning() {
+	assert.NotPanics(s.T(), func() { logging.Warning("Test") })
 }
 
-func exists(path string) bool {
-	_, err := os.Stat(path)
-	return !errors.Is(err, os.ErrNotExist)
+func (s *LoggingInterfaceNilSuite) TestInterfaceError() {
+	assert.NotPanics(s.T(), func() { logging.Error("Test") })
 }
 
-func TestCheckLogSize(t *testing.T) {
-	file := "temptest.log"
-	os.Remove(file)
-	logging.MaxSize(100)
-	logging.FileCountLimit(2)
-	logging.Setup(file, false, debug.NONE)
-	logging.Info("aaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa")
-	logging.Info("aaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa")
-	logging.Info("aaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa")
-	logging.Info("aaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa")
-	logging.Info("aaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa")
-	assert.True(t, exists(file+".0.bak"))
-	assert.True(t, exists(file+".1.bak"))
-	assert.False(t, exists(file+".2.bak"))
-	os.Remove(file)
-	os.Remove(file + ".0.bak")
-	os.Remove(file + ".1.bak")
-	// logging.Shutdown()
-	// assert.True(t, logging.FileClosed())
+func (s *LoggingInterfaceNilSuite) TestInterfaceTodo() {
+	assert.NotPanics(s.T(), func() { logging.Todo("Test") })
 }
 
-// go test -cover -v -coverprofile=cover.out
-// go tool cover -html=cover.out -o coverage.html
+func (s *LoggingInterfaceNilSuite) TestInterfaceFatal() {
+	assert.NotPanics(s.T(), func() { logging.Fatal("Test") })
+}
+
+type LoggingInterfaceSuite struct {
+	suite.Suite
+	filename string
+}
+
+func (s *LoggingInterfaceSuite) SetupSuite() {
+	s.filename = "temp.log"
+	assert.NotPanics(s.T(), func() { logging.Setup(s.filename, false) })
+	assert.NotNil(s.T(), logging.LI)
+}
+
+func (s *LoggingInterfaceSuite) TearDownSuite() {
+	assert.NotPanics(s.T(), func() { logging.Shutdown() })
+	assert.True(s.T(), exists(s.filename))
+	os.Remove(s.filename)
+	assert.False(s.T(), exists(s.filename))
+}
+
+func (s *LoggingInterfaceSuite) TestInterfaceCustomLogger() {
+	assert.NotPanics(s.T(), func() { assert.NotNil(s.T(), logging.CustomLogger("Test")) })
+}
+
+func (s *LoggingInterfaceSuite) TestInterfaceCustom() {
+	assert.NotPanics(s.T(), func() { logging.Custom("Test", "Test") })
+
+}
+
+func (s *LoggingInterfaceSuite) TestInterfaceInfo() {
+	assert.NotPanics(s.T(), func() { logging.Info("Test") })
+}
+
+func (s *LoggingInterfaceSuite) TestInterfaceWarning() {
+	assert.NotPanics(s.T(), func() { logging.Warning("Test") })
+}
+
+func (s *LoggingInterfaceSuite) TestInterfaceError() {
+	assert.NotPanics(s.T(), func() { logging.Error("Test") })
+}
+
+func (s *LoggingInterfaceSuite) TestInterfaceTodo() {
+	assert.NotPanics(s.T(), func() { logging.Todo("Test") })
+}
+
+func (s *LoggingInterfaceSuite) TestInterfaceFatal() {
+	assert.Panics(s.T(), func() { logging.Fatal("Test") })
+}
