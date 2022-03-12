@@ -47,13 +47,17 @@ func InterfaceSliceToIntSlice(in []interface{}) ([]int, error) {
 	return out, nil
 }
 
-func StringToIntSlice(in string) []int {
-	tmp := strings.Split(in, ",")
-	out := make([]int, len(tmp))
-	for i, v := range tmp {
-		out[i], _ = strconv.Atoi(v)
+func StringToIntSlice(in string) ([]int, error) {
+	splitString := strings.Split(in, ",")
+	out := make([]int, len(splitString))
+	for i, v := range splitString {
+		tmp, err := strconv.Atoi(v)
+		if err != nil {
+			return nil, err
+		}
+		out[i] = tmp
 	}
-	return out
+	return out, nil
 }
 
 func StringToStringSlice(in string) []string {
@@ -61,10 +65,13 @@ func StringToStringSlice(in string) []string {
 	return out
 }
 
-func StringToStringMap(in string) map[string]interface{} {
+//TODO JSON.Unmarshal makes all numbers floats by default Make some way of going through this and converting them
+//to there correct formats
+//You'll need to then find anywhere using this and fix it.
+func StringToStringMap(in string) (map[string]interface{}, error) {
 	out := map[string]interface{}{}
-	json.Unmarshal([]byte(in), &out)
-	return out
+	err := json.Unmarshal([]byte(in), &out)
+	return out, err
 }
 
 func StringToDuration(in string) (time.Duration, error) {

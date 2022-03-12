@@ -13,8 +13,5 @@ func RandStr(length int) string {
 		r[i] = letters[rand.Intn(len(letters))]
 	}
 	key := string(r)
-	if key == "" {
-		return RandStr(length)
-	}
 	return key
 }

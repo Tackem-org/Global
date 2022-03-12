@@ -11,15 +11,11 @@ func CheckPath(path string) bool {
 	if strings.HasPrefix(path, "/") {
 		path = strings.Replace(path, "/", "", 1)
 	}
+	if strings.Count(path, "{") == 0 && strings.Count(path, "}") == 0 {
+		return true
+	}
+
 	s := strings.Split(path, "/")
-	if len(s) == 0 {
-		return true
-	}
-	startCount := strings.Count(path, "{")
-	endCount := strings.Count(path, "}")
-	if startCount == 0 && endCount == 0 {
-		return true
-	}
 	for _, part := range s {
 		v, _ := CheckPathPart(part)
 		if !v {
@@ -62,13 +58,13 @@ func CheckPathPart(part string) (ok bool, isVarData []string) {
 		logging.Warning("Bad Path Part [%s] - Part not in correct format should be {{[number|string]:[valiable name]}}", part)
 		return false, nil
 	}
-
-	if matched, _ := regexp.Match(`number|string`, []byte(splitPart[0])); !matched {
+	if splitPart[0] != "number" && splitPart[0] != "string" {
 		logging.Warning("Bad Path Part [%s] - variable Type not 'number' or 'string'", part)
 		return false, nil
 	}
 
-	if matched, _ := regexp.Match(`[a-zA-Z0-9]`, []byte(splitPart[1])); !matched {
+	isAlphaNumeric := regexp.MustCompile(`^[A-Za-z0-9]+$`).MatchString
+	if !isAlphaNumeric(splitPart[1]) {
 		logging.Warning("Bad Path Part [%s] - variable value has no name", part)
 		return false, nil
 	}
