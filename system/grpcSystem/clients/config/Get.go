@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func Get(request *pb.GetConfigRequest) (*pb.GetConfigResponse, error) {
+func (cc *ConfigClient) Get(request *pb.GetConfigRequest) (*pb.GetConfigResponse, error) {
 	conn, err := connections.Master()
 	if err != nil {
 		return &pb.GetConfigResponse{

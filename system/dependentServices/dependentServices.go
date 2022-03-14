@@ -26,7 +26,6 @@ type DependentService struct {
 }
 
 func (ds *DependentService) setup() {
-	ds.UP.Up()
 	ds.UP.Label = fmt.Sprintf("[Dependent] %s %s", ds.ServiceType, ds.ServiceName)
 }
 
@@ -36,7 +35,7 @@ func GetActive() []*DependentService {
 	var rd []*DependentService
 
 	for _, s := range ds {
-		if s.UP.Check() {
+		if !s.UP.Check() {
 			continue
 		}
 		rd = append(rd, s)
@@ -55,16 +54,17 @@ func GetByBaseID(baseID string) *DependentService {
 	return nil
 }
 
-func Add(d *DependentService) {
+func Add(d *DependentService) bool {
 	mu.Lock()
 	defer mu.Unlock()
 	for _, s := range ds {
 		if s.BaseID == d.BaseID {
-			return
+			return false
 		}
 	}
 	d.setupOnce.Do(d.setup)
 	ds = append(ds, d)
+	return true
 }
 
 func Remove(baseID string) bool {
@@ -84,8 +84,11 @@ func Up(baseID string) bool {
 	defer mu.Unlock()
 	for _, s := range ds {
 		if s.BaseID == baseID {
-			s.UP.Up()
-			return true
+			if !s.UP.Check() {
+				s.UP.Up()
+				return true
+			}
+			return false
 		}
 	}
 	return false
@@ -96,8 +99,12 @@ func Down(baseID string) bool {
 	defer mu.Unlock()
 	for _, s := range ds {
 		if s.BaseID == baseID {
-			s.UP.Down()
-			return true
+			if s.UP.Check() {
+
+				s.UP.Down()
+				return true
+			}
+			return false
 		}
 	}
 	return false

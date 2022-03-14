@@ -109,6 +109,13 @@ func (v Version) EqualTo(c Version) bool {
 	return false
 }
 
+func (v Version) EqualToHotfix(c Version) bool {
+	if v.Major == c.Major && v.Minor == c.Minor && v.Hotfix == c.Hotfix {
+		return true
+	}
+	return false
+}
+
 func (v Version) ToProto() *pb.Version {
 	return &pb.Version{
 		Major:  uint32(v.Major),

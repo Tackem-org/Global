@@ -15,69 +15,69 @@ type LoggingInterface interface {
 }
 
 var (
-	LI LoggingInterface
+	I LoggingInterface
 )
 
 func Setup(logFile string, verbose bool) {
-	if LI == nil {
-		LI = DefaultLogging()
+	if I == nil {
+		I = DefaultLogging()
 	}
-	LI.Setup(logFile, verbose)
+	I.Setup(logFile, verbose)
 }
 
 func Shutdown() {
-	if LI == nil {
+	if I == nil {
 		return
 	}
-	LI.Shutdown()
+	I.Shutdown()
 }
 
 func CustomLogger(prefix string) *log.Logger {
-	if LI == nil {
+	if I == nil {
 		return nil
 	}
-	return LI.CustomLogger(prefix)
+	return I.CustomLogger(prefix)
 }
 
 func Custom(prefix string, message string, values ...interface{}) {
-	if LI == nil {
+	if I == nil {
 		return
 	}
-	LI.Custom(prefix, message, values...)
+	I.Custom(prefix, message, values...)
 }
 
 func Info(message string, values ...interface{}) {
-	if LI == nil {
+	if I == nil {
 		return
 	}
-	LI.Info(message, values...)
+	I.Info(message, values...)
 }
 
 func Warning(message string, values ...interface{}) {
-	if LI == nil {
+	if I == nil {
 		return
 	}
-	LI.Warning(message, values...)
+	I.Warning(message, values...)
 }
 
 func Error(message string, values ...interface{}) {
-	if LI == nil {
+	if I == nil {
 		return
 	}
-	LI.Error(message, values...)
+	I.Error(message, values...)
 }
 
 func Todo(message string, values ...interface{}) {
-	if LI == nil {
+	if I == nil {
 		return
 	}
-	LI.Todo(message, values...)
+	I.Todo(message, values...)
 }
 
 func Fatal(message string, values ...interface{}) {
-	if LI == nil {
+	if I == nil {
 		return
 	}
-	panic(LI.Fatal(message, values...))
+	panic(I.Fatal(message, values...))
 
 }

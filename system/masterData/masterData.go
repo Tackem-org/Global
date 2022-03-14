@@ -11,12 +11,16 @@ import (
 	"github.com/Tackem-org/Global/system/setupData"
 )
 
-var (
-	setupOnce       sync.Once
-	UP              helpers.Locker = helpers.Locker{Label: "Master"}
+type Infostruct struct {
 	URL             string
 	Port            uint32
 	RegistrationKey string
+}
+
+var (
+	setupOnce sync.Once
+	UP        helpers.Locker = helpers.Locker{Label: "Master"}
+	Info      Infostruct
 )
 
 const (
@@ -24,42 +28,37 @@ const (
 	defaultPort uint32 = 50000
 )
 
+//TODO Split this down for better testing somehow then test
 func Setup() {
 	setupOnce.Do(func() {
-		data := struct {
-			URL             string
-			Port            uint32
-			RegistrationKey string
-		}{}
-		file, err := ioutil.ReadFile(setupData.Data.MasterConf)
-		if err != nil {
-			if val, present := os.LookupEnv("URL"); present {
-				data.URL = val
-			} else {
-				data.URL = defaultURL
-			}
-			if val, present := os.LookupEnv("PORT"); present {
-				p, errp := strconv.Atoi(val)
-				if errp != nil {
-					data.Port = defaultPort
-				} else {
-					data.Port = uint32(p)
-				}
-			} else {
-				data.Port = defaultPort
-			}
-			if val, present := os.LookupEnv("REGKEY"); present {
-				data.RegistrationKey = val
-			}
-			file, _ := json.MarshalIndent(data, "", " ")
-			_ = ioutil.WriteFile(setupData.Data.MasterConf, file, 0644)
-		} else {
-			_ = json.Unmarshal([]byte(file), &data)
-		}
-		Port = data.Port
-		URL = data.URL
-		RegistrationKey = data.RegistrationKey
 		UP.Down()
+		if file, err := ioutil.ReadFile(setupData.Data.MasterConf); err == nil {
+			_ = json.Unmarshal([]byte(file), &Info)
+			return
+		}
+
+		if val, present := os.LookupEnv("URL"); present {
+			Info.URL = val
+		} else {
+			Info.URL = defaultURL
+		}
+		if val, present := os.LookupEnv("PORT"); present {
+			p, errp := strconv.Atoi(val)
+			if errp != nil {
+				Info.Port = defaultPort
+			} else {
+				Info.Port = uint32(p)
+			}
+		} else {
+			Info.Port = defaultPort
+		}
+		if val, present := os.LookupEnv("REGKEY"); present {
+			Info.RegistrationKey = val
+		}
+
+		file, _ := json.MarshalIndent(Info, "", " ")
+		_ = ioutil.WriteFile(setupData.Data.MasterConf, file, 0644)
+
 	})
 
 }

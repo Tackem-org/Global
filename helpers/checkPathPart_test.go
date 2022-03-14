@@ -13,66 +13,18 @@ func TestCheckPathPart(t *testing.T) {
 		pass  bool
 		parts int
 	}{
-		{
-			part:  "test1pass",
-			pass:  true,
-			parts: 0,
-		},
-		{
-			part:  "{test2",
-			pass:  false,
-			parts: 0,
-		},
-		{
-			part:  "{{test3}",
-			pass:  false,
-			parts: 0,
-		},
-		{
-			part:  "{{test4}}{{second}}",
-			pass:  false,
-			parts: 0,
-		},
-		{
-			part:  "?{{test5}}",
-			pass:  false,
-			parts: 0,
-		},
-		{
-			part:  "{{test6}}?",
-			pass:  false,
-			parts: 0,
-		},
-		{
-			part:  "{{test7:test7:test7}}",
-			pass:  false,
-			parts: 0,
-		},
-		{
-			part:  "{{test8}}",
-			pass:  false,
-			parts: 0,
-		},
-		{
-			part:  "{{test9:test9}}",
-			pass:  false,
-			parts: 0,
-		},
-		{
-			part:  "{{number:test10-}}",
-			pass:  false,
-			parts: 0,
-		},
-		{
-			part:  "{{string:test10-}}",
-			pass:  false,
-			parts: 0,
-		},
-		{
-			part:  "{{string:test11}}",
-			pass:  true,
-			parts: 2,
-		},
+		{"test1pass", true, 0},
+		{"{test2", false, 0},
+		{"{{test3}", false, 0},
+		{"{{test4}}{{second}}", false, 0},
+		{"?{{test5}}", false, 0},
+		{"{{test6}}?", false, 0},
+		{"{{test7:test7:test7}}", false, 0},
+		{"{{test8}}", false, 0},
+		{"{{test9:test9}}", false, 0},
+		{"{{number:test10-}}", false, 0},
+		{"{{string:test10-}}", false, 0},
+		{"{{string:test11}}", true, 2},
 	}
 
 	for _, test := range tests {
@@ -94,22 +46,10 @@ func TestCheckPath(t *testing.T) {
 		path string
 		pass bool
 	}{
-		{
-			path: "",
-			pass: true,
-		},
-		{
-			path: "/",
-			pass: true,
-		},
-		{
-			path: "/{{number:test}}",
-			pass: true,
-		},
-		{
-			path: "/{{test}}",
-			pass: false,
-		},
+		{"", true},
+		{"/", true},
+		{"/{{number:test}}", true},
+		{"/{{test}}", false},
 	}
 
 	for _, test := range tests {

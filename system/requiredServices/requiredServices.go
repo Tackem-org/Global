@@ -25,7 +25,6 @@ type RequiredService struct {
 }
 
 func (rs *RequiredService) setup() {
-	rs.UP.Up()
 	rs.UP.Label = fmt.Sprintf("[Required] %s %s", rs.ServiceType, rs.ServiceName)
 }
 
@@ -51,16 +50,17 @@ func GetByBaseID(baseID string) *RequiredService {
 	return nil
 }
 
-func Add(r *RequiredService) {
+func Add(r *RequiredService) bool {
 	mu.Lock()
 	defer mu.Unlock()
 	for _, s := range rs {
 		if s.BaseID == r.BaseID {
-			return
+			return false
 		}
 	}
 	r.setupOnce.Do(r.setup)
 	rs = append(rs, r)
+	return true
 }
 
 func Remove(baseID string) bool {
@@ -80,8 +80,10 @@ func Up(baseID string) bool {
 	defer mu.Unlock()
 	for _, s := range rs {
 		if s.BaseID == baseID {
-			s.UP.Up()
-			return true
+			if !s.UP.Check() {
+				s.UP.Up()
+				return true
+			}
 		}
 	}
 	return false
@@ -92,8 +94,10 @@ func Down(baseID string) bool {
 	defer mu.Unlock()
 	for _, s := range rs {
 		if s.BaseID == baseID {
-			s.UP.Down()
-			return true
+			if s.UP.Check() {
+				s.UP.Down()
+				return true
+			}
 		}
 	}
 	return false

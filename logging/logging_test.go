@@ -19,11 +19,12 @@ type LoggingInterfaceNilSuite struct {
 }
 
 func (s *LoggingInterfaceNilSuite) SetupTest() {
-	logging.LI = nil
+	logging.I = nil
+	assert.Nil(s.T(), logging.I)
 }
 
 func (s *LoggingInterfaceNilSuite) TearDownTest() {
-	assert.Nil(s.T(), logging.LI)
+	assert.Nil(s.T(), logging.I)
 }
 
 func (s *LoggingInterfaceNilSuite) TestInterfaceShutdown() {
@@ -66,7 +67,7 @@ type LoggingInterfaceSuite struct {
 func (s *LoggingInterfaceSuite) SetupSuite() {
 	s.filename = "temp.log"
 	assert.NotPanics(s.T(), func() { logging.Setup(s.filename, false) })
-	assert.NotNil(s.T(), logging.LI)
+	assert.NotNil(s.T(), logging.I)
 }
 
 func (s *LoggingInterfaceSuite) TearDownSuite() {

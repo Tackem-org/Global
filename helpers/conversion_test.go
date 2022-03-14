@@ -2,6 +2,7 @@ package helpers_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/Tackem-org/Global/helpers"
 	"github.com/stretchr/testify/assert"
@@ -12,18 +13,9 @@ func TestIntSliceToStringSlice(t *testing.T) {
 		input    []int
 		expected []string
 	}{
-		{
-			input:    []int{},
-			expected: []string{},
-		},
-		{
-			input:    []int{1},
-			expected: []string{"1"},
-		},
-		{
-			input:    []int{1, 2},
-			expected: []string{"1", "2"},
-		},
+		{[]int{}, []string{}},
+		{[]int{1}, []string{"1"}},
+		{[]int{1, 2}, []string{"1", "2"}},
 	}
 
 	for _, test := range tests {
@@ -38,18 +30,9 @@ func TestStringSliceToIntSlice(t *testing.T) {
 		input    []string
 		expected []int
 	}{
-		{
-			input:    []string{},
-			expected: []int{},
-		},
-		{
-			input:    []string{"1"},
-			expected: []int{1},
-		},
-		{
-			input:    []string{"1", "2"},
-			expected: []int{1, 2},
-		},
+		{[]string{}, []int{}},
+		{[]string{"1"}, []int{1}},
+		{[]string{"1", "2"}, []int{1, 2}},
 	}
 
 	for _, test := range tests {
@@ -64,18 +47,9 @@ func TestInterfaceSliceToStringSlice(t *testing.T) {
 		input    []interface{}
 		expected []string
 	}{
-		{
-			input:    []interface{}{},
-			expected: []string{},
-		},
-		{
-			input:    []interface{}{1},
-			expected: []string{"1"},
-		},
-		{
-			input:    []interface{}{1, 2},
-			expected: []string{"1", "2"},
-		},
+		{[]interface{}{}, []string{}},
+		{[]interface{}{1}, []string{"1"}},
+		{[]interface{}{1, 2}, []string{"1", "2"}},
 	}
 
 	for _, test := range tests {
@@ -91,21 +65,9 @@ func TestInterfaceSliceToIntSlice(t *testing.T) {
 		expected []int
 		pass     bool
 	}{
-		{
-			input:    []interface{}{},
-			expected: []int{},
-			pass:     true,
-		},
-		{
-			input:    []interface{}{"1"},
-			expected: []int{1},
-			pass:     true,
-		},
-		{
-			input:    []interface{}{"1", "2"},
-			expected: []int{1, 2},
-			pass:     true,
-		},
+		{[]interface{}{}, []int{}, true},
+		{[]interface{}{"1"}, []int{1}, true},
+		{[]interface{}{"1", "2"}, []int{1, 2}, true},
 		{
 			input: []interface{}{"string"},
 			pass:  false,
@@ -134,16 +96,8 @@ func TestStringToIntSlice(t *testing.T) {
 		expected []int
 		pass     bool
 	}{
-		{
-			input:    "1",
-			expected: []int{1},
-			pass:     true,
-		},
-		{
-			input:    "1,2",
-			expected: []int{1, 2},
-			pass:     true,
-		},
+		{"1", []int{1}, true},
+		{"1,2", []int{1, 2}, true},
 		{
 			input: "",
 			pass:  false,
@@ -178,44 +132,15 @@ func TestStringToStringSlice(t *testing.T) {
 	tests := []struct {
 		input    string
 		expected []string
-		pass     bool
 	}{
-		{
-			input:    "1",
-			expected: []string{"1"},
-			pass:     true,
-		},
-		{
-			input:    "1,2",
-			expected: []string{"1", "2"},
-			pass:     true,
-		},
-		{
-			input:    "test",
-			expected: []string{"test"},
-			pass:     true,
-		},
-		{
-			input:    "test,another",
-			expected: []string{"test", "another"},
-			pass:     true,
-		},
-		{
-			input:    "",
-			expected: []string{""},
-		},
-		{
-			input:    "string",
-			expected: []string{"string"},
-		},
-		{
-			input:    "2.2",
-			expected: []string{"2.2"},
-		},
-		{
-			input:    "string,1",
-			expected: []string{"string", "1"},
-		},
+		{"1", []string{"1"}},
+		{"1,2", []string{"1", "2"}},
+		{"test", []string{"test"}},
+		{"test,another", []string{"test", "another"}},
+		{"", []string{""}},
+		{"string", []string{"string"}},
+		{"2.2", []string{"2.2"}},
+		{"string,1", []string{"string", "1"}},
 	}
 
 	for _, test := range tests {
@@ -225,8 +150,6 @@ func TestStringToStringSlice(t *testing.T) {
 
 }
 
-//TODO WORKING DOWN FROM HERE AND TEST ALL THEN LOCKER THEN WORK DOWN
-// will need to expand tests once I have ints converted in helper
 func TestStringToStringMap(t *testing.T) {
 
 	tests := []struct {
@@ -234,11 +157,7 @@ func TestStringToStringMap(t *testing.T) {
 		expected map[string]interface{}
 		pass     bool
 	}{
-		{
-			input:    `{"Test": 1.1, "Test2": "test"}`,
-			expected: map[string]interface{}{"Test": 1.1, "Test2": "test"},
-			pass:     true,
-		},
+		{`{"int":1, "float":1.1, "string": "test"}`, map[string]interface{}{"int": 1, "float": 1.1, "string": "test"}, true},
 		{
 			input: `"Test": 1.1, "Test2": "test"}`,
 			pass:  false,
@@ -266,17 +185,79 @@ func TestStringToStringMap(t *testing.T) {
 
 }
 
-// func TestStringToDuration(t *testing.T) {
-// 	data, err := helpers.StringToDuration("")
+func TestStringToDuration(t *testing.T) {
 
-// }
+	tests := []struct {
+		input    string
+		expected time.Duration
+		pass     bool
+	}{
+		{"5.9", time.Duration(5), true},
+		{"105", time.Duration(105), true},
+		{"1ns", time.Duration(time.Nanosecond), true},
+		{"1us", time.Duration(time.Microsecond), true},
+		{"1ms", time.Duration(time.Millisecond), true},
+		{"1s", time.Duration(time.Second), true},
+		{"1m", time.Duration(time.Minute), true},
+		{"1h", time.Duration(time.Hour), true},
+		{"1d", time.Duration(24 * time.Hour), true},
+		{"1w", time.Duration(7 * 24 * time.Hour), true},
+		{
+			input: "friday",
+			pass:  false,
+		},
+	}
 
-// func TestDurationToString(t *testing.T) {
-// 	data := helpers.DurationToString(time.Duration(100))
+	for _, test := range tests {
+		data, err := helpers.StringToDuration(test.input)
+		if test.pass {
+			assert.Nil(t, err)
+			assert.Equal(t, test.expected, data)
+		} else {
+			assert.Empty(t, data)
+			assert.NotNil(t, err)
+		}
+	}
 
-// }
+}
 
-// func TestMapStringInterfaceToMapStringString(t *testing.T) {
-// 	data := helpers.MapStringInterfaceToMapStringString(map[string]interface{}{})
+func TestDurationToString(t *testing.T) {
+	tests := []struct {
+		input    time.Duration
+		expected string
+	}{
+		{time.Duration(time.Nanosecond), "1ns"},
+		{time.Duration(time.Microsecond), "1µs"},
+		{time.Duration(time.Millisecond), "1ms"},
+		{time.Duration(time.Second), "1s"},
+		{time.Duration(time.Minute), "1m0s"},
+		{time.Duration(time.Hour), "1h0m0s"},
+		{time.Duration(24 * time.Hour), "1d0h0m0s"},
+		{time.Duration(7 * 24 * time.Hour), "1w0d0h0m0s"},
+	}
+	for _, test := range tests {
+		data := helpers.DurationToString(test.input)
+		assert.Equal(t, test.expected, data)
+	}
 
-// }
+}
+
+func TestMapStringInterfaceToMapStringString(t *testing.T) {
+	tests := []struct {
+		input    map[string]interface{}
+		expected map[string]string
+	}{
+		{
+			map[string]interface{}{}, map[string]string{},
+		},
+		{
+			map[string]interface{}{"a": "text", "b": 1, "c": 2.2}, map[string]string{"a": "text", "b": "1", "c": "2.2"},
+		},
+	}
+
+	for _, test := range tests {
+		data := helpers.MapStringInterfaceToMapStringString(test.input)
+		assert.Equal(t, test.expected, data)
+	}
+
+}

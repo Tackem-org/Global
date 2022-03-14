@@ -27,14 +27,7 @@ func Setup(wg *sync.WaitGroup, webEnabled bool) {
 
 	wg.Add(1)
 	go func() {
-		listen, err := setupData.FreeTCPPort()
-		if err != nil {
-			logging.Fatal("GRPC Error: %s", err.Error())
-		}
-		if listen == nil {
-			logging.Fatal("GRPC Error NO TCP LISTENER")
-		}
-		if err := server.Serve(listen); err != nil {
+		if err := server.Serve(setupData.FreeTCPPort()); err != nil {
 			logging.Fatal("GRPC Error CANNOT SERVER ON LISTENER: %s", err.Error())
 		}
 	}()

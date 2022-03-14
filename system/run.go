@@ -42,6 +42,7 @@ func Run(d *setupData.SetupData) {
 
 	os.Exit(0)
 }
+
 func startup() {
 	channels.Setup()
 	masterData.Setup()

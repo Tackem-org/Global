@@ -78,7 +78,7 @@ type SocketItem struct {
 	Call              SocketFunc
 }
 
-func FreeTCPPort() (net.Listener, error) {
+func FreeTCPPort() net.Listener {
 	mu.Lock()
 	defer mu.Unlock()
 	bind := ""
@@ -86,9 +86,8 @@ func FreeTCPPort() (net.Listener, error) {
 		bind = val
 	}
 	for {
-		ln, err := net.Listen("tcp", fmt.Sprintf("%s:%d", bind, Port))
-		if err == nil {
-			return ln, nil
+		if ln, err := net.Listen("tcp", fmt.Sprintf("%s:%d", bind, Port)); err == nil {
+			return ln
 		}
 		Port++
 	}

@@ -20,9 +20,9 @@ func makeWebRequest(in *pb.PageRequest) *structs.WebRequest {
 		Method:   in.Method,
 	}
 
-	json.Unmarshal([]byte(in.QueryParamsJson), &webRequest.QueryParams)
-	json.Unmarshal([]byte(in.PostJson), &webRequest.Post)
-	json.Unmarshal([]byte(in.PathParamsJson), &webRequest.PathVariables)
+	json.Unmarshal([]byte(in.QueryParamsJson), &webRequest.QueryParams)  //TODO Change this to helper.StringToStringMap
+	json.Unmarshal([]byte(in.PostJson), &webRequest.Post)                //TODO Change this to helper.StringToStringMap
+	json.Unmarshal([]byte(in.PathParamsJson), &webRequest.PathVariables) //TODO Change this to helper.StringToStringMap
 
 	return &webRequest
 }

@@ -132,6 +132,7 @@ func GetString(key string) (string, error) {
 	return response.GetValue(), nil
 }
 
+//TODO CHANGE WITH NEW FUNC BELLOW AFTER TESTED
 func GetStringMap(key string) (map[string]interface{}, error) {
 	r := map[string]interface{}{}
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
@@ -144,6 +145,20 @@ func GetStringMap(key string) (map[string]interface{}, error) {
 	}
 	return r, nil
 }
+
+//NEW
+// func GetStringMap(key string) (map[string]interface{}, error) {
+
+// 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
+// 	if err != nil {
+// 		return map[string]interface{}{}, err
+// 	}
+// 	r, err := helpers.StringToStringMap(response.Value)
+// 	if err != nil {
+// 		return map[string]interface{}{}, err
+// 	}
+// 	return r, nil
+// }
 
 func GetStringMapString(key string) (map[string]string, error) {
 	r := map[string]string{}

@@ -65,20 +65,30 @@ func StringToStringSlice(in string) []string {
 	return out
 }
 
-//TODO JSON.Unmarshal makes all numbers floats by default Make some way of going through this and converting them
-//to there correct formats
-//You'll need to then find anywhere using this and fix it.
 func StringToStringMap(in string) (map[string]interface{}, error) {
 	out := map[string]interface{}{}
 	err := json.Unmarshal([]byte(in), &out)
-	return out, err
+	if err != nil {
+		return map[string]interface{}{}, err
+	}
+
+	for key, val := range out {
+		switch x := val.(type) {
+		default:
+			continue
+		case float64:
+			if i, err := strconv.Atoi(fmt.Sprintf("%.0f", x)); err == nil && float64(i) == x {
+				out[key] = i
+			}
+		}
+	}
+
+	return out, nil
 }
 
 func StringToDuration(in string) (time.Duration, error) {
 	if f, err := strconv.ParseFloat(in, 64); err == nil {
 		return time.Duration(f), nil
-	} else if i, err := strconv.Atoi(in); err == nil {
-		return time.Duration(i), nil
 	} else if d, err := str2duration.ParseDuration(in); err == nil {
 		return d, nil
 	}

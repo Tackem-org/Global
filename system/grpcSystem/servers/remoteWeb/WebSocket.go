@@ -13,7 +13,7 @@ import (
 
 func (r *RemoteWebServer) WebSocket(ctx context.Context, in *pb.WebSocketRequest) (*pb.WebSocketResponse, error) {
 	var d map[string]interface{}
-	json.Unmarshal([]byte(in.DataJson), &d)
+	json.Unmarshal([]byte(in.DataJson), &d) //TODO Change this to helper.StringToStringMap
 
 	webSocketRequest := structs.SocketRequest{
 		Command: in.Command,
