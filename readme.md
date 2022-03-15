@@ -4,6 +4,7 @@ Global Features for Tackem
 - concurrency RWMUTEX
 - TESTING
   -config section needs a mock
+  - <http://www.inanzzz.com/index.php/post/w9qr/unit-testing-golang-grpc-client-and-server-application-with-bufconn-package>
 
 - while adding all tests make sure:
   - any access to a service checks if its running and active and does the right action for where it is.

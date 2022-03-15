@@ -8,7 +8,6 @@ import (
 	"sync"
 
 	"github.com/Tackem-org/Global/helpers"
-	"github.com/Tackem-org/Global/system/setupData"
 )
 
 type Infostruct struct {
@@ -24,41 +23,71 @@ var (
 )
 
 const (
-	defaultURL  string = "127.0.0.1"
-	defaultPort uint32 = 50000
+	DefaultURL  string = "127.0.0.1"
+	DefaultPort uint32 = 50000
 )
 
-//TODO Split this down for better testing somehow then test
-func Setup() {
+func Setup(masterConf string) bool {
 	setupOnce.Do(func() {
 		UP.Down()
-		if file, err := ioutil.ReadFile(setupData.Data.MasterConf); err == nil {
-			_ = json.Unmarshal([]byte(file), &Info)
-			return
-		}
-
-		if val, present := os.LookupEnv("URL"); present {
-			Info.URL = val
-		} else {
-			Info.URL = defaultURL
-		}
-		if val, present := os.LookupEnv("PORT"); present {
-			p, errp := strconv.Atoi(val)
-			if errp != nil {
-				Info.Port = defaultPort
-			} else {
-				Info.Port = uint32(p)
-			}
-		} else {
-			Info.Port = defaultPort
-		}
-		if val, present := os.LookupEnv("REGKEY"); present {
-			Info.RegistrationKey = val
-		}
-
-		file, _ := json.MarshalIndent(Info, "", " ")
-		_ = ioutil.WriteFile(setupData.Data.MasterConf, file, 0644)
-
 	})
 
+	Info.URL = DefaultURL
+	Info.Port = DefaultPort
+	if grabFromFile(masterConf) {
+		return true
+	}
+
+	if grabFromEnv() {
+		return saveToFile(masterConf)
+	}
+	return false
+}
+
+func grabFromFile(masterConf string) bool {
+	if masterConf == "" {
+		return false
+	}
+
+	if file, err := ioutil.ReadFile(masterConf); err == nil {
+		err = json.Unmarshal([]byte(file), &Info)
+		if err == nil {
+			return true
+		}
+	}
+	return false
+}
+
+func grabFromEnv() bool {
+	urlVal, urlPresent := os.LookupEnv("URL")
+	portVal, portPresent := os.LookupEnv("PORT")
+	keyVal, keyPresent := os.LookupEnv("REGKEY")
+
+	if !keyPresent {
+		return false
+	}
+	Info.RegistrationKey = keyVal
+
+	if urlPresent {
+		Info.URL = urlVal
+	}
+	if portPresent {
+		p, errp := strconv.Atoi(portVal)
+		if errp == nil {
+			Info.Port = uint32(p)
+		}
+	}
+
+	os.Unsetenv("REGKEY")
+	os.Unsetenv("URL")
+	os.Unsetenv("PORT")
+	return true
+}
+
+func saveToFile(masterConf string) bool {
+	if masterConf == "" {
+		return false
+	}
+	file, _ := json.MarshalIndent(Info, "", " ")
+	return ioutil.WriteFile(masterConf, file, 0644) == nil
 }

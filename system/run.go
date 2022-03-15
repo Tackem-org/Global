@@ -28,13 +28,15 @@ func Run(d *setupData.SetupData) {
 	if setupData.Data.MainSetup != nil {
 		setupData.Data.MainSetup()
 	}
-	startup()
-	logging.Info("Started Tackem %s System", d.Name())
 
-	mainLoop()
+	if startup() {
+		logging.Info("Started Tackem %s System", d.Name())
+		mainLoop()
 
-	logging.Info("Stopping Tackem %s System", d.Name())
-	Shutdown(true)
+		logging.Info("Stopping Tackem %s System", d.Name())
+		Shutdown(true)
+	}
+
 	if setupData.Data.MainShutdown != nil {
 		setupData.Data.MainShutdown()
 	}
@@ -43,9 +45,12 @@ func Run(d *setupData.SetupData) {
 	os.Exit(0)
 }
 
-func startup() {
+func startup() bool {
 	channels.Setup()
-	masterData.Setup()
+	if !masterData.Setup(setupData.Data.MasterConf) {
+		logging.Fatal("NO REGISTRATION KEY TO USE UNABLE TO START")
+		return false
+	}
 
 	logging.Info("Setup GRPC Service")
 	servers.Setup(WG, len(setupData.Data.AdminPaths)+len(setupData.Data.Paths)+len(setupData.Data.Sockets) > 0)
@@ -62,6 +67,7 @@ func startup() {
 		logging.Info("System Active")
 		setupData.Active = true
 	}
+	return true
 }
 
 func mainLoop() {

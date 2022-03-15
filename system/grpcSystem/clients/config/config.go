@@ -11,8 +11,6 @@ var (
 	I ConfigClientInterface
 )
 
-type ConfigClient struct{}
-
 func Get(request *pb.GetConfigRequest) (*pb.GetConfigResponse, error) {
 	if I == nil {
 		I = &ConfigClient{}
