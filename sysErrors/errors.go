@@ -2,6 +2,12 @@ package sysErrors
 
 import "fmt"
 
+type MasterDownError struct{ err string }
+
+func (e *MasterDownError) Error() string {
+	return fmt.Sprintf("master is down %s", e.err)
+}
+
 type ServiceDownError struct{ err string }
 
 func (e *ServiceDownError) Error() string {

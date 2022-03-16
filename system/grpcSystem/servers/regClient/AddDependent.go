@@ -20,7 +20,7 @@ func (r *RegClientServer) AddDependent(ctx context.Context, in *pb.AddDependentR
 		ServiceID:   in.Id,
 		BaseID:      in.BaseId,
 		Key:         in.Key,
-		IPAddress:   in.IpAddress,
+		URL:         in.Url,
 		Port:        in.Port,
 		SingleRun:   in.SingleRun,
 	})

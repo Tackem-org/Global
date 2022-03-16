@@ -1,33 +1,13 @@
 package dependentServices
 
 import (
-	"fmt"
 	"sync"
-
-	"github.com/Tackem-org/Global/helpers"
 )
 
 var (
 	mu sync.RWMutex
 	ds []*DependentService
 )
-
-type DependentService struct {
-	UP          helpers.Locker
-	setupOnce   sync.Once
-	ServiceName string
-	ServiceType string
-	ServiceID   uint64
-	BaseID      string
-	Key         string
-	IPAddress   string
-	Port        uint32
-	SingleRun   bool
-}
-
-func (ds *DependentService) setup() {
-	ds.UP.Label = fmt.Sprintf("[Dependent] %s %s", ds.ServiceType, ds.ServiceName)
-}
 
 func GetActive() []*DependentService {
 	mu.RLock()

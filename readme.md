@@ -5,6 +5,10 @@ Global Features for Tackem
 - TESTING
   -config section needs a mock
   - <http://www.inanzzz.com/index.php/post/w9qr/unit-testing-golang-grpc-client-and-server-application-with-bufconn-package>
+  - <https://stackoverflow.com/questions/42102496/testing-a-grpc-service>
+  - <https://songrgg.github.io/programming/grpc-go-client-performance-test/>
+  - <https://blog.bullgare.com/2019/05/golang-testing-http-and-grpc-servers/>
+  - <https://medium.com/testvagrant/automating-grpc-api-tests-cfee49d10384>
 
 - while adding all tests make sure:
   - any access to a service checks if its running and active and does the right action for where it is.

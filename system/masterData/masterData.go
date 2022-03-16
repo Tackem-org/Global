@@ -10,12 +10,6 @@ import (
 	"github.com/Tackem-org/Global/helpers"
 )
 
-type Infostruct struct {
-	URL             string
-	Port            uint32
-	RegistrationKey string
-}
-
 var (
 	setupOnce sync.Once
 	UP        helpers.Locker = helpers.Locker{Label: "Master"}

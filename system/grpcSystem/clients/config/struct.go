@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/Tackem-org/Global/system/grpcSystem/connections"
+	"github.com/Tackem-org/Global/system/grpcSystem/headers"
 	pb "github.com/Tackem-org/Proto/pb/config"
 
 	"google.golang.org/grpc"
@@ -19,7 +20,7 @@ func (cc *ConfigClient) Set(request *pb.SetConfigRequest) (*pb.SetConfigResponse
 	}
 	defer conn.Close()
 	client := pb.NewConfigClient(conn)
-	header, ctx, cancel := connections.MasterHeader()
+	header, ctx, cancel := headers.MasterHeader()
 	defer cancel()
 	return client.Set(ctx, request, grpc.Header(&header))
 }
@@ -35,7 +36,7 @@ func (cc *ConfigClient) Get(request *pb.GetConfigRequest) (*pb.GetConfigResponse
 	}
 	defer conn.Close()
 	client := pb.NewConfigClient(conn)
-	header, ctx, cancel := connections.MasterHeader()
+	header, ctx, cancel := headers.MasterHeader()
 	defer cancel()
 	return client.Get(ctx, request, grpc.Header(&header))
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRequiredServiceAddAndRemove(t *testing.T) {
+func TestRequiredServicesAddAndRemove(t *testing.T) {
 	r := &requiredServices.RequiredService{
 		ServiceName: "Test1",
 		ServiceType: "Test1",
@@ -19,7 +19,7 @@ func TestRequiredServiceAddAndRemove(t *testing.T) {
 	assert.False(t, requiredServices.Remove(r.BaseID), "Removing the service when already removed")
 }
 
-func TestRequiredServiceUPAndDown(t *testing.T) {
+func TestRequiredServicesUPAndDown(t *testing.T) {
 	r := &requiredServices.RequiredService{
 		ServiceName: "Test2",
 		ServiceType: "Test2",
@@ -39,7 +39,7 @@ func TestRequiredServiceUPAndDown(t *testing.T) {
 
 }
 
-func TestRequiredServiceGet(t *testing.T) {
+func TestRequiredServicesGet(t *testing.T) {
 	r := &requiredServices.RequiredService{
 		ServiceName: "Test3",
 		ServiceType: "Test3",
@@ -53,7 +53,7 @@ func TestRequiredServiceGet(t *testing.T) {
 	assert.True(t, requiredServices.Remove(r.BaseID), "Removing The Service")
 }
 
-func TestRequiredServiceGetByBaseID(t *testing.T) {
+func TestRequiredServicesGetByBaseID(t *testing.T) {
 	r := &requiredServices.RequiredService{
 		ServiceName: "Test4",
 		ServiceType: "Test4",

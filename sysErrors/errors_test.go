@@ -7,6 +7,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMasterDownError(t *testing.T) {
+	sd := sysErrors.MasterDownError{}
+	assert.Error(t, &sd)
+	assert.Equal(t, "master is down ", sd.Error())
+}
+
 func TestSystemDownError(t *testing.T) {
 	sd := sysErrors.ServiceDownError{}
 	assert.Error(t, &sd)
