@@ -7,9 +7,7 @@ type ConfigClientInterface interface {
 	Set(request *pb.SetConfigRequest) (*pb.SetConfigResponse, error)
 }
 
-var (
-	I ConfigClientInterface
-)
+var I ConfigClientInterface
 
 func Get(request *pb.GetConfigRequest) (*pb.GetConfigResponse, error) {
 	if I == nil {

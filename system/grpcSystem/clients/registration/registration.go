@@ -10,9 +10,7 @@ type RegistrationClientInterface interface {
 	Register(request *pb.RegisterRequest) (*pb.RegisterResponse, error)
 }
 
-var (
-	I RegistrationClientInterface
-)
+var I RegistrationClientInterface
 
 func Activate(request *pb.ActivateRequest) (*pb.ActivateResponse, error) {
 	if I == nil {
