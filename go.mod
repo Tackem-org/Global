@@ -1,6 +1,6 @@
 module github.com/Tackem-org/Global
 
-go 1.17
+go 1.18
 
 replace github.com/Tackem-org/Proto => ../Proto
 

@@ -9,15 +9,20 @@ import (
 	"github.com/Tackem-org/Global/channels"
 	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/system/grpcSystem/clients/registration"
-	"github.com/Tackem-org/Global/system/grpcSystem/servers"
+	"github.com/Tackem-org/Global/system/grpcSystem/servers/regClient"
+	"github.com/Tackem-org/Global/system/grpcSystem/servers/remoteWeb"
 	"github.com/Tackem-org/Global/system/masterData"
 	"github.com/Tackem-org/Global/system/setupData"
+	"google.golang.org/grpc"
 
-	pb "github.com/Tackem-org/Proto/pb/registration"
+	pbrc "github.com/Tackem-org/Proto/pb/regclient"
+	pbr "github.com/Tackem-org/Proto/pb/registration"
+	pbrw "github.com/Tackem-org/Proto/pb/remoteweb"
 )
 
 var (
-	WG *sync.WaitGroup = &sync.WaitGroup{}
+	wg     *sync.WaitGroup = &sync.WaitGroup{}
+	server *grpc.Server
 )
 
 func Run(d *setupData.SetupData) {
@@ -53,12 +58,34 @@ func startup() bool {
 	}
 
 	logging.Info("Setup GRPC Service")
-	servers.Setup(WG, len(setupData.Data.AdminPaths)+len(setupData.Data.Paths)+len(setupData.Data.Sockets) > 0)
+	server = grpc.NewServer()
+	pbrc.RegisterRegClientServer(server, &regClient.RegClientServer{})
+	if len(setupData.Data.AdminPaths)+len(setupData.Data.Paths)+len(setupData.Data.Sockets) > 0 {
+		pbrw.RegisterRemoteWebServer(server, &remoteWeb.RemoteWebServer{})
+	}
+	setupData.Data.GRPCSystems(server)
+
+	wg.Add(1)
+	go func() {
+		if err := server.Serve(setupData.FreeTCPPort()); err != nil {
+			logging.Fatal("GRPC Error CANNOT SERVER ON LISTENER: %s", err.Error())
+		}
+	}()
 
 	waitTime := time.Duration(5)
 	for !connect(setupData.Data.RegisterProto()) {
-		logging.Info("Master System Is Down Waiting for %d seconds before retrying", waitTime)
-		time.Sleep(waitTime * time.Second)
+		select {
+		case <-channels.Root.TermChan:
+			fmt.Print("\n")
+			logging.Info("SIGTERM received. Shutdown process initiated")
+			return false
+		case <-channels.Root.Shutdown:
+			logging.Info("Shutdown Command received. Shutdown process initiated")
+			return false
+		default:
+			logging.Info("Master System Is Down Waiting for %d seconds before retrying", waitTime)
+			time.Sleep(waitTime * time.Second)
+		}
 	}
 
 	masterData.UP.Up()
@@ -103,23 +130,24 @@ func mainLoop() {
 }
 
 func Shutdown(registered bool) {
-	servers.Shutdown(WG)
+	server.Stop()
+	wg.Done()
+	logging.Info("Shutdown gRPC Server")
+
 	if registered && masterData.UP.Check() {
-		WG.Add(1)
+		wg.Add(1)
 		logging.Info("Disconnect: %t", masterData.UP.Check())
-		disconnectResponse, err := registration.Disconnect(&pb.DisconnectRequest{
-			BaseId: setupData.BaseID,
-		})
+		disconnectResponse, err := registration.Disconnect(&pbr.DisconnectRequest{})
 		if err != nil || !disconnectResponse.Success {
 			logging.Warning("failed to disconnect service from master: %s", disconnectResponse.ErrorMessage)
 		}
 		logging.Info("Disconnect Done")
-		WG.Done()
+		wg.Done()
 	}
-	WG.Wait()
+	wg.Wait()
 }
 
-func connect(request *pb.RegisterRequest) bool {
+func connect(request *pbr.RegisterRequest) bool {
 	response, err := registration.Register(request)
 	if err != nil {
 		logging.Error(err.Error())
