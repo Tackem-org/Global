@@ -2,9 +2,7 @@ package masterData
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"net"
 	"os"
 	"strconv"
 	"sync"
@@ -87,18 +85,4 @@ func saveToFile(masterConf string) bool {
 	}
 	file, _ := json.MarshalIndent(Info, "", " ")
 	return ioutil.WriteFile(masterConf, file, 0644) == nil
-}
-
-func GrabIPFromURL(in string) string {
-	if addr := net.ParseIP(in); addr != nil {
-		return in
-	}
-
-	addr, err := net.LookupIP(in)
-
-	if err == nil && len(addr) > 0 {
-		return fmt.Sprint(addr[0])
-	}
-
-	return ""
 }

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Tackem-org/Global/channels"
+	"github.com/Tackem-org/Global/helpers"
 	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/system/grpcSystem/clients/registration"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/regClient"
@@ -158,7 +159,7 @@ func connect(request *pbr.RegisterRequest) bool {
 
 		masterData.ConnectionInfo = masterData.ConnectionInfostruct{
 			Key: response.Key,
-			IP:  masterData.GrabIPFromURL(masterData.Info.URL),
+			IP:  helpers.GrabIPFromURL(masterData.Info.URL),
 		}
 		return true
 	}
