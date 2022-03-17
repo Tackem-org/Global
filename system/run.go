@@ -155,7 +155,11 @@ func connect(request *pbr.RegisterRequest) bool {
 	if response.Success {
 		setupData.BaseID = response.BaseId
 		setupData.ServiceID = response.ServiceId
-		setupData.Key = response.Key
+
+		masterData.ConnectionInfo = masterData.ConnectionInfostruct{
+			Key: response.Key,
+			IP:  masterData.GrabIPFromURL(masterData.Info.URL),
+		}
 		return true
 	}
 	logging.Error(response.ErrorMessage)

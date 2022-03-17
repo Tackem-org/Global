@@ -19,7 +19,6 @@ var (
 	Active    bool = false
 	BaseID    string
 	ServiceID uint64
-	Key       string
 	Port      uint32 = 50001
 )
 

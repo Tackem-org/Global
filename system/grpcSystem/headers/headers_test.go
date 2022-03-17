@@ -25,7 +25,7 @@ func TestMasterHeader(t *testing.T) {
 	header, _, _ := headers.MasterHeader()
 	assert.IsType(t, metadata.MD{}, header)
 	assert.Equal(t, setupData.BaseID, header.Get("baseID")[0])
-	assert.Equal(t, setupData.Key, header.Get("key")[0])
+	assert.Equal(t, masterData.ConnectionInfo.Key, header.Get("key")[0])
 }
 
 func TestRegistrationHeader(t *testing.T) {

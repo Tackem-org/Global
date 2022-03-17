@@ -3,6 +3,7 @@ package regClient
 import (
 	"context"
 
+	"github.com/Tackem-org/Global/system/masterData"
 	"github.com/Tackem-org/Global/system/setupData"
 	"google.golang.org/grpc/metadata"
 )
@@ -29,7 +30,7 @@ func checkKey(ctx context.Context) (bool, string) {
 		return false, "key is blank"
 	}
 
-	if setupData.BaseID == baseID && setupData.Key == key {
+	if setupData.BaseID == baseID && masterData.ConnectionInfo.Key == key {
 
 		return true, ""
 	}

@@ -19,7 +19,7 @@ func Header(data map[string]string) (metadata.MD, context.Context, context.Cance
 }
 
 func MasterHeader() (metadata.MD, context.Context, context.CancelFunc) {
-	return Header(map[string]string{"baseID": setupData.BaseID, "key": setupData.Key})
+	return Header(map[string]string{"baseID": setupData.BaseID, "key": masterData.ConnectionInfo.Key})
 }
 
 func RegistrationHeader() (metadata.MD, context.Context, context.CancelFunc) {
