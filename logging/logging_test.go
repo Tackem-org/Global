@@ -11,7 +11,7 @@ import (
 func TestLoggingInterfaceNilInterface(t *testing.T) {
 	logging.I = nil
 	assert.Nil(t, logging.I)
-	assert.NotPanics(t, func() { assert.Nil(t, logging.CustomLogger("Test")) })
+	assert.Nil(t, logging.CustomLogger("Test"))
 	assert.NotPanics(t, func() { logging.Custom("Test", "Test") })
 	assert.NotPanics(t, func() { logging.Info("Test") })
 	assert.NotPanics(t, func() { logging.Warning("Test") })
@@ -26,7 +26,7 @@ func TestLoggingInterfaceSetInterface(t *testing.T) {
 	filename := "temp.log"
 	assert.NotPanics(t, func() { logging.Setup(filename, false) })
 	assert.NotNil(t, logging.I)
-	assert.NotPanics(t, func() { assert.NotNil(t, logging.CustomLogger("Test")) })
+	assert.NotNil(t, logging.CustomLogger("Test"))
 	assert.NotPanics(t, func() { logging.Custom("Test", "Test") })
 	assert.NotPanics(t, func() { logging.Info("Test") })
 	assert.NotPanics(t, func() { logging.Warning("Test") })
