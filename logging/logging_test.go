@@ -6,102 +6,35 @@ import (
 
 	"github.com/Tackem-org/Global/logging"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 )
 
-func TestLoggingInterface(t *testing.T) {
-	suite.Run(t, new(LoggingInterfaceNilSuite))
-	suite.Run(t, new(LoggingInterfaceSuite))
-}
-
-type LoggingInterfaceNilSuite struct {
-	suite.Suite
-}
-
-func (s *LoggingInterfaceNilSuite) SetupTest() {
+func TestLoggingInterfaceNilInterface(t *testing.T) {
 	logging.I = nil
-	assert.Nil(s.T(), logging.I)
+	assert.Nil(t, logging.I)
+	assert.NotPanics(t, func() { assert.Nil(t, logging.CustomLogger("Test")) })
+	assert.NotPanics(t, func() { logging.Custom("Test", "Test") })
+	assert.NotPanics(t, func() { logging.Info("Test") })
+	assert.NotPanics(t, func() { logging.Warning("Test") })
+	assert.NotPanics(t, func() { logging.Error("Test") })
+	assert.NotPanics(t, func() { logging.Todo("Test") })
+	assert.NotPanics(t, func() { logging.Fatal("Test") })
+	assert.NotPanics(t, func() { logging.Shutdown() })
+	assert.Nil(t, logging.I)
 }
 
-func (s *LoggingInterfaceNilSuite) TearDownTest() {
-	assert.Nil(s.T(), logging.I)
-}
-
-func (s *LoggingInterfaceNilSuite) TestInterfaceShutdown() {
-	assert.NotPanics(s.T(), func() { logging.Shutdown() })
-}
-func (s *LoggingInterfaceNilSuite) TestInterfaceCustomLogger() {
-	assert.NotPanics(s.T(), func() { assert.Nil(s.T(), logging.CustomLogger("Test")) })
-}
-
-func (s *LoggingInterfaceNilSuite) TestInterfaceCustom() {
-	assert.NotPanics(s.T(), func() { logging.Custom("Test", "Test") })
-
-}
-
-func (s *LoggingInterfaceNilSuite) TestInterfaceInfo() {
-	assert.NotPanics(s.T(), func() { logging.Info("Test") })
-}
-
-func (s *LoggingInterfaceNilSuite) TestInterfaceWarning() {
-	assert.NotPanics(s.T(), func() { logging.Warning("Test") })
-}
-
-func (s *LoggingInterfaceNilSuite) TestInterfaceError() {
-	assert.NotPanics(s.T(), func() { logging.Error("Test") })
-}
-
-func (s *LoggingInterfaceNilSuite) TestInterfaceTodo() {
-	assert.NotPanics(s.T(), func() { logging.Todo("Test") })
-}
-
-func (s *LoggingInterfaceNilSuite) TestInterfaceFatal() {
-	assert.NotPanics(s.T(), func() { logging.Fatal("Test") })
-}
-
-type LoggingInterfaceSuite struct {
-	suite.Suite
-	filename string
-}
-
-func (s *LoggingInterfaceSuite) SetupSuite() {
-	s.filename = "temp.log"
-	assert.NotPanics(s.T(), func() { logging.Setup(s.filename, false) })
-	assert.NotNil(s.T(), logging.I)
-}
-
-func (s *LoggingInterfaceSuite) TearDownSuite() {
-	assert.NotPanics(s.T(), func() { logging.Shutdown() })
-	assert.True(s.T(), exists(s.filename))
-	os.Remove(s.filename)
-	assert.False(s.T(), exists(s.filename))
-}
-
-func (s *LoggingInterfaceSuite) TestInterfaceCustomLogger() {
-	assert.NotPanics(s.T(), func() { assert.NotNil(s.T(), logging.CustomLogger("Test")) })
-}
-
-func (s *LoggingInterfaceSuite) TestInterfaceCustom() {
-	assert.NotPanics(s.T(), func() { logging.Custom("Test", "Test") })
-
-}
-
-func (s *LoggingInterfaceSuite) TestInterfaceInfo() {
-	assert.NotPanics(s.T(), func() { logging.Info("Test") })
-}
-
-func (s *LoggingInterfaceSuite) TestInterfaceWarning() {
-	assert.NotPanics(s.T(), func() { logging.Warning("Test") })
-}
-
-func (s *LoggingInterfaceSuite) TestInterfaceError() {
-	assert.NotPanics(s.T(), func() { logging.Error("Test") })
-}
-
-func (s *LoggingInterfaceSuite) TestInterfaceTodo() {
-	assert.NotPanics(s.T(), func() { logging.Todo("Test") })
-}
-
-func (s *LoggingInterfaceSuite) TestInterfaceFatal() {
-	assert.Panics(s.T(), func() { logging.Fatal("Test") })
+func TestLoggingInterfaceSetInterface(t *testing.T) {
+	filename := "temp.log"
+	assert.NotPanics(t, func() { logging.Setup(filename, false) })
+	assert.NotNil(t, logging.I)
+	assert.NotPanics(t, func() { assert.NotNil(t, logging.CustomLogger("Test")) })
+	assert.NotPanics(t, func() { logging.Custom("Test", "Test") })
+	assert.NotPanics(t, func() { logging.Info("Test") })
+	assert.NotPanics(t, func() { logging.Warning("Test") })
+	assert.NotPanics(t, func() { logging.Error("Test") })
+	assert.NotPanics(t, func() { logging.Todo("Test") })
+	assert.Panics(t, func() { logging.Fatal("Test") })
+	assert.NotPanics(t, func() { logging.Shutdown() })
+	assert.True(t, exists(filename))
+	os.Remove(filename)
+	assert.False(t, exists(filename))
 }
