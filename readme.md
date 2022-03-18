@@ -14,6 +14,8 @@ Global Features for Tackem
 - Github Actions
   - <https://github.com/mvdan/github-actions-golang>
   - <https://www.docker.com/blog/docker-golang/>
+- Deeper Linter
+  - <https://github.com/mgechev/revive>
 ## Improvements Where possible
   - any access to a service checks if its running and active and does the right action for where it is.
   - concurrency give as many places locks, make the objets all lockable with rwmutex to read and write lock.

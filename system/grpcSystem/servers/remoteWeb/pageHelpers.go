@@ -10,6 +10,7 @@ import (
 	pb "github.com/Tackem-org/Proto/pb/remoteweb"
 )
 
+//TODO TEST THIS FIRST MAKING SURE TO HANDLE ALL SORTS OF MISSING DATA
 func makeWebRequest(in *pb.PageRequest) *structs.WebRequest {
 
 	user := structs.GetUserData(in.User)
