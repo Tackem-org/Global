@@ -3,6 +3,7 @@ package remoteWeb_test
 import (
 	"errors"
 	"io/fs"
+	iofs "io/fs"
 	"net/http"
 	"testing"
 
@@ -14,28 +15,33 @@ import (
 )
 
 type MockEmbed struct {
-	Files []string
+	Files map[string]*MockFile
 }
 
 func (me *MockEmbed) Open(name string) (fs.File, error) {
-	for _, v := range me.Files {
-		if name == v {
-			return &MockFile{}, nil
-		}
+	if v, ok := me.Files[name]; ok {
+		return v, nil
 	}
 	return nil, errors.New("FAIL")
 }
 
 func (me *MockEmbed) ReadFile(name string) ([]byte, error) {
-	for _, v := range me.Files {
-		if name == v {
-			return []byte("FOUND"), nil
-		}
+	if v, ok := me.Files[name]; ok {
+		return []byte(v.Data), nil
 	}
-	return nil, errors.New("FAIL")
+	if name == "ISE" {
+		return nil, errors.New("FAIL")
+	}
+	return nil, &iofs.PathError{
+		Op:   "TEST",
+		Path: name,
+		Err:  errors.New("test"),
+	}
 }
 
-type MockFile struct{}
+type MockFile struct {
+	Data string
+}
 
 func (mf *MockFile) Stat() (fs.FileInfo, error) {
 	return nil, nil
@@ -90,11 +96,11 @@ func TestGetBaseCSSandJS(t *testing.T) {
 		setupData.Data = &setupData.SetupData{
 			ServiceType: test.serviceType,
 			ServiceName: test.serviceName,
-			StaticFS: &MockEmbed{Files: []string{
-				"css/found.css",
-				"js/found.js",
-				"css/test2.css",
-				"js/test3.js",
+			StaticFS: &MockEmbed{Files: map[string]*MockFile{
+				"css/found.css": {},
+				"js/found.js":   {},
+				"css/test2.css": {},
+				"js/test3.js":   {},
 			}},
 		}
 
@@ -108,8 +114,8 @@ func TestPageFile(t *testing.T) {
 	setupData.Data = &setupData.SetupData{
 		ServiceType: "service",
 		ServiceName: "test",
-		StaticFS: &MockEmbed{Files: []string{
-			"pages/found.html",
+		StaticFS: &MockEmbed{Files: map[string]*MockFile{
+			"pages/found.html": {"TEST"},
 		}},
 	}
 

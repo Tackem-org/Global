@@ -20,7 +20,6 @@ func (r *RemoteWebServer) File(ctx context.Context, in *pb.FileRequest) (*pb.Fil
 	}
 	data, err := setupData.Data.StaticFS.ReadFile(in.Path)
 	if err != nil {
-		logging.Error("[GRPC Remote Web System File Request] %s:%s", in.GetPath(), err.Error())
 		sc := http.StatusInternalServerError
 		em := "Internal Error"
 		switch err.(type) {
@@ -33,6 +32,7 @@ func (r *RemoteWebServer) File(ctx context.Context, in *pb.FileRequest) (*pb.Fil
 				em = "File Not Found"
 			}
 		default:
+			logging.Error("[GRPC Remote Web System File Request] %s:%s", in.Path, err.Error())
 		}
 
 		return &pb.FileResponse{

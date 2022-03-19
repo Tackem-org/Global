@@ -20,7 +20,7 @@ func (r *RemoteWebServer) AdminPage(ctx context.Context, in *pb.PageRequest) (*p
 	webRequest := MakeWebRequest(in)
 	path := setupData.Data.GetAdminPath(webRequest.BasePath)
 	if path == nil {
-		logging.Warning("[GRPC Remote Web System Admin Page Request] %s: Not found", in.GetPath())
+		logging.Warning("[GRPC Remote Web System Admin Page Request] %s: Not found", in.Path)
 		return &pb.PageResponse{
 			StatusCode:   http.StatusNotFound,
 			ErrorMessage: "Page Not Found (NIL)",
