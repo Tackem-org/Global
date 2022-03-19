@@ -13,18 +13,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type MockEmbed struct{}
-
-var mockEmbedFiles []string = []string{
-	"css/found.css",
-	"js/found.js",
-	"css/test2.css",
-	"js/test3.js",
-	"pages/found.html",
+type MockEmbed struct {
+	Files []string
 }
 
 func (me *MockEmbed) Open(name string) (fs.File, error) {
-	for _, v := range mockEmbedFiles {
+	for _, v := range me.Files {
 		if name == v {
 			return &MockFile{}, nil
 		}
@@ -33,7 +27,7 @@ func (me *MockEmbed) Open(name string) (fs.File, error) {
 }
 
 func (me *MockEmbed) ReadFile(name string) ([]byte, error) {
-	for _, v := range mockEmbedFiles {
+	for _, v := range me.Files {
 		if name == v {
 			return []byte("FOUND"), nil
 		}
@@ -96,7 +90,12 @@ func TestGetBaseCSSandJS(t *testing.T) {
 		setupData.Data = &setupData.SetupData{
 			ServiceType: test.serviceType,
 			ServiceName: test.serviceName,
-			StaticFS:    &MockEmbed{},
+			StaticFS: &MockEmbed{Files: []string{
+				"css/found.css",
+				"js/found.js",
+				"css/test2.css",
+				"js/test3.js",
+			}},
 		}
 
 		css, js := remoteWeb.GetBaseCSSandJS(test.path)
@@ -109,7 +108,9 @@ func TestPageFile(t *testing.T) {
 	setupData.Data = &setupData.SetupData{
 		ServiceType: "service",
 		ServiceName: "test",
-		StaticFS:    &MockEmbed{},
+		StaticFS: &MockEmbed{Files: []string{
+			"pages/found.html",
+		}},
 	}
 
 	returnData1 := &structs.WebReturn{
@@ -117,7 +118,6 @@ func TestPageFile(t *testing.T) {
 	}
 	in := &pb.PageRequest{}
 	response1 := remoteWeb.PageFile(returnData1, in)
-	assert.NotNil(t, response1)
 	assert.Equal(t, http.StatusInternalServerError, int(response1.StatusCode))
 
 	returnData2 := &structs.WebReturn{
@@ -125,7 +125,6 @@ func TestPageFile(t *testing.T) {
 		FilePath:   "found",
 	}
 	response2 := remoteWeb.PageFile(returnData2, in)
-	assert.NotNil(t, response2)
 	assert.Equal(t, http.StatusOK, int(response2.StatusCode))
 
 }
@@ -153,16 +152,17 @@ func TestMakePageResponse(t *testing.T) {
 		StaticFS:    &MockEmbed{},
 	}
 	response1 := remoteWeb.MakePageResponse(&pb.PageRequest{}, &structs.WebReturn{}, errors.New("TEST"))
-	assert.NotNil(t, response1)
 	assert.Equal(t, http.StatusInternalServerError, int(response1.StatusCode))
 
 	response2 := remoteWeb.MakePageResponse(&pb.PageRequest{}, &structs.WebReturn{StatusCode: http.StatusBadGateway}, nil)
-	assert.NotNil(t, response2)
 	assert.Equal(t, http.StatusBadGateway, int(response2.StatusCode))
 
 	response3 := remoteWeb.MakePageResponse(&pb.PageRequest{}, &structs.WebReturn{StatusCode: http.StatusOK}, nil)
-	assert.NotNil(t, response3)
 	assert.Equal(t, http.StatusInternalServerError, int(response3.StatusCode))
 
-	//TODO Make this do the last two lines
+	response4 := remoteWeb.MakePageResponse(&pb.PageRequest{}, &structs.WebReturn{StatusCode: http.StatusOK, FilePath: "something"}, nil)
+	assert.Equal(t, http.StatusInternalServerError, int(response4.StatusCode))
+
+	response5 := remoteWeb.MakePageResponse(&pb.PageRequest{}, &structs.WebReturn{StatusCode: http.StatusOK, PageString: "something"}, nil)
+	assert.Equal(t, http.StatusOK, int(response5.StatusCode))
 }

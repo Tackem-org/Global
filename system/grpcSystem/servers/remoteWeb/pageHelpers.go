@@ -10,7 +10,6 @@ import (
 	pb "github.com/Tackem-org/Proto/pb/remoteweb"
 )
 
-//TODO TEST THIS FIRST MAKING SURE TO HANDLE ALL SORTS OF MISSING DATAODO THIS IS WHERE I AM IN CODING
 func MakeWebRequest(in *pb.PageRequest) *structs.WebRequest {
 
 	user := structs.GetUserData(in.User)
@@ -83,7 +82,7 @@ func pageFile(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageRespons
 	css, js := getBaseCSSandJS(returnData.FilePath)
 	return &pb.PageResponse{
 		StatusCode:        returnData.StatusCode,
-		TemplateHtml:      string(templateHtml),
+		TemplateHtml:      returnData.FilePath + ":" + string(templateHtml),
 		PageVariablesJson: string(pageData),
 		CustomPageName:    returnData.CustomPageName,
 		CustomCss:         append(css, returnData.CustomCss...),

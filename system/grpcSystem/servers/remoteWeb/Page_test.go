@@ -12,10 +12,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAdminPage(t *testing.T) {
+func TestPage(t *testing.T) {
 	s := remoteWeb.RemoteWebServer{}
 	ctx1 := MakeTestHeader("", "", "")
-	r1, err1 := s.AdminPage(ctx1, &pb.PageRequest{})
+	r1, err1 := s.Page(ctx1, &pb.PageRequest{})
 	assert.Nil(t, err1)
 	assert.Equal(t, uint32(http.StatusInternalServerError), r1.StatusCode)
 	assert.True(t, r1.HideErrorFromUser)
@@ -27,7 +27,7 @@ func TestAdminPage(t *testing.T) {
 
 	setupData.Data = &setupData.SetupData{
 		ServiceType: "service",
-		AdminPaths: []*setupData.AdminPathItem{
+		Paths: []*setupData.PathItem{
 			{
 				Path: "/test",
 				Call: func(in *structs.WebRequest) (*structs.WebReturn, error) {
@@ -42,11 +42,11 @@ func TestAdminPage(t *testing.T) {
 	}
 
 	ctx2 := MakeTestHeader("Test1", masterData.ConnectionInfo.Key, masterData.ConnectionInfo.IP)
-	r2, err2 := s.AdminPage(ctx2, &pb.PageRequest{User: &pb.UserData{IsAdmin: true}})
+	r2, err2 := s.Page(ctx2, &pb.PageRequest{User: &pb.UserData{}})
 	assert.Nil(t, err2)
 	assert.Equal(t, uint32(http.StatusNotFound), r2.StatusCode)
 	ctx3 := MakeTestHeader("Test1", masterData.ConnectionInfo.Key, masterData.ConnectionInfo.IP)
-	r3, err3 := s.AdminPage(ctx3, &pb.PageRequest{BasePath: "/test", User: &pb.UserData{IsAdmin: true}})
+	r3, err3 := s.Page(ctx3, &pb.PageRequest{BasePath: "/test", User: &pb.UserData{}})
 
 	assert.NotNil(t, r3)
 	assert.Nil(t, err3)
