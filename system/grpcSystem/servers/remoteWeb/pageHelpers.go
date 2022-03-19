@@ -10,8 +10,8 @@ import (
 	pb "github.com/Tackem-org/Proto/pb/remoteweb"
 )
 
-//TODO TEST THIS FIRST MAKING SURE TO HANDLE ALL SORTS OF MISSING DATA
-func makeWebRequest(in *pb.PageRequest) *structs.WebRequest {
+//TODO TEST THIS FIRST MAKING SURE TO HANDLE ALL SORTS OF MISSING DATAODO THIS IS WHERE I AM IN CODING
+func MakeWebRequest(in *pb.PageRequest) *structs.WebRequest {
 
 	user := structs.GetUserData(in.User)
 	webRequest := structs.WebRequest{
@@ -28,7 +28,7 @@ func makeWebRequest(in *pb.PageRequest) *structs.WebRequest {
 	return &webRequest
 }
 
-func makePageResponse(in *pb.PageRequest, webReturn *structs.WebReturn, err error) *pb.PageResponse {
+func MakePageResponse(in *pb.PageRequest, webReturn *structs.WebReturn, err error) *pb.PageResponse {
 	if err != nil {
 		logging.Error("[GRPC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
 		return &pb.PageResponse{
@@ -57,15 +57,7 @@ func makePageResponse(in *pb.PageRequest, webReturn *structs.WebReturn, err erro
 }
 
 func pageString(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageResponse {
-	var pageData []byte
-	pageData, err := json.Marshal(returnData.PageData)
-	if err != nil {
-		logging.Error("[GRPC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
-		return &pb.PageResponse{
-			StatusCode:   http.StatusInternalServerError,
-			ErrorMessage: "ERROR WITH THE SYSTEM",
-		}
-	}
+	pageData, _ := json.Marshal(returnData.PageData)
 	css, js := getBaseCSSandJS(in.Path)
 	return &pb.PageResponse{
 		StatusCode:        returnData.StatusCode,
@@ -80,22 +72,14 @@ func pageString(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageRespo
 func pageFile(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageResponse {
 	templateHtml, err := setupData.Data.StaticFS.ReadFile("pages/" + returnData.FilePath + ".html")
 	if err != nil {
-		logging.Error("[GRPC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
+		logging.Error("[GRPC Remote Web System Page Request] %s:%s", in.Path, err.Error())
 		return &pb.PageResponse{
 			StatusCode:   http.StatusInternalServerError,
 			ErrorMessage: "ERROR WITH THE SYSTEM",
 		}
 	}
 
-	var pageData []byte
-	pageData, err = json.Marshal(returnData.PageData)
-	if err != nil {
-		logging.Error("[GRPC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
-		return &pb.PageResponse{
-			StatusCode:   http.StatusInternalServerError,
-			ErrorMessage: "ERROR WITH THE SYSTEM",
-		}
-	}
+	pageData, _ := json.Marshal(returnData.PageData)
 	css, js := getBaseCSSandJS(returnData.FilePath)
 	return &pb.PageResponse{
 		StatusCode:        returnData.StatusCode,
@@ -108,15 +92,9 @@ func pageFile(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageRespons
 }
 
 func getBaseCSSandJS(path string) (css []string, js []string) {
-	baseurl := ""
-	if setupData.Data.ServiceType != "system" {
-		baseurl += setupData.Data.ServiceType + "/"
-	}
-	baseurl += setupData.Data.ServiceName + "/static/"
-
 	cssfile, err := setupData.Data.StaticFS.Open("css/" + setupData.Data.ServiceName + ".css")
 	if err == nil {
-		css = append(css, baseurl+"css/"+setupData.Data.ServiceName)
+		css = append(css, setupData.Data.URL()+"/static/css/"+setupData.Data.ServiceName)
 	}
 	if cssfile != nil {
 		cssfile.Close()
@@ -124,7 +102,7 @@ func getBaseCSSandJS(path string) (css []string, js []string) {
 
 	jsfile, err := setupData.Data.StaticFS.Open("js/" + setupData.Data.ServiceName + ".js")
 	if err == nil {
-		js = append(js, baseurl+"js/"+setupData.Data.ServiceName)
+		js = append(js, setupData.Data.URL()+"/static/js/"+setupData.Data.ServiceName)
 	}
 	if jsfile != nil {
 		jsfile.Close()
@@ -132,7 +110,7 @@ func getBaseCSSandJS(path string) (css []string, js []string) {
 
 	cssfile, err = setupData.Data.StaticFS.Open("css/" + path + ".css")
 	if err == nil {
-		css = append(css, baseurl+"css/"+path)
+		css = append(css, setupData.Data.URL()+"/static/css/"+path)
 	}
 	if cssfile != nil {
 		cssfile.Close()
@@ -140,7 +118,7 @@ func getBaseCSSandJS(path string) (css []string, js []string) {
 
 	jsfile, err = setupData.Data.StaticFS.Open("js/" + path + ".js")
 	if err == nil {
-		js = append(js, baseurl+"js/"+path)
+		js = append(js, setupData.Data.URL()+"/static/js/"+path)
 	}
 	if jsfile != nil {
 		jsfile.Close()

@@ -1,8 +1,8 @@
 package setupData
 
 import (
-	"embed"
 	"fmt"
+	"io/fs"
 	"net"
 	"os"
 	"sync"
@@ -12,6 +12,11 @@ import (
 	pbw "github.com/Tackem-org/Proto/pb/web"
 	"google.golang.org/grpc"
 )
+
+type EmbedInterface interface {
+	Open(name string) (fs.File, error)
+	ReadFile(name string) ([]byte, error)
+}
 
 var (
 	mu        sync.RWMutex
@@ -41,7 +46,7 @@ type SetupData struct {
 	VerboseLog  bool
 	GRPCSystems func(server *grpc.Server)
 
-	StaticFS     *embed.FS
+	StaticFS     EmbedInterface
 	AdminPaths   []*AdminPathItem
 	Paths        []*PathItem
 	Sockets      []*SocketItem

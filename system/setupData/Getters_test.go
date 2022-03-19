@@ -64,3 +64,21 @@ func TestName(t *testing.T) {
 	}
 	assert.Equal(t, sn2, d2.Name())
 }
+
+func TestURL(t *testing.T) {
+	sn1 := "testName"
+	st1 := "testService"
+	d1 := &setupData.SetupData{
+		ServiceType: st1,
+		ServiceName: sn1,
+	}
+	assert.Equal(t, fmt.Sprintf("%s/%s", st1, sn1), d1.URL())
+
+	sn2 := "testName2"
+	st2 := "system"
+	d2 := &setupData.SetupData{
+		ServiceType: st2,
+		ServiceName: sn2,
+	}
+	assert.Equal(t, sn2, d2.URL())
+}

@@ -17,7 +17,7 @@ func (r *RemoteWebServer) Page(ctx context.Context, in *pb.PageRequest) (*pb.Pag
 	}, "GRPC Add Dependent"); err != "" {
 		return &pb.PageResponse{StatusCode: http.StatusInternalServerError, HideErrorFromUser: true, ErrorMessage: err}, nil
 	}
-	webRequest := makeWebRequest(in)
+	webRequest := MakeWebRequest(in)
 	path := setupData.Data.GetPath(webRequest.BasePath)
 	if path == nil {
 		logging.Warning("[GRPC Remote Web System Page Request] %s: Not found", in.GetPath())
@@ -27,6 +27,6 @@ func (r *RemoteWebServer) Page(ctx context.Context, in *pb.PageRequest) (*pb.Pag
 		}, nil
 	}
 	response, err := path.Call(webRequest)
-	pageResponse := makePageResponse(in, response, err)
+	pageResponse := MakePageResponse(in, response, err)
 	return pageResponse, nil
 }

@@ -35,7 +35,6 @@ func (m *MockDataStore) CheckIP(ipAddress string) bool {
 	return ipAddress == m.ip
 }
 
-//TODO TEST ME
 func TestGRPCAccessCheckerNoMetadata(t *testing.T) {
 	mds := &MockDataStore{
 		baseID: "test1",

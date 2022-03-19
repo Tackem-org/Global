@@ -45,3 +45,12 @@ func (d *SetupData) Name() string {
 	}
 	return fmt.Sprintf("%s %s", d.ServiceType, d.ServiceName)
 }
+
+func (d *SetupData) URL() string {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	if d.ServiceType == "system" {
+		return d.ServiceName
+	}
+	return fmt.Sprintf("%s/%s", d.ServiceType, d.ServiceName)
+}

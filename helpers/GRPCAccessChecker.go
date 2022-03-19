@@ -14,7 +14,6 @@ type ServiceKeyCheckInterface interface {
 	CheckIP(ipAddress string) bool
 }
 
-//TODO TEST ME
 func GRPCAccessChecker(ctx context.Context, getByBaseID func(baseID string) ServiceKeyCheckInterface, systemLabel string) (ServiceKeyCheckInterface, string) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
