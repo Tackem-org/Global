@@ -2,7 +2,6 @@ package system
 
 import (
 	"fmt"
-	"os"
 	"sync"
 	"time"
 
@@ -26,6 +25,12 @@ var (
 	server *grpc.Server
 )
 
+var (
+	callStartup  = startup
+	callMainLoop = mainLoop
+	callShutdown = shutdown
+)
+
 func Run(d *setupData.SetupData) {
 	logging.Setup(d.LogFile, d.VerboseLog)
 	defer logging.Shutdown()
@@ -35,20 +40,18 @@ func Run(d *setupData.SetupData) {
 		setupData.Data.MainSetup()
 	}
 
-	if startup() {
+	if callStartup() {
 		logging.Info("Started Tackem %s System", d.Name())
-		mainLoop()
+		callMainLoop()
 
 		logging.Info("Stopping Tackem %s System", d.Name())
-		Shutdown(true)
+		callShutdown(true)
 	}
 
 	if setupData.Data.MainShutdown != nil {
 		setupData.Data.MainShutdown()
 	}
 	logging.Info("Stopped Tackem %s System", d.Name())
-
-	os.Exit(0)
 }
 
 func startup() bool {
@@ -130,7 +133,7 @@ func mainLoop() {
 
 }
 
-func Shutdown(registered bool) {
+func shutdown(registered bool) {
 	server.Stop()
 	wg.Done()
 	logging.Info("Shutdown gRPC Server")

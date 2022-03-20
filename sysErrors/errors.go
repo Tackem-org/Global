@@ -1,6 +1,8 @@
 package sysErrors
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type MasterDownError struct{ err string }
 
@@ -18,4 +20,16 @@ type ServiceInactiveError struct{ err string }
 
 func (e *ServiceInactiveError) Error() string {
 	return fmt.Sprintf("service is inactive %s", e.err)
+}
+
+type ConfigTypeError struct{ err string }
+
+func (e *ConfigTypeError) Error() string {
+	return fmt.Sprintf("config value type is wrong %s", e.err)
+}
+
+type ConfigValueError struct{ err string }
+
+func (e *ConfigValueError) Error() string {
+	return fmt.Sprintf("config value is bad %s", e.err)
 }
