@@ -1,4 +1,5 @@
 # Tackem Global
+[![Test](https://github.com/Tackem-org/Global/actions/workflows/test.yml/badge.svg)](https://github.com/Tackem-org/Global/actions/workflows/test.yml)
 Global Features for Tackem
 ## TODO
 - TESTING
