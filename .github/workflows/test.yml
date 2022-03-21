@@ -23,4 +23,4 @@ jobs:
         key: ${{ runner.os }}-go-${{ matrix.go-version }}-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-${{ matrix.go-version }}-
-    - run: go test $(go list ./... | grep -v /pb/) -
+    - run: go test $(go list ./... | grep -v /pb/)
