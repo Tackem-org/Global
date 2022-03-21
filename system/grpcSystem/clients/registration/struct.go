@@ -1,9 +1,9 @@
 package registration
 
 import (
+	pb "github.com/Tackem-org/Global/pb/registration"
 	"github.com/Tackem-org/Global/system/grpcSystem/connections"
 	"github.com/Tackem-org/Global/system/grpcSystem/headers"
-	pb "github.com/Tackem-org/Proto/pb/registration"
 	"google.golang.org/grpc"
 )
 

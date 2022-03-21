@@ -1,0 +1,186 @@
+syntax = "proto3";
+import "config.proto";
+option go_package = "github.com/Tackem-org/Global/pb/registration";
+package registration;
+
+service Registration {
+  rpc Register(RegisterRequest) returns (RegisterResponse) {}
+  rpc Deregister(DeregisterRequest) returns (DeregisterResponse) {}
+  rpc Disconnect(DisconnectRequest) returns (DisconnectResponse) {}
+  rpc Activate(ActivateRequest) returns (ActivateResponse) {}
+  rpc Deactivate(DeactivateRequest) returns (DeactivateResponse) {}
+}
+
+enum LinkType {
+  Main = 0;
+  User = 1;
+  Admin = 2;
+  Top = 3;
+}
+
+enum InputType {
+  None = 0;
+  ICheckbox = 1;
+  IColor = 2;
+  IDate = 3;
+  IDatetimelocal = 4;
+  IEmail = 5;
+  INumber = 6;
+  IPassword = 7;
+  IRadio = 8;
+  IRange = 9;
+  ITel = 10;
+  IText = 11;
+  ITime = 12;
+  IUrl = 13;
+  TextArea = 14;
+  Select = 15;
+  Switch = 16;
+}
+
+message RegisterRequest {
+  string service_name = 1;
+  string service_type = 2;
+  Version version = 3;
+  uint32 port = 4;
+  bool multi = 5;
+  bool single_run = 6;
+  bool start_active = 7;
+  repeated ConfigItem config_items = 8;
+  repeated RequiredService required_services = 9;
+  repeated WebLinkItem web_link_items = 10;
+  repeated AdminWebLinkItem admin_web_link_items = 11;
+  repeated NavItem nav_items = 12;
+  repeated WebSocketItem web_socket_items = 13;
+  repeated string groups = 14;
+  repeated string permissions = 15;
+}
+
+message Version {
+  uint32 major = 1;
+  uint32 minor = 2;
+  uint32 hotfix = 3;
+}
+
+message RegisterResponse {
+  bool success = 1;
+  string error_message = 2;
+  string base_id = 3;
+  uint64 service_id = 4;
+  string key = 5;
+  repeated RequiredService missing_services = 6;
+  repeated FoundRequiredService found_services = 7;
+}
+
+message WebLinkItem {
+  string path = 1;
+  string permission = 2;
+  bool post_allowed = 3;
+  bool get_disabled = 4;
+}
+
+message AdminWebLinkItem {
+  string path = 1;
+  bool post_allowed = 2;
+  bool get_disabled = 3;
+}
+
+message WebSocketItem {
+  string command = 1;
+  string permission = 2;
+  bool admin_only = 3;
+  repeated string required_variables = 5;
+}
+
+message NavItem {
+  LinkType link_type = 1;
+  string title = 2;
+  string icon = 3;
+  string path = 4;
+  string permission = 5;
+  repeated NavItem sub_links = 6;
+}
+
+message RequiredService {
+  string type = 1;
+  string name = 2;
+  Version version = 3;
+}
+
+message FoundRequiredService {
+  string type = 1;
+  string name = 2;
+  Version version = 3;
+  string base_id = 4;
+  uint64 service_id = 5;
+  string key = 6;
+  string url = 7;
+  uint32 port = 8;
+  bool single_run = 9;
+}
+
+message ConfigItem {
+  string key = 1;
+  string default_value = 2;
+  config.ValueType type = 3;
+  string label = 4;
+  string help_text = 5;
+  bool hide_on_html = 6;
+  bool not_in_config = 7;
+  bool restart_required = 8;
+  InputType input_type = 9;
+  repeated string options = 10;
+  InputAttributes input_attributes = 11;
+  repeated InputButton buttons = 12;
+}
+
+message InputAttributes {
+  bool autofocus = 1;
+  bool readonly = 2;
+  bool disabled = 3;
+  bool multiple = 4;
+  bool required = 5;
+  bool selected = 6;
+  bool hidden = 7;
+  map<string,string> other = 8;
+}
+
+
+message InputButton {
+  string label = 1;
+  string action = 2;
+  map<string,string> attributes = 3;
+}
+
+
+message DeregisterRequest {
+}
+
+message DeregisterResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message DisconnectRequest {
+}
+
+message DisconnectResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message ActivateRequest {
+}
+
+message ActivateResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message DeactivateRequest {
+}
+
+message DeactivateResponse {
+  bool success = 1;
+  string error_message = 2;
+}

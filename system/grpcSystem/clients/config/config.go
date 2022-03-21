@@ -1,6 +1,6 @@
 package config
 
-import pb "github.com/Tackem-org/Proto/pb/config"
+import pb "github.com/Tackem-org/Global/pb/config"
 
 type ConfigClientInterface interface {
 	Get(request *pb.GetConfigRequest) (*pb.GetConfigResponse, error)

@@ -1,0 +1,45 @@
+syntax = "proto3";
+option go_package = "github.com/Tackem-org/Global/pb/config";
+package config;
+
+enum ValueType {
+  failed = 0;
+  Bool = 1;
+  Duration = 2;
+  Float64 = 3;
+  Int = 4;
+  Int32 = 5;
+  Int64 = 6;
+  IntSlice = 7;
+  String = 8;
+  StringSlice = 9;
+  Time = 10;
+  Uint = 11;
+  Uint32 = 12;
+  Uint64 = 13;
+}
+
+service Config {
+  rpc Get(GetConfigRequest) returns (GetConfigResponse) {}
+  rpc Set(SetConfigRequest) returns (SetConfigResponse) {}
+}
+
+message GetConfigRequest {
+  string key = 1;
+}
+
+message SetConfigRequest {
+  string key = 1;
+  string value = 2;
+}
+
+message GetConfigResponse {
+    string key = 1;
+    string value = 2;
+    ValueType type = 3;
+}
+
+message SetConfigResponse {
+  bool success = 1;
+  string error_message = 2;
+}

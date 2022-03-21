@@ -4,10 +4,10 @@ import (
 	"testing"
 
 	"github.com/Tackem-org/Global/healthCheck"
+	pb "github.com/Tackem-org/Global/pb/regclient"
 	"github.com/Tackem-org/Global/system/dependentServices"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/regClient"
 	"github.com/Tackem-org/Global/system/masterData"
-	pb "github.com/Tackem-org/Proto/pb/regclient"
 	"github.com/stretchr/testify/assert"
 )
 

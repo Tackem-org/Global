@@ -1,6 +1,6 @@
 package registration
 
-import pb "github.com/Tackem-org/Proto/pb/registration"
+import pb "github.com/Tackem-org/Global/pb/registration"
 
 type RegistrationClientInterface interface {
 	Activate(request *pb.ActivateRequest) (*pb.ActivateResponse, error)

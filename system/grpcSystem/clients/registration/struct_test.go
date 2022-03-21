@@ -6,9 +6,9 @@ import (
 	"net"
 	"testing"
 
+	pb "github.com/Tackem-org/Global/pb/registration"
 	"github.com/Tackem-org/Global/system/grpcSystem/clients/registration"
 	"github.com/Tackem-org/Global/system/grpcSystem/connections"
-	pb "github.com/Tackem-org/Proto/pb/registration"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"

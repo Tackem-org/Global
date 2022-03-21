@@ -3,7 +3,7 @@ package structs
 import (
 	"fmt"
 
-	pb "github.com/Tackem-org/Proto/pb/registration"
+	pb "github.com/Tackem-org/Global/pb/registration"
 )
 
 type Version struct {

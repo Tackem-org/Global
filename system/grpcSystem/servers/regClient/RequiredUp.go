@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/Tackem-org/Global/helpers"
+	pb "github.com/Tackem-org/Global/pb/regclient"
 	"github.com/Tackem-org/Global/system/masterData"
 	"github.com/Tackem-org/Global/system/requiredServices"
-	pb "github.com/Tackem-org/Proto/pb/regclient"
 )
 
 func (r *RegClientServer) RequiredUp(ctx context.Context, in *pb.RequiredUpRequest) (*pb.RequiredUpResponse, error) {

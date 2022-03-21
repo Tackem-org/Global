@@ -3,8 +3,8 @@ package web_test
 import (
 	"testing"
 
+	pb "github.com/Tackem-org/Global/pb/web"
 	"github.com/Tackem-org/Global/system/grpcSystem/clients/web"
-	pb "github.com/Tackem-org/Proto/pb/web"
 	"github.com/stretchr/testify/assert"
 )
 

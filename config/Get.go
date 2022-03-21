@@ -5,9 +5,9 @@ import (
 	"strings"
 	"time"
 
+	pb "github.com/Tackem-org/Global/pb/config"
 	"github.com/Tackem-org/Global/sysErrors"
 	configClient "github.com/Tackem-org/Global/system/grpcSystem/clients/config"
-	pb "github.com/Tackem-org/Proto/pb/config"
 
 	str2duration "github.com/xhit/go-str2duration/v2"
 )

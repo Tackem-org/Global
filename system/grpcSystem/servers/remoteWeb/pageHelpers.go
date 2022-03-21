@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/Tackem-org/Global/logging"
+	pb "github.com/Tackem-org/Global/pb/remoteweb"
 	"github.com/Tackem-org/Global/structs"
 	"github.com/Tackem-org/Global/system/setupData"
-	pb "github.com/Tackem-org/Proto/pb/remoteweb"
 )
 
 func MakeWebRequest(in *pb.PageRequest) *structs.WebRequest {

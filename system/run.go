@@ -15,9 +15,9 @@ import (
 	"github.com/Tackem-org/Global/system/setupData"
 	"google.golang.org/grpc"
 
-	pbrc "github.com/Tackem-org/Proto/pb/regclient"
-	pbr "github.com/Tackem-org/Proto/pb/registration"
-	pbrw "github.com/Tackem-org/Proto/pb/remoteweb"
+	pbrc "github.com/Tackem-org/Global/pb/regclient"
+	pbr "github.com/Tackem-org/Global/pb/registration"
+	pbrw "github.com/Tackem-org/Global/pb/remoteweb"
 )
 
 var (

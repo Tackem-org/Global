@@ -5,9 +5,9 @@ import (
 
 	"github.com/Tackem-org/Global/helpers"
 	"github.com/Tackem-org/Global/logging"
+	pb "github.com/Tackem-org/Global/pb/regclient"
 	"github.com/Tackem-org/Global/system/masterData"
 	"github.com/Tackem-org/Global/system/setupData"
-	pb "github.com/Tackem-org/Proto/pb/regclient"
 )
 
 func (r *RegClientServer) MasterBackUp(ctx context.Context, in *pb.MasterBackUpRequest) (*pb.MasterBackUpResponse, error) {

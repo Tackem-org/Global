@@ -6,8 +6,8 @@ import (
 	"github.com/Tackem-org/Global/channels"
 	"github.com/Tackem-org/Global/helpers"
 	"github.com/Tackem-org/Global/logging"
+	pb "github.com/Tackem-org/Global/pb/regclient"
 	"github.com/Tackem-org/Global/system/masterData"
-	pb "github.com/Tackem-org/Proto/pb/regclient"
 )
 
 func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoingDownRequest) (*pb.MasterGoingDownResponse, error) {

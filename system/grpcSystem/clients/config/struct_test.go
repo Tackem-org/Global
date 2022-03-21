@@ -12,7 +12,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
 
-	pb "github.com/Tackem-org/Proto/pb/config"
+	pb "github.com/Tackem-org/Global/pb/config"
 )
 
 type MockConfigServer struct {

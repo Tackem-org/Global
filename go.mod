@@ -2,10 +2,10 @@ module github.com/Tackem-org/Global
 
 go 1.18
 
-replace github.com/Tackem-org/Proto => ../Proto
+replace github.com/Tackem-org/Global => ../Proto
 
 require (
-	github.com/Tackem-org/Proto v0.0.0-00010101000000-000000000000
+	github.com/Tackem-org/Global v0.0.0-00010101000000-000000000000
 	github.com/stretchr/testify v1.7.0
 	github.com/viney-shih/go-lock v1.1.1
 	github.com/xhit/go-str2duration/v2 v2.0.0

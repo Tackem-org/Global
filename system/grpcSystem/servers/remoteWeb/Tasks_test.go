@@ -3,11 +3,11 @@ package remoteWeb_test
 import (
 	"testing"
 
+	pb "github.com/Tackem-org/Global/pb/remoteweb"
+	"github.com/Tackem-org/Global/pb/web"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/remoteWeb"
 	"github.com/Tackem-org/Global/system/masterData"
 	"github.com/Tackem-org/Global/system/setupData"
-	pb "github.com/Tackem-org/Proto/pb/remoteweb"
-	"github.com/Tackem-org/Proto/pb/web"
 	"github.com/stretchr/testify/assert"
 )
 

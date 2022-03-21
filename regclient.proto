@@ -1,0 +1,125 @@
+syntax = "proto3";
+import "registration.proto";
+option go_package = "github.com/Tackem-org/Global/pb/regclient";
+package regClient;
+
+enum MasterGoingDownReason {
+  Shutdown = 0;
+  Reboot = 1;
+  FullShutdown = 2;
+}
+
+service RegClient {
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {}
+  rpc AddDependent(AddDependentRequest) returns (AddDependentResponse) {}
+  rpc RemoveDependent(RemoveDependentRequest) returns (RemoveDependentResponse) {}
+  rpc RemoveRequired(RemoveRequiredRequest) returns (RemoveRequiredResponse) {}
+  rpc MasterGoingDown(MasterGoingDownRequest) returns (MasterGoingDownResponse) {}
+  rpc MasterBackUp(MasterBackUpRequest) returns (MasterBackUpResponse) {}
+
+  rpc DependentUp(DependentUpRequest) returns (DependentUpResponse) {}
+  rpc DependentDown(DependentDownRequest) returns (DependentDownResponse) {}
+  rpc RequiredUp(RequiredUpRequest) returns (RequiredUpResponse) {}
+  rpc RequiredDown(RequiredDownRequest) returns (RequiredDownResponse) {}
+}
+
+message HealthCheckRequest {
+
+}
+
+message HealthCheckResponse {
+  bool success = 1;
+  string error_message = 2;
+  bool healthy = 3;
+  repeated string issues = 4;
+}
+
+message AddDependentRequest {
+  string type = 1;
+  string name = 2;
+  uint64 id = 3;
+  string base_id = 4;
+  string key = 5;
+  string url = 6;
+  uint32 port = 7;
+  bool single_run = 8;
+}
+
+message AddDependentResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message RemoveDependentRequest {
+  string base_id = 1;
+}
+
+message RemoveDependentResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message RemoveRequiredRequest {
+  string base_id = 1;
+}
+
+message RemoveRequiredResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+
+message MasterGoingDownRequest {
+  MasterGoingDownReason reason = 1;
+}
+
+message MasterGoingDownResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message MasterBackUpRequest {
+}
+
+message MasterBackUpResponse {
+  bool success = 1;
+  string error_message = 2;
+  bool active = 3;
+  registration.RegisterRequest reg_data = 4;
+}
+
+message DependentUpRequest {
+  string base_id = 1;
+}
+
+message DependentUpResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message DependentDownRequest {
+  string base_id = 1;
+}
+
+message DependentDownResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message RequiredUpRequest {
+  string base_id = 1;
+}
+
+message RequiredUpResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message RequiredDownRequest {
+  string base_id = 1;
+}
+
+message RequiredDownResponse {
+  bool success = 1;
+  string error_message = 2;
+}

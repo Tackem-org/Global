@@ -1,7 +1,7 @@
 package web
 
 import (
-	pb "github.com/Tackem-org/Proto/pb/web"
+	pb "github.com/Tackem-org/Global/pb/web"
 )
 
 type WebClientInterface interface {

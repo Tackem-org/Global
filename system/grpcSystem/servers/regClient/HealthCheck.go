@@ -6,8 +6,8 @@ import (
 	"github.com/Tackem-org/Global/healthCheck"
 	"github.com/Tackem-org/Global/helpers"
 	"github.com/Tackem-org/Global/logging"
+	pb "github.com/Tackem-org/Global/pb/regclient"
 	"github.com/Tackem-org/Global/system/masterData"
-	pb "github.com/Tackem-org/Proto/pb/regclient"
 )
 
 func (r *RegClientServer) HealthCheck(ctx context.Context, in *pb.HealthCheckRequest) (*pb.HealthCheckResponse, error) {

@@ -3,10 +3,10 @@ package setupData_test
 import (
 	"testing"
 
+	"github.com/Tackem-org/Global/pb/config"
+	pb "github.com/Tackem-org/Global/pb/registration"
 	"github.com/Tackem-org/Global/structs"
 	"github.com/Tackem-org/Global/system/setupData"
-	"github.com/Tackem-org/Proto/pb/config"
-	pb "github.com/Tackem-org/Proto/pb/registration"
 	"github.com/stretchr/testify/assert"
 )
 

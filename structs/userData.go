@@ -1,7 +1,7 @@
 package structs
 
 import (
-	pb "github.com/Tackem-org/Proto/pb/remoteweb"
+	pb "github.com/Tackem-org/Global/pb/remoteweb"
 )
 
 type UserData struct {

@@ -3,7 +3,7 @@ package config_test
 import (
 	"errors"
 
-	pb "github.com/Tackem-org/Proto/pb/config"
+	pb "github.com/Tackem-org/Global/pb/config"
 )
 
 type ConfigInfo struct {

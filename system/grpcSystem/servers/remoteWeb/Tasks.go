@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/Tackem-org/Global/helpers"
+	pb "github.com/Tackem-org/Global/pb/remoteweb"
 	"github.com/Tackem-org/Global/system/masterData"
 	"github.com/Tackem-org/Global/system/setupData"
-	pb "github.com/Tackem-org/Proto/pb/remoteweb"
 )
 
 func (r *RemoteWebServer) Tasks(ctx context.Context, in *pb.TasksRequest) (*pb.TasksResponse, error) {

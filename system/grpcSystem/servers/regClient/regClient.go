@@ -1,7 +1,7 @@
 package regClient
 
 import (
-	pb "github.com/Tackem-org/Proto/pb/regclient"
+	pb "github.com/Tackem-org/Global/pb/regclient"
 )
 
 type RegClientServer struct {

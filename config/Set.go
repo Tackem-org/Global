@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
+	pb "github.com/Tackem-org/Global/pb/config"
 	configClient "github.com/Tackem-org/Global/system/grpcSystem/clients/config"
-	pb "github.com/Tackem-org/Proto/pb/config"
 )
 
 func SetBool(key string, value bool) (bool, error) {

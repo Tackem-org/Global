@@ -10,7 +10,7 @@ import (
 	"github.com/Tackem-org/Global/system/grpcSystem/clients/web"
 	"github.com/Tackem-org/Global/system/grpcSystem/connections"
 
-	pb "github.com/Tackem-org/Proto/pb/web"
+	pb "github.com/Tackem-org/Global/pb/web"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"

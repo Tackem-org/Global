@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/Tackem-org/Global/helpers"
+	pb "github.com/Tackem-org/Global/pb/regclient"
 	"github.com/Tackem-org/Global/system/dependentServices"
 	"github.com/Tackem-org/Global/system/masterData"
-	pb "github.com/Tackem-org/Proto/pb/regclient"
 )
 
 func (r *RegClientServer) RemoveDependent(ctx context.Context, in *pb.RemoveDependentRequest) (*pb.RemoveDependentResponse, error) {

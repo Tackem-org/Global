@@ -7,9 +7,9 @@ import (
 	"os"
 	"sync"
 
+	pb "github.com/Tackem-org/Global/pb/registration"
+	pbw "github.com/Tackem-org/Global/pb/web"
 	"github.com/Tackem-org/Global/structs"
-	pb "github.com/Tackem-org/Proto/pb/registration"
-	pbw "github.com/Tackem-org/Proto/pb/web"
 	"google.golang.org/grpc"
 )
 

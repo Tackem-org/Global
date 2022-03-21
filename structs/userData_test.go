@@ -3,8 +3,8 @@ package structs_test
 import (
 	"testing"
 
+	pb "github.com/Tackem-org/Global/pb/remoteweb"
 	"github.com/Tackem-org/Global/structs"
-	pb "github.com/Tackem-org/Proto/pb/remoteweb"
 	"github.com/stretchr/testify/assert"
 )
 

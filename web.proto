@@ -1,0 +1,59 @@
+syntax = "proto3";
+option go_package = "github.com/Tackem-org/Global/pb/web";
+package web;
+
+service Web {
+  // rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse) {}
+  rpc SendTask(TaskMessage) returns (SendTaskResponse) {}
+  rpc RemoveTask(RemoveTaskRequest) returns (RemoveTaskResponse) {}
+  rpc SendWebSocket(SendWebSocketRequest) returns (SendWebSocketResponse) {}
+}
+
+message TaskMessage {
+  string task = 1;
+  string base_id = 2; //TODO remove requirement from Add Task Stuff and remove this
+  uint64 task_id = 3;
+  string created_at = 4;
+  string url = 5;
+  string icon = 6;
+  string color = 7;
+  string title = 8;
+  string message = 9;
+  repeated TaskAction actions = 10;
+  oneof who {
+    bool admin_only = 11;
+    string permission = 12;
+    uint64 user_id = 13;
+  }
+}
+
+message TaskAction {
+  string title = 1;
+  string url = 2;
+  map<string, string> command = 3;
+}
+
+message SendTaskResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message RemoveTaskRequest {
+  string task = 1;
+  uint64 task_id = 2;
+}
+
+message RemoveTaskResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message SendWebSocketRequest {
+  string command = 1;
+  bool admin_only = 2;
+  string permission = 3;
+  string data_json = 4;
+}
+
+message SendWebSocketResponse {
+}

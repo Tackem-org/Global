@@ -6,9 +6,9 @@ import (
 
 	"github.com/Tackem-org/Global/helpers"
 	"github.com/Tackem-org/Global/logging"
+	pb "github.com/Tackem-org/Global/pb/remoteweb"
 	"github.com/Tackem-org/Global/system/masterData"
 	"github.com/Tackem-org/Global/system/setupData"
-	pb "github.com/Tackem-org/Proto/pb/remoteweb"
 )
 
 func (r *RemoteWebServer) AdminPage(ctx context.Context, in *pb.PageRequest) (*pb.PageResponse, error) {

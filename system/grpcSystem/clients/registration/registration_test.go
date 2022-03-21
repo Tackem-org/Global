@@ -3,8 +3,8 @@ package registration_test
 import (
 	"testing"
 
+	pb "github.com/Tackem-org/Global/pb/registration"
 	"github.com/Tackem-org/Global/system/grpcSystem/clients/registration"
-	pb "github.com/Tackem-org/Proto/pb/registration"
 	"github.com/stretchr/testify/assert"
 )
 

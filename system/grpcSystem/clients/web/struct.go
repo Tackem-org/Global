@@ -2,9 +2,9 @@ package web
 
 import (
 	"github.com/Tackem-org/Global/logging"
+	pb "github.com/Tackem-org/Global/pb/web"
 	"github.com/Tackem-org/Global/system/grpcSystem/connections"
 	"github.com/Tackem-org/Global/system/grpcSystem/headers"
-	pb "github.com/Tackem-org/Proto/pb/web"
 	"google.golang.org/grpc"
 )
 

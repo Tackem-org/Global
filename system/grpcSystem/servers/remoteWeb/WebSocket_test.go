@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"testing"
 
+	pb "github.com/Tackem-org/Global/pb/remoteweb"
 	"github.com/Tackem-org/Global/structs"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/remoteWeb"
 	"github.com/Tackem-org/Global/system/masterData"
 	"github.com/Tackem-org/Global/system/setupData"
-	pb "github.com/Tackem-org/Proto/pb/remoteweb"
 	"github.com/stretchr/testify/assert"
 )
 

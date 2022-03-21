@@ -3,8 +3,8 @@ package config_test
 import (
 	"testing"
 
+	pb "github.com/Tackem-org/Global/pb/config"
 	"github.com/Tackem-org/Global/system/grpcSystem/clients/config"
-	pb "github.com/Tackem-org/Proto/pb/config"
 	"github.com/stretchr/testify/assert"
 )
 

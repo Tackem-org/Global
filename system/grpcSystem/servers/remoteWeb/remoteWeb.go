@@ -1,7 +1,7 @@
 package remoteWeb
 
 import (
-	pb "github.com/Tackem-org/Proto/pb/remoteweb"
+	pb "github.com/Tackem-org/Global/pb/remoteweb"
 )
 
 type RemoteWebServer struct {

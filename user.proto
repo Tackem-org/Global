@@ -1,0 +1,67 @@
+syntax = "proto3";
+option go_package = "github.com/Tackem-org/Global/pb/user";
+package user;
+
+service User {
+  rpc Login(LoginRequest) returns (LoginResponse) {}
+  rpc Logout(LogoutRequest) returns (LogoutResponse) {}
+  rpc GetUserData(GetUserDataRequest) returns (UserDataResponse) {}
+  rpc AddGroups(AddGroupsRequest) returns (AddGroupsResponse) {}
+  rpc AddPermissions(AddPermissionsRequest) returns (AddPermissionsResponse) {}
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+  string ip_address = 3;
+  int64 expiryTime = 4;
+}
+
+message LogoutRequest {
+  string session_token = 1;
+  string ip_address = 2;
+}
+
+message GetUserDataRequest {
+  string session_token = 1;
+  string ip_address = 2;
+}
+
+message LoginResponse {
+  bool success = 1;
+  string error_message = 2;
+  string session_token = 4;
+}
+
+message LogoutResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message UserDataResponse {
+  bool success = 1;
+  string error_message = 2;
+  uint64 user_id = 3;
+	string Name = 4;
+	string Icon = 5;
+	bool IsAdmin = 6;
+  repeated string permissions = 7;
+}
+
+message AddGroupsRequest{
+  repeated string groups = 1;
+}
+
+message AddGroupsResponse {
+  bool success = 1;
+  string error_message = 2;
+}
+
+message AddPermissionsRequest{
+  repeated string permissions = 1;
+}
+
+message AddPermissionsResponse {
+  bool success = 1;
+  string error_message = 2;
+}

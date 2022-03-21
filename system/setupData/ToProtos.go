@@ -2,7 +2,7 @@ package setupData
 
 import (
 	"github.com/Tackem-org/Global/helpers"
-	pb "github.com/Tackem-org/Proto/pb/registration"
+	pb "github.com/Tackem-org/Global/pb/registration"
 )
 
 func (d *SetupData) RegisterProto() *pb.RegisterRequest {
