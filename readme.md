@@ -1,15 +1,9 @@
 # Tackem Global
 Global Features for Tackem
 ## TODO
-- concurrency RWMUTEX
 - TESTING
-  - To test the GPRC Server Section
-  - Then The Config Section
-  - Then figure out how to test last few files (run.go and server.go)
-  - Once it's all done look at Github Actions to do unit testing.
-  - Then move back to master and check the proto changes havn't really broken it
-  - Start on unit testing of master
-  - Move to User After And Test That.
+  - Github Actions to do unit testing.
+
 
 - Github Actions
   - <https://github.com/mvdan/github-actions-golang>

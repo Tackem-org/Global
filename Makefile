@@ -7,11 +7,23 @@ test-debug:
 	go tool cover -html=cover.out -o coverage.html
 
 proto:
-	@echo "Generating Proto Data"
-	@for filename in *.proto; do \
-		mkdir -p pb/$${filename%.*}$f ;\
-		protoc --proto_path=. --go_out=pb/$${filename%.*} --go_opt=paths=source_relative --go-grpc_out=pb/$${filename%.*} --go-grpc_opt=paths=source_relative $$filename ; \
-	done
+	@echo "Generating Proto Data..."
+	@mkdir -p pb/config pb/regclient pb/registration pb/remoteweb pb/user pb/web
+	@echo "Generating Config Proto Data..."
+	@protoc --proto_path=protos --go_out=pb/config --go_opt=paths=source_relative --go-grpc_out=pb/config --go-grpc_opt=paths=source_relative protos/config.proto
+	@echo "Generating RegClient Proto Data..."
+	@protoc --proto_path=protos --go_out=pb/regclient --go_opt=paths=source_relative --go-grpc_out=pb/regclient --go-grpc_opt=paths=source_relative protos/regclient.proto
+	@echo "Generating Registration Data..."
+	@protoc --proto_path=protos --go_out=pb/registration --go_opt=paths=source_relative --go-grpc_out=pb/registration --go-grpc_opt=paths=source_relative protos/registration.proto
+	@echo "Generating RemoteWeb Data..."
+	@protoc --proto_path=protos --go_out=pb/remoteweb --go_opt=paths=source_relative --go-grpc_out=pb/remoteweb --go-grpc_opt=paths=source_relative protos/remoteweb.proto
+	@echo "Generating User Data..."
+	@protoc --proto_path=protos --go_out=pb/user --go_opt=paths=source_relative --go-grpc_out=pb/user --go-grpc_opt=paths=source_relative protos/user.proto
+	@echo "Generating Web Data..."
+	@protoc --proto_path=protos --go_out=pb/web --go_opt=paths=source_relative --go-grpc_out=pb/web --go-grpc_opt=paths=source_relative protos/web.proto
+	@echo "Generated Proto Data"
+
+
 
 clean:
 	rm -R pb/*
