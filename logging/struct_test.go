@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"runtime"
 	"testing"
 
 	"github.com/Tackem-org/Global/logging"
@@ -144,7 +145,9 @@ func (s *LoggingCallsSuite) TestFatal() {
 func TestPanicIfFileCannotOpen(t *testing.T) {
 	unreachableFile := "/temptest.log"
 	l := logging.DefaultLogging()
-	assert.Panics(t, func() { l.Setup(unreachableFile, false) })
+	if runtime.GOOS != "windows" {
+		assert.Panics(t, func() { l.Setup(unreachableFile, false) })
+	}
 }
 
 func TestLogVerboseMode(t *testing.T) {
