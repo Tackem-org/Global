@@ -25,12 +25,6 @@ var (
 	server *grpc.Server
 )
 
-var (
-	callStartup  = startup
-	callMainLoop = mainLoop
-	callShutdown = shutdown
-)
-
 func Run(d *setupData.SetupData) {
 	logging.Setup(d.LogFile, d.VerboseLog)
 	defer logging.Shutdown()
@@ -40,12 +34,12 @@ func Run(d *setupData.SetupData) {
 		setupData.Data.MainSetup()
 	}
 
-	if callStartup() {
+	if startup() {
 		logging.Info("Started Tackem %s System", d.Name())
-		callMainLoop()
+		mainLoop()
 
 		logging.Info("Stopping Tackem %s System", d.Name())
-		callShutdown(true)
+		shutdown(true)
 	}
 
 	if setupData.Data.MainShutdown != nil {
@@ -77,6 +71,7 @@ func startup() bool {
 	}()
 
 	waitTime := time.Duration(5)
+
 	for !connect(setupData.Data.RegisterProto()) {
 		select {
 		case <-channels.Root.TermChan:
