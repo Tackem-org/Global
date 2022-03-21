@@ -23,7 +23,6 @@ proto:
 	@protoc --proto_path=protos --go_out=pb/web --go_opt=paths=source_relative --go-grpc_out=pb/web --go-grpc_opt=paths=source_relative protos/web.proto
 	@echo "Generated Proto Data"
 
-
-
 clean:
 	rm -R pb/*
+	rm cover.out coverage.html
