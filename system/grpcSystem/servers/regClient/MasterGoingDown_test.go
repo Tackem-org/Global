@@ -3,8 +3,8 @@ package regClient_test
 import (
 	"testing"
 
-	"github.com/Tackem-org/Global/channels"
 	pb "github.com/Tackem-org/Global/pb/regclient"
+	"github.com/Tackem-org/Global/system/channels"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/regClient"
 	"github.com/Tackem-org/Global/system/masterData"
 	"github.com/stretchr/testify/assert"

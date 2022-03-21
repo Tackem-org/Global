@@ -3,7 +3,7 @@ package channels_test
 import (
 	"testing"
 
-	"github.com/Tackem-org/Global/channels"
+	"github.com/Tackem-org/Global/system/channels"
 	"github.com/stretchr/testify/assert"
 )
 

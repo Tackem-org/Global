@@ -3,10 +3,10 @@ package regClient
 import (
 	"context"
 
-	"github.com/Tackem-org/Global/channels"
 	"github.com/Tackem-org/Global/helpers"
 	"github.com/Tackem-org/Global/logging"
 	pb "github.com/Tackem-org/Global/pb/regclient"
+	"github.com/Tackem-org/Global/system/channels"
 	"github.com/Tackem-org/Global/system/masterData"
 )
 

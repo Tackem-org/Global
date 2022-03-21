@@ -3,7 +3,7 @@ package healthCheck_test
 import (
 	"testing"
 
-	"github.com/Tackem-org/Global/healthCheck"
+	"github.com/Tackem-org/Global/system/healthCheck"
 	"github.com/stretchr/testify/assert"
 )
 

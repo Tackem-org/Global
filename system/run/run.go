@@ -1,13 +1,13 @@
-package system
+package run
 
 import (
 	"fmt"
 	"sync"
 	"time"
 
-	"github.com/Tackem-org/Global/channels"
 	"github.com/Tackem-org/Global/helpers"
 	"github.com/Tackem-org/Global/logging"
+	"github.com/Tackem-org/Global/system/channels"
 	"github.com/Tackem-org/Global/system/grpcSystem/clients/registration"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/regClient"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/remoteWeb"
@@ -61,7 +61,10 @@ func startup() bool {
 	if len(setupData.Data.AdminPaths)+len(setupData.Data.Paths)+len(setupData.Data.Sockets) > 0 {
 		pbrw.RegisterRemoteWebServer(server, &remoteWeb.RemoteWebServer{})
 	}
-	setupData.Data.GRPCSystems(server)
+
+	if setupData.Data.GRPCSystems != nil {
+		setupData.Data.GRPCSystems(server)
+	}
 
 	wg.Add(1)
 	go func() {

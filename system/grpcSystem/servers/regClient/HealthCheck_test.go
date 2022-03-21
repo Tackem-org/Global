@@ -3,10 +3,10 @@ package regClient_test
 import (
 	"testing"
 
-	"github.com/Tackem-org/Global/healthCheck"
 	pb "github.com/Tackem-org/Global/pb/regclient"
 	"github.com/Tackem-org/Global/system/dependentServices"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/regClient"
+	"github.com/Tackem-org/Global/system/healthCheck"
 	"github.com/Tackem-org/Global/system/masterData"
 	"github.com/stretchr/testify/assert"
 )

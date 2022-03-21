@@ -1,10 +1,10 @@
 test:
-	go test -cover -coverprofile=cover.out ./...
-	go tool cover -html=cover.out -o coverage.html
+	@FILES="$(shell go list ./... | grep -v /pb/ | grep -v github.com/Tackem-org/Global/system/run)"; go test -cover -coverprofile=cover.out $$FILES
+	@go tool cover -html=cover.out -o coverage.html
 
 test-debug:
-	go test -cover -v -coverprofile=cover.out ./...
-	go tool cover -html=cover.out -o coverage.html
+	@FILES="$(shell go list ./... | grep -v /pb/ | grep -v github.com/Tackem-org/Global/system/run)"; go test -cover -v -coverprofile=cover.out $$FILES
+	@go tool cover -html=cover.out -o coverage.html
 
 proto:
 	@echo "Generating Proto Data..."
@@ -24,5 +24,5 @@ proto:
 	@echo "Generated Proto Data"
 
 clean:
-	rm -R pb/*
-	rm cover.out coverage.html
+	@rm -R pb/*
+	@rm cover.out coverage.html
