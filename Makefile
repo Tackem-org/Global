@@ -1,9 +1,12 @@
 test:
-	@FILES="$(shell go list ./... | grep -v /pb/ | grep -v github.com/Tackem-org/Global/system/run)"; go test -cover -coverprofile=cover.out $$FILES
-	@go tool cover -html=cover.out -o coverage.html
+	@FILES="$(shell go list ./... | grep -v /pb/ )"; go test -cover -coverprofile=cover.out $$FILES
+	@go tool cover -func=cover.out | tail -n 1
 
 test-debug:
-	@FILES="$(shell go list ./... | grep -v /pb/ | grep -v github.com/Tackem-org/Global/system/run)"; go test -cover -v -coverprofile=cover.out $$FILES
+	@FILES="$(shell go list ./... | grep -v /pb/)"; go test -cover -v -coverprofile=cover.out $$FILES
+
+test-html:
+	@FILES="$(shell go list ./... | grep -v /pb/)"; go test -cover -coverprofile=cover.out $$FILES
 	@go tool cover -html=cover.out -o coverage.html
 
 proto:
