@@ -61,7 +61,7 @@ func startGRPCServer() (*grpc.Server, *bufconn.Listener) {
 	return srv, listener
 }
 
-func TestRegistrationServerActivate(t *testing.T) {
+func TestRegistrationActivate(t *testing.T) {
 	rc := registration.RegistrationClient{}
 	response1, err1 := rc.Activate(&pb.ActivateRequest{})
 	assert.IsType(t, &pb.ActivateResponse{}, response1)
@@ -77,7 +77,7 @@ func TestRegistrationServerActivate(t *testing.T) {
 	assert.Nil(t, err2)
 }
 
-func TestRegistrationServerDeactivate(t *testing.T) {
+func TestRegistrationDeactivate(t *testing.T) {
 	rc := registration.RegistrationClient{}
 	response1, err1 := rc.Deactivate(&pb.DeactivateRequest{})
 	assert.IsType(t, &pb.DeactivateResponse{}, response1)
@@ -93,7 +93,7 @@ func TestRegistrationServerDeactivate(t *testing.T) {
 	assert.Nil(t, err2)
 }
 
-func TestRegistrationServerDeregister(t *testing.T) {
+func TestRegistrationDeregister(t *testing.T) {
 	rc := registration.RegistrationClient{}
 	response1, err1 := rc.Deregister(&pb.DeregisterRequest{})
 	assert.IsType(t, &pb.DeregisterResponse{}, response1)
@@ -109,7 +109,7 @@ func TestRegistrationServerDeregister(t *testing.T) {
 	assert.Nil(t, err2)
 }
 
-func TestRegistrationServerDisconnect(t *testing.T) {
+func TestRegistrationDisconnect(t *testing.T) {
 	rc := registration.RegistrationClient{}
 	response1, err1 := rc.Disconnect(&pb.DisconnectRequest{})
 	assert.IsType(t, &pb.DisconnectResponse{}, response1)
@@ -125,7 +125,7 @@ func TestRegistrationServerDisconnect(t *testing.T) {
 	assert.Nil(t, err2)
 }
 
-func TestRegistrationServerRegister(t *testing.T) {
+func TestRegistrationRegister(t *testing.T) {
 	rc := registration.RegistrationClient{}
 	response1, err1 := rc.Register(&pb.RegisterRequest{})
 	assert.IsType(t, &pb.RegisterResponse{}, response1)

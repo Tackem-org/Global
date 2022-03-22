@@ -13,19 +13,15 @@ type MockRegistrationClient struct{}
 func (mrc *MockRegistrationClient) Activate(request *pb.ActivateRequest) (*pb.ActivateResponse, error) {
 	return &pb.ActivateResponse{}, nil
 }
-
 func (mrc *MockRegistrationClient) Deactivate(request *pb.DeactivateRequest) (*pb.DeactivateResponse, error) {
 	return &pb.DeactivateResponse{}, nil
 }
-
 func (mrc *MockRegistrationClient) Deregister(request *pb.DeregisterRequest) (*pb.DeregisterResponse, error) {
 	return &pb.DeregisterResponse{}, nil
 }
-
 func (mrc *MockRegistrationClient) Disconnect(request *pb.DisconnectRequest) (*pb.DisconnectResponse, error) {
 	return &pb.DisconnectResponse{}, nil
 }
-
 func (mrc *MockRegistrationClient) Register(request *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	return &pb.RegisterResponse{}, nil
 }

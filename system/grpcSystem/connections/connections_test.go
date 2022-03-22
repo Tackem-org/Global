@@ -84,7 +84,7 @@ func TestMaster(t *testing.T) {
 	masterData.UP.Down()
 	conn2, err2 := connections.Master()
 	assert.NotNil(t, err2, "An Error has happened with the Connection")
-	assert.Equal(t, &sysErrors.MasterDownError{}, err2)
+	assert.ErrorIs(t, err2, sysErrors.MasterDownError)
 	assert.Nil(t, conn2, "Connection Connected when should have failed")
 }
 
@@ -108,7 +108,7 @@ func TestRequiredServiceConnection(t *testing.T) {
 	r.UP.Down()
 	conn2, err2 := connections.RequiredService(r)
 	assert.NotNil(t, err2, "An Error has happened with the Connection")
-	assert.Equal(t, &sysErrors.ServiceDownError{}, err2)
+	assert.ErrorIs(t, err2, sysErrors.ServiceDownError)
 	assert.Nil(t, conn2, "Connection Connected when should have failed")
 }
 
@@ -132,6 +132,6 @@ func TestDependentServiceConnection(t *testing.T) {
 	d.UP.Down()
 	conn2, err2 := connections.DependentService(d)
 	assert.NotNil(t, err2, "An Error has happened with the Connection")
-	assert.Equal(t, &sysErrors.ServiceDownError{}, err2)
+	assert.Equal(t, err2, sysErrors.ServiceDownError)
 	assert.Nil(t, conn2, "Connection Connected when should have failed")
 }

@@ -26,12 +26,12 @@ func TestGetBool(t *testing.T) {
 	value, berr := config.GetBool("bad")
 	assert.False(t, value)
 	assert.Error(t, berr)
-	assert.Error(t, berr, &sysErrors.ConfigValueError{})
+	assert.ErrorIs(t, berr, sysErrors.ConfigValueError)
 
 	value, verr := config.GetBool("wrong")
 	assert.False(t, value)
 	assert.Error(t, verr)
-	assert.Error(t, verr, &sysErrors.ConfigTypeError{})
+	assert.ErrorIs(t, verr, sysErrors.ConfigTypeError)
 
 	value, nilerr := config.GetBool("test")
 	assert.True(t, value)
@@ -52,12 +52,12 @@ func TestGetFloat64(t *testing.T) {
 	value, berr := config.GetFloat64("bad")
 	assert.Equal(t, 0.0, value)
 	assert.Error(t, berr)
-	assert.Error(t, berr, &sysErrors.ConfigValueError{})
+	assert.ErrorIs(t, berr, sysErrors.ConfigValueError)
 
 	value, verr := config.GetFloat64("wrong")
 	assert.Equal(t, 0.0, value)
 	assert.Error(t, verr)
-	assert.Error(t, verr, &sysErrors.ConfigTypeError{})
+	assert.ErrorIs(t, verr, sysErrors.ConfigTypeError)
 
 	value, nilerr := config.GetFloat64("test")
 	assert.Equal(t, 1.1, value)
@@ -78,12 +78,12 @@ func TestGetInt(t *testing.T) {
 	value, berr := config.GetInt("bad")
 	assert.Equal(t, 0, value)
 	assert.Error(t, berr)
-	assert.Error(t, berr, &sysErrors.ConfigValueError{})
+	assert.ErrorIs(t, berr, sysErrors.ConfigValueError)
 
 	value, verr := config.GetInt("wrong")
 	assert.Equal(t, 0, value)
 	assert.Error(t, verr)
-	assert.Error(t, verr, &sysErrors.ConfigTypeError{})
+	assert.ErrorIs(t, verr, sysErrors.ConfigTypeError)
 
 	value, nilerr := config.GetInt("test")
 	assert.Equal(t, 1, value)
@@ -104,12 +104,12 @@ func TestGetInt32(t *testing.T) {
 	value, berr := config.GetInt32("bad")
 	assert.Equal(t, int32(0), value)
 	assert.Error(t, berr)
-	assert.Error(t, berr, &sysErrors.ConfigValueError{})
+	assert.ErrorIs(t, berr, sysErrors.ConfigValueError)
 
 	value, verr := config.GetInt32("wrong")
 	assert.Equal(t, int32(0), value)
 	assert.Error(t, verr)
-	assert.Error(t, verr, &sysErrors.ConfigTypeError{})
+	assert.ErrorIs(t, verr, sysErrors.ConfigTypeError)
 
 	value, nilerr := config.GetInt32("test")
 	assert.Equal(t, int32(1), value)
@@ -130,12 +130,12 @@ func TestGetInt64(t *testing.T) {
 	value, berr := config.GetInt64("bad")
 	assert.Equal(t, int64(0), value)
 	assert.Error(t, berr)
-	assert.Error(t, berr, &sysErrors.ConfigValueError{})
+	assert.ErrorIs(t, berr, sysErrors.ConfigValueError)
 
 	value, verr := config.GetInt64("wrong")
 	assert.Equal(t, int64(0), value)
 	assert.Error(t, verr)
-	assert.Error(t, verr, &sysErrors.ConfigTypeError{})
+	assert.ErrorIs(t, verr, sysErrors.ConfigTypeError)
 
 	value, nilerr := config.GetInt64("test")
 	assert.Equal(t, int64(1), value)
@@ -156,12 +156,12 @@ func TestGetUint(t *testing.T) {
 	value, berr := config.GetUint("bad")
 	assert.Equal(t, uint(0), value)
 	assert.Error(t, berr)
-	assert.Error(t, berr, &sysErrors.ConfigValueError{})
+	assert.ErrorIs(t, berr, sysErrors.ConfigValueError)
 
 	value, verr := config.GetUint("wrong")
 	assert.Equal(t, uint(0), value)
 	assert.Error(t, verr)
-	assert.Error(t, verr, &sysErrors.ConfigTypeError{})
+	assert.ErrorIs(t, verr, sysErrors.ConfigTypeError)
 
 	value, nilerr := config.GetUint("test")
 	assert.Equal(t, uint(1), value)
@@ -182,12 +182,12 @@ func TestGetUint32(t *testing.T) {
 	value, berr := config.GetUint32("bad")
 	assert.Equal(t, uint32(0), value)
 	assert.Error(t, berr)
-	assert.Error(t, berr, &sysErrors.ConfigValueError{})
+	assert.ErrorIs(t, berr, sysErrors.ConfigValueError)
 
 	value, verr := config.GetUint32("wrong")
 	assert.Equal(t, uint32(0), value)
 	assert.Error(t, verr)
-	assert.Error(t, verr, &sysErrors.ConfigTypeError{})
+	assert.ErrorIs(t, verr, sysErrors.ConfigTypeError)
 
 	value, nilerr := config.GetUint32("test")
 	assert.Equal(t, uint32(1), value)
@@ -208,12 +208,12 @@ func TestGetUint64(t *testing.T) {
 	value, berr := config.GetUint64("bad")
 	assert.Equal(t, uint64(0), value)
 	assert.Error(t, berr)
-	assert.Error(t, berr, &sysErrors.ConfigValueError{})
+	assert.ErrorIs(t, berr, sysErrors.ConfigValueError)
 
 	value, verr := config.GetUint64("wrong")
 	assert.Equal(t, uint64(0), value)
 	assert.Error(t, verr)
-	assert.Error(t, verr, &sysErrors.ConfigTypeError{})
+	assert.ErrorIs(t, verr, sysErrors.ConfigTypeError)
 
 	value, nilerr := config.GetUint64("test")
 	assert.Equal(t, uint64(1), value)
@@ -234,12 +234,12 @@ func TestGetIntSlice(t *testing.T) {
 	value, berr := config.GetIntSlice("bad")
 	assert.Equal(t, []int{}, value)
 	assert.Error(t, berr)
-	assert.Error(t, berr, &sysErrors.ConfigValueError{})
+	assert.ErrorIs(t, berr, sysErrors.ConfigValueError)
 
 	value, verr := config.GetIntSlice("wrong")
 	assert.Equal(t, []int{}, value)
 	assert.Error(t, verr)
-	assert.Error(t, verr, &sysErrors.ConfigTypeError{})
+	assert.ErrorIs(t, verr, sysErrors.ConfigTypeError)
 
 	value, nilerr := config.GetIntSlice("test")
 	assert.Equal(t, []int{1, 2, 3, 4}, value)
@@ -259,7 +259,7 @@ func TestGetString(t *testing.T) {
 	value, verr := config.GetString("wrong")
 	assert.Equal(t, "", value)
 	assert.Error(t, verr)
-	assert.Error(t, verr, &sysErrors.ConfigTypeError{})
+	assert.ErrorIs(t, verr, sysErrors.ConfigTypeError)
 
 	value, nilerr := config.GetString("test")
 	assert.Equal(t, "test", value)
@@ -281,7 +281,7 @@ func TestGetStringSlice(t *testing.T) {
 	value, verr := config.GetStringSlice("wrong")
 	assert.Equal(t, []string{}, value)
 	assert.Error(t, verr)
-	assert.Error(t, verr, &sysErrors.ConfigTypeError{})
+	assert.ErrorIs(t, verr, sysErrors.ConfigTypeError)
 
 	value, nilerr := config.GetStringSlice("test")
 	assert.Equal(t, []string{"a", "b", "c", "d"}, value)
@@ -305,12 +305,12 @@ func TestGetTime(t *testing.T) {
 	value, berr := config.GetTime("bad")
 	assert.Equal(t, time.Unix(0, 0), value)
 	assert.Error(t, berr)
-	assert.Error(t, berr, &sysErrors.ConfigValueError{})
+	assert.ErrorIs(t, berr, sysErrors.ConfigValueError)
 
 	value, verr := config.GetTime("wrong")
 	assert.Equal(t, time.Unix(0, 0), value)
 	assert.Error(t, verr)
-	assert.Error(t, verr, &sysErrors.ConfigTypeError{})
+	assert.ErrorIs(t, verr, sysErrors.ConfigTypeError)
 
 	value, nilerr := config.GetTime("test")
 	assert.Equal(t, tn, value)
@@ -331,12 +331,12 @@ func TestGetDuration(t *testing.T) {
 	value, berr := config.GetDuration("bad")
 	assert.Equal(t, time.Duration(0), value)
 	assert.Error(t, berr)
-	assert.Error(t, berr, &sysErrors.ConfigValueError{})
+	assert.ErrorIs(t, berr, sysErrors.ConfigValueError)
 
 	value, verr := config.GetDuration("wrong")
 	assert.Equal(t, time.Duration(0), value)
 	assert.Error(t, verr)
-	assert.Error(t, verr, &sysErrors.ConfigTypeError{})
+	assert.ErrorIs(t, verr, sysErrors.ConfigTypeError)
 
 	value, nilerr := config.GetDuration("test")
 	assert.Equal(t, time.Second, value)

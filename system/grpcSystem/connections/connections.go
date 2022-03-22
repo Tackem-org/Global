@@ -29,19 +29,19 @@ func Master() (*grpc.ClientConn, error) {
 	if masterData.UP.Wait(5) {
 		return Get(masterData.Info.Address())
 	}
-	return nil, &sysErrors.MasterDownError{}
+	return nil, sysErrors.MasterDownError
 }
 
 func RequiredService(requiredService *requiredServices.RequiredService) (*grpc.ClientConn, error) {
 	if requiredService.UP.Check() {
 		return Get(requiredService.Address())
 	}
-	return nil, &sysErrors.ServiceDownError{}
+	return nil, sysErrors.ServiceDownError
 }
 
 func DependentService(dependentService *dependentServices.DependentService) (*grpc.ClientConn, error) {
 	if dependentService.UP.Check() {
 		return Get(dependentService.Address())
 	}
-	return nil, &sysErrors.ServiceDownError{}
+	return nil, sysErrors.ServiceDownError
 }
