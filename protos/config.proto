@@ -34,9 +34,11 @@ message SetConfigRequest {
 }
 
 message GetConfigResponse {
-    string key = 1;
-    string value = 2;
-    ValueType type = 3;
+  bool success = 1;
+  string error_message = 2;
+  string key = 3;
+  string value = 4;
+  ValueType type = 5;
 }
 
 message SetConfigResponse {
