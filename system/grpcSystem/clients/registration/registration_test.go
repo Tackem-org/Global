@@ -27,10 +27,6 @@ func (mrc *MockRegistrationClient) Register(request *pb.RegisterRequest) (*pb.Re
 }
 
 func TestActivate(t *testing.T) {
-	cr, err := registration.Activate(&pb.ActivateRequest{})
-	assert.IsType(t, &pb.ActivateResponse{}, cr)
-	assert.NotNil(t, err)
-
 	registration.I = &MockRegistrationClient{}
 	scr, err2 := registration.Activate(&pb.ActivateRequest{})
 	assert.IsType(t, &pb.ActivateResponse{}, scr)
@@ -39,10 +35,6 @@ func TestActivate(t *testing.T) {
 }
 
 func TestDeactivate(t *testing.T) {
-	cr, err := registration.Deactivate(&pb.DeactivateRequest{})
-	assert.IsType(t, &pb.DeactivateResponse{}, cr)
-	assert.NotNil(t, err)
-
 	registration.I = &MockRegistrationClient{}
 	scr, err2 := registration.Deactivate(&pb.DeactivateRequest{})
 	assert.IsType(t, &pb.DeactivateResponse{}, scr)
@@ -51,10 +43,6 @@ func TestDeactivate(t *testing.T) {
 }
 
 func TestDeregister(t *testing.T) {
-	cr, err := registration.Deregister(&pb.DeregisterRequest{})
-	assert.IsType(t, &pb.DeregisterResponse{}, cr)
-	assert.NotNil(t, err)
-
 	registration.I = &MockRegistrationClient{}
 	scr, err2 := registration.Deregister(&pb.DeregisterRequest{})
 	assert.IsType(t, &pb.DeregisterResponse{}, scr)
@@ -63,10 +51,6 @@ func TestDeregister(t *testing.T) {
 }
 
 func TestDisconnect(t *testing.T) {
-	cr, err := registration.Disconnect(&pb.DisconnectRequest{})
-	assert.IsType(t, &pb.DisconnectResponse{}, cr)
-	assert.NotNil(t, err)
-
 	registration.I = &MockRegistrationClient{}
 	scr, err2 := registration.Disconnect(&pb.DisconnectRequest{})
 	assert.IsType(t, &pb.DisconnectResponse{}, scr)
@@ -75,10 +59,6 @@ func TestDisconnect(t *testing.T) {
 }
 
 func TestRegister(t *testing.T) {
-	cr, err := registration.Register(&pb.RegisterRequest{})
-	assert.IsType(t, &pb.RegisterResponse{}, cr)
-	assert.NotNil(t, err)
-
 	registration.I = &MockRegistrationClient{}
 	scr, err2 := registration.Register(&pb.RegisterRequest{})
 	assert.IsType(t, &pb.RegisterResponse{}, scr)

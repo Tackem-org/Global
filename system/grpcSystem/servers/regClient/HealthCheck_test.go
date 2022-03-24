@@ -3,6 +3,7 @@ package regClient_test
 import (
 	"testing"
 
+	"github.com/Tackem-org/Global/logging"
 	pb "github.com/Tackem-org/Global/pb/regclient"
 	"github.com/Tackem-org/Global/system/dependentServices"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/regClient"
@@ -12,6 +13,7 @@ import (
 )
 
 func TestHealthCheck(t *testing.T) {
+	logging.I = &MockLogging{}
 	s := regClient.RegClientServer{}
 	ctx1 := MakeTestHeader("", "", "")
 	r1, err1 := s.HealthCheck(ctx1, &pb.HealthCheckRequest{})

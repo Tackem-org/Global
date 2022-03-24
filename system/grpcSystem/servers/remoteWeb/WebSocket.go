@@ -19,8 +19,7 @@ func (r *RemoteWebServer) WebSocket(ctx context.Context, in *pb.WebSocketRequest
 	}, "GRPC Add Dependent"); err != "" {
 		return &pb.WebSocketResponse{StatusCode: http.StatusInternalServerError, HideErrorFromUser: true, ErrorMessage: err}, nil
 	}
-	var d map[string]interface{}
-	json.Unmarshal([]byte(in.DataJson), &d) //TODO Change this to helper.StringToStringMap
+	d, err := helpers.StringToStringMap(in.DataJson)
 
 	webSocketRequest := structs.SocketRequest{
 		Command: in.Command,

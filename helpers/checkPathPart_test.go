@@ -4,10 +4,12 @@ import (
 	"testing"
 
 	"github.com/Tackem-org/Global/helpers"
+	"github.com/Tackem-org/Global/logging"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCheckPathPart(t *testing.T) {
+	logging.I = &MockLogging{}
 	tests := []struct {
 		part  string
 		pass  bool
@@ -42,6 +44,7 @@ func TestCheckPathPart(t *testing.T) {
 }
 
 func TestCheckPath(t *testing.T) {
+	logging.I = &MockLogging{}
 	tests := []struct {
 		path string
 		pass bool

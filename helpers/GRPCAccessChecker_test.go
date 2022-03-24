@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/Tackem-org/Global/helpers"
+	"github.com/Tackem-org/Global/logging"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
@@ -36,6 +37,7 @@ func (m *MockDataStore) CheckIP(ipAddress string) bool {
 }
 
 func TestGRPCAccessCheckerNoMetadata(t *testing.T) {
+	logging.I = &MockLogging{}
 	mds := &MockDataStore{
 		baseID: "test1",
 		key:    "",

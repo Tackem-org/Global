@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/Tackem-org/Global/helpers"
 	"github.com/Tackem-org/Global/logging"
 	pb "github.com/Tackem-org/Global/pb/remoteweb"
 	"github.com/Tackem-org/Global/structs"
@@ -20,9 +21,9 @@ func MakeWebRequest(in *pb.PageRequest) *structs.WebRequest {
 		Method:   in.Method,
 	}
 
-	json.Unmarshal([]byte(in.QueryParamsJson), &webRequest.QueryParams)  //TODO Change this to helper.StringToStringMap
-	json.Unmarshal([]byte(in.PostJson), &webRequest.Post)                //TODO Change this to helper.StringToStringMap
-	json.Unmarshal([]byte(in.PathParamsJson), &webRequest.PathVariables) //TODO Change this to helper.StringToStringMap
+	webRequest.QueryParams, _ = helpers.StringToStringMap(in.QueryParamsJson)
+	webRequest.Post, _ = helpers.StringToStringMap(in.PostJson)
+	webRequest.PathVariables, _ = helpers.StringToStringMap(in.PathParamsJson)
 
 	return &webRequest
 }

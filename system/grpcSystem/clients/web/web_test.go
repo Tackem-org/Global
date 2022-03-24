@@ -23,21 +23,18 @@ func (mwc *MockWebClient) WebSocketSend(request *pb.SendWebSocketRequest) bool {
 }
 
 func TestAddTask(t *testing.T) {
-	assert.False(t, web.AddTask(&pb.TaskMessage{}))
 	web.I = &MockWebClient{}
 	assert.True(t, web.AddTask(&pb.TaskMessage{}))
 	web.I = nil
 }
 
 func TestRemoveTask(t *testing.T) {
-	assert.False(t, web.RemoveTask(&pb.RemoveTaskRequest{}))
 	web.I = &MockWebClient{}
 	assert.True(t, web.RemoveTask(&pb.RemoveTaskRequest{}))
 	web.I = nil
 }
 
 func TestWebSocketSend(t *testing.T) {
-	assert.False(t, web.WebSocketSend(&pb.SendWebSocketRequest{}))
 	web.I = &MockWebClient{}
 	assert.True(t, web.WebSocketSend(&pb.SendWebSocketRequest{}))
 	web.I = nil

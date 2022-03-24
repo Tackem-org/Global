@@ -3,6 +3,7 @@ package regClient_test
 import (
 	"testing"
 
+	"github.com/Tackem-org/Global/logging"
 	pb "github.com/Tackem-org/Global/pb/regclient"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/regClient"
 	"github.com/Tackem-org/Global/system/masterData"
@@ -11,6 +12,7 @@ import (
 )
 
 func TestMasterBackUp(t *testing.T) {
+	logging.I = &MockLogging{}
 	s := regClient.RegClientServer{}
 	ctx1 := MakeTestHeader("", "", "")
 	r1, err1 := s.MasterBackUp(ctx1, &pb.MasterBackUpRequest{})

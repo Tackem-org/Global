@@ -7,18 +7,12 @@ type ConfigClientInterface interface {
 	Set(request *pb.SetConfigRequest) (*pb.SetConfigResponse, error)
 }
 
-var I ConfigClientInterface
+var I ConfigClientInterface = &ConfigClient{}
 
 func Get(request *pb.GetConfigRequest) (*pb.GetConfigResponse, error) {
-	if I == nil {
-		I = &ConfigClient{}
-	}
 	return I.Get(request)
 }
 
 func Set(request *pb.SetConfigRequest) (*pb.SetConfigResponse, error) {
-	if I == nil {
-		I = &ConfigClient{}
-	}
 	return I.Set(request)
 }

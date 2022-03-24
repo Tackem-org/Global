@@ -10,25 +10,16 @@ type WebClientInterface interface {
 	WebSocketSend(request *pb.SendWebSocketRequest) bool
 }
 
-var I WebClientInterface
+var I WebClientInterface = &WebClient{}
 
 func AddTask(request *pb.TaskMessage) bool {
-	if I == nil {
-		I = &WebClient{}
-	}
 	return I.AddTask(request)
 }
 
 func RemoveTask(request *pb.RemoveTaskRequest) bool {
-	if I == nil {
-		I = &WebClient{}
-	}
 	return I.RemoveTask(request)
 }
 
 func WebSocketSend(request *pb.SendWebSocketRequest) bool {
-	if I == nil {
-		I = &WebClient{}
-	}
 	return I.WebSocketSend(request)
 }

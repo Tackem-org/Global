@@ -7,6 +7,7 @@ import (
 	"net"
 	"testing"
 
+	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/system/grpcSystem/clients/web"
 	"github.com/Tackem-org/Global/system/grpcSystem/connections"
 
@@ -64,6 +65,7 @@ func startGRPCServer() (*grpc.Server, *bufconn.Listener) {
 	return srv, listener
 }
 func TestWebServerAddTask(t *testing.T) {
+	logging.I = &MockLogging{}
 	wc := web.WebClient{}
 	assert.False(t, wc.AddTask(&pb.TaskMessage{}))
 
@@ -77,6 +79,7 @@ func TestWebServerAddTask(t *testing.T) {
 }
 
 func TestWebServerRemoveTask(t *testing.T) {
+	logging.I = &MockLogging{}
 	wc := web.WebClient{}
 	assert.False(t, wc.RemoveTask(&pb.RemoveTaskRequest{}))
 
@@ -90,6 +93,7 @@ func TestWebServerRemoveTask(t *testing.T) {
 }
 
 func TestWebServerWebSocketSend(t *testing.T) {
+	logging.I = &MockLogging{}
 	wc := web.WebClient{}
 	assert.False(t, wc.WebSocketSend(&pb.SendWebSocketRequest{}))
 
