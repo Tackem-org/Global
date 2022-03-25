@@ -1,67 +1,137 @@
 package registration_test
 
 import (
+	"context"
+	"log"
+	"net"
 	"testing"
 
 	pb "github.com/Tackem-org/Global/pb/registration"
 	"github.com/Tackem-org/Global/system/grpcSystem/clients/registration"
+	"github.com/Tackem-org/Global/system/grpcSystem/connections"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/test/bufconn"
 )
 
-type MockRegistrationClient struct{}
+type MockRegistrationServer struct {
+	pb.UnimplementedRegistrationServer
+}
 
-func (mrc *MockRegistrationClient) Activate(request *pb.ActivateRequest) (*pb.ActivateResponse, error) {
+func (rc *MockRegistrationServer) Activate(ctx context.Context, in *pb.ActivateRequest) (*pb.ActivateResponse, error) {
 	return &pb.ActivateResponse{}, nil
 }
-func (mrc *MockRegistrationClient) Deactivate(request *pb.DeactivateRequest) (*pb.DeactivateResponse, error) {
+
+func (rc *MockRegistrationServer) Deactivate(ctx context.Context, in *pb.DeactivateRequest) (*pb.DeactivateResponse, error) {
 	return &pb.DeactivateResponse{}, nil
 }
-func (mrc *MockRegistrationClient) Deregister(request *pb.DeregisterRequest) (*pb.DeregisterResponse, error) {
+
+func (rc *MockRegistrationServer) Deregister(ctx context.Context, in *pb.DeregisterRequest) (*pb.DeregisterResponse, error) {
 	return &pb.DeregisterResponse{}, nil
 }
-func (mrc *MockRegistrationClient) Disconnect(request *pb.DisconnectRequest) (*pb.DisconnectResponse, error) {
+
+func (rc *MockRegistrationServer) Disconnect(ctx context.Context, in *pb.DisconnectRequest) (*pb.DisconnectResponse, error) {
 	return &pb.DisconnectResponse{}, nil
 }
-func (mrc *MockRegistrationClient) Register(request *pb.RegisterRequest) (*pb.RegisterResponse, error) {
+
+func (rc *MockRegistrationServer) Register(ctx context.Context, in *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	return &pb.RegisterResponse{}, nil
 }
 
-func TestActivate(t *testing.T) {
-	registration.I = &MockRegistrationClient{}
-	scr, err2 := registration.Activate(&pb.ActivateRequest{})
-	assert.IsType(t, &pb.ActivateResponse{}, scr)
-	assert.Nil(t, err2)
-	registration.I = nil
+func startGRPCServer() (*grpc.Server, *bufconn.Listener) {
+	bufferSize := 1024 * 1024
+	listener := bufconn.Listen(bufferSize)
+	srv := grpc.NewServer()
+
+	pb.RegisterRegistrationServer(srv, &MockRegistrationServer{})
+
+	go func() {
+		if err := srv.Serve(listener); err != nil {
+			log.Fatalf("failed to start grpc server: %v", err)
+		}
+	}()
+
+	getBufDialer := func(listener *bufconn.Listener) func(context.Context, string) (net.Conn, error) {
+		return func(ctx context.Context, url string) (net.Conn, error) {
+			return listener.Dial()
+		}
+	}
+
+	connections.ExtraOptions = append(connections.ExtraOptions, grpc.WithContextDialer(getBufDialer(listener)))
+	return srv, listener
 }
 
-func TestDeactivate(t *testing.T) {
-	registration.I = &MockRegistrationClient{}
-	scr, err2 := registration.Deactivate(&pb.DeactivateRequest{})
-	assert.IsType(t, &pb.DeactivateResponse{}, scr)
+func TestRegistrationActivate(t *testing.T) {
+	response1, err1 := registration.Activate(&pb.ActivateRequest{})
+	assert.IsType(t, &pb.ActivateResponse{}, response1)
+	assert.NotNil(t, err1)
+
+	srv, listener := startGRPCServer()
+	assert.NotNil(t, srv, "Test GRPC SERVER not running")
+	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
+	defer srv.Stop()
+
+	response2, err2 := registration.Activate(&pb.ActivateRequest{})
+	assert.IsType(t, &pb.ActivateResponse{}, response2)
 	assert.Nil(t, err2)
-	registration.I = nil
 }
 
-func TestDeregister(t *testing.T) {
-	registration.I = &MockRegistrationClient{}
-	scr, err2 := registration.Deregister(&pb.DeregisterRequest{})
-	assert.IsType(t, &pb.DeregisterResponse{}, scr)
+func TestRegistrationDeactivate(t *testing.T) {
+	response1, err1 := registration.Deactivate(&pb.DeactivateRequest{})
+	assert.IsType(t, &pb.DeactivateResponse{}, response1)
+	assert.NotNil(t, err1)
+
+	srv, listener := startGRPCServer()
+	assert.NotNil(t, srv, "Test GRPC SERVER not running")
+	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
+	defer srv.Stop()
+
+	response2, err2 := registration.Deactivate(&pb.DeactivateRequest{})
+	assert.IsType(t, &pb.DeactivateResponse{}, response2)
 	assert.Nil(t, err2)
-	registration.I = nil
 }
 
-func TestDisconnect(t *testing.T) {
-	registration.I = &MockRegistrationClient{}
-	scr, err2 := registration.Disconnect(&pb.DisconnectRequest{})
-	assert.IsType(t, &pb.DisconnectResponse{}, scr)
+func TestRegistrationDeregister(t *testing.T) {
+	response1, err1 := registration.Deregister(&pb.DeregisterRequest{})
+	assert.IsType(t, &pb.DeregisterResponse{}, response1)
+	assert.NotNil(t, err1)
+
+	srv, listener := startGRPCServer()
+	assert.NotNil(t, srv, "Test GRPC SERVER not running")
+	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
+	defer srv.Stop()
+
+	response2, err2 := registration.Deregister(&pb.DeregisterRequest{})
+	assert.IsType(t, &pb.DeregisterResponse{}, response2)
 	assert.Nil(t, err2)
-	registration.I = nil
 }
 
-func TestRegister(t *testing.T) {
-	registration.I = &MockRegistrationClient{}
-	scr, err2 := registration.Register(&pb.RegisterRequest{})
-	assert.IsType(t, &pb.RegisterResponse{}, scr)
+func TestRegistrationDisconnect(t *testing.T) {
+	response1, err1 := registration.Disconnect(&pb.DisconnectRequest{})
+	assert.IsType(t, &pb.DisconnectResponse{}, response1)
+	assert.NotNil(t, err1)
+
+	srv, listener := startGRPCServer()
+	assert.NotNil(t, srv, "Test GRPC SERVER not running")
+	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
+	defer srv.Stop()
+
+	response2, err2 := registration.Disconnect(&pb.DisconnectRequest{})
+	assert.IsType(t, &pb.DisconnectResponse{}, response2)
 	assert.Nil(t, err2)
-	registration.I = nil
+}
+
+func TestRegistrationRegister(t *testing.T) {
+	response1, err1 := registration.Register(&pb.RegisterRequest{})
+	assert.IsType(t, &pb.RegisterResponse{}, response1)
+	assert.NotNil(t, err1)
+
+	srv, listener := startGRPCServer()
+	assert.NotNil(t, srv, "Test GRPC SERVER not running")
+	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
+	defer srv.Stop()
+
+	response2, err2 := registration.Register(&pb.RegisterRequest{})
+	assert.IsType(t, &pb.RegisterResponse{}, response2)
+	assert.Nil(t, err2)
 }
