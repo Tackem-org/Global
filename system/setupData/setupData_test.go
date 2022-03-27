@@ -17,7 +17,7 @@ func TestFreeTCPPort(t *testing.T) {
 	assert.NotNil(t, second)
 	assert.Equal(t, uint32(49993), setupData.Port)
 	os.Setenv("BIND", "localhost")
-	defer os.Unsetenv("ENV_VAR")
+	defer os.Unsetenv("BIND")
 	third := setupData.FreeTCPPort()
 	assert.NotNil(t, third)
 	first.Close()

@@ -2,7 +2,6 @@ package masterData
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"strconv"
 	"sync"
@@ -44,7 +43,7 @@ func grabFromFile(masterConf string) bool {
 		return false
 	}
 
-	if file, err := ioutil.ReadFile(masterConf); err == nil {
+	if file, err := os.ReadFile(masterConf); err == nil {
 		err = json.Unmarshal([]byte(file), &Info)
 		if err == nil {
 			return true
@@ -84,5 +83,5 @@ func saveToFile(masterConf string) bool {
 		return false
 	}
 	file, _ := json.MarshalIndent(Info, "", " ")
-	return ioutil.WriteFile(masterConf, file, 0644) == nil
+	return os.WriteFile(masterConf, file, 0644) == nil
 }

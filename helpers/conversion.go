@@ -69,7 +69,7 @@ func StringToStringMap[T string | []byte](in T) (map[string]interface{}, error) 
 	out := map[string]interface{}{}
 	err := json.Unmarshal([]byte(in), &out)
 	if err != nil {
-		return map[string]interface{}{}, err
+		return nil, err
 	}
 
 	for key, val := range out {
