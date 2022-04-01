@@ -13,7 +13,7 @@ type UserData struct {
 }
 
 func (u *UserData) HasPermission(name string) bool {
-	if u.IsAdmin {
+	if name == "" || u.IsAdmin {
 		return true
 	}
 	for _, v := range u.Permissions {
