@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"context"
+	"reflect"
 	"strings"
 
 	"github.com/Tackem-org/Global/logging"
@@ -31,7 +32,7 @@ func GRPCAccessChecker(ctx context.Context, getByBaseID func(baseID string) Serv
 		return nil, "baseID in header blank"
 	}
 	s := getByBaseID(baseID)
-	if s == nil {
+	if reflect.ValueOf(s).IsNil() {
 		logging.Custom("SECURITY", "[%s] Bad GRPC Access BaseID Not Found", systemLabel)
 		return nil, "baseID not found"
 	}
