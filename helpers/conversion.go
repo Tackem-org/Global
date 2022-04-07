@@ -71,7 +71,11 @@ func StringToStringMap[T string | []byte](in T) (map[string]interface{}, error) 
 	if err != nil {
 		return nil, err
 	}
+	out = mapRecursion(out)
+	return out, nil
+}
 
+func mapRecursion(out map[string]interface{}) map[string]interface{} {
 	for key, val := range out {
 		switch x := val.(type) {
 		default:
@@ -80,10 +84,12 @@ func StringToStringMap[T string | []byte](in T) (map[string]interface{}, error) 
 			if i, err := strconv.Atoi(fmt.Sprintf("%.0f", x)); err == nil && float64(i) == x {
 				out[key] = i
 			}
+		case map[string]interface{}:
+			out[key] = mapRecursion(x)
 		}
 	}
 
-	return out, nil
+	return out
 }
 
 func StringToDuration(in string) (time.Duration, error) {
