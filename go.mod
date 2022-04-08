@@ -3,6 +3,7 @@ module github.com/Tackem-org/Global
 go 1.18
 
 require (
+	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.7.0
 	github.com/viney-shih/go-lock v1.1.1
 	github.com/xhit/go-str2duration/v2 v2.0.0
