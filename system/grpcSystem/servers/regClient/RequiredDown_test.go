@@ -40,7 +40,7 @@ func TestRequiredDown(t *testing.T) {
 	assert.NotNil(t, r3)
 	assert.Nil(t, err3)
 	assert.False(t, r3.Success)
-	assert.Equal(t, "Required Service Not Found", r3.ErrorMessage)
+	assert.Equal(t, "required service not found", r3.ErrorMessage)
 
 	requiredServices.Remove(r.BaseID)
 }

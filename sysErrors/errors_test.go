@@ -7,7 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestErrors(t *testing.T) {
+func TestSetupErrors(t *testing.T) {
+	sysErrors.SetupErrors()
 	assert.Error(t, sysErrors.MasterDownError)
 	assert.Error(t, sysErrors.ServiceDownError)
 	assert.Error(t, sysErrors.ServiceInactiveError)

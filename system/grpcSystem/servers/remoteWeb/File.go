@@ -21,15 +21,15 @@ func (r *RemoteWebServer) File(ctx context.Context, in *pb.FileRequest) (*pb.Fil
 	data, err := setupData.Data.StaticFS.ReadFile(in.Path)
 	if err != nil {
 		sc := http.StatusInternalServerError
-		em := "Internal Error"
+		em := "internal error"
 		switch err.(type) {
 		case *iofs.PathError:
 			if in.Path[len(in.Path)-1:] == "/" {
 				sc = http.StatusForbidden
-				em = "Path is a Directory Access Forbidden"
+				em = "path is a directory access forbidden"
 			} else {
 				sc = http.StatusNotFound
-				em = "File Not Found"
+				em = "file not found"
 			}
 		default:
 			logging.Error("[GRPC Remote Web System File Request] %s:%s", in.Path, err.Error())
@@ -41,8 +41,7 @@ func (r *RemoteWebServer) File(ctx context.Context, in *pb.FileRequest) (*pb.Fil
 		}, nil
 	}
 	return &pb.FileResponse{
-		StatusCode:   http.StatusOK,
-		ErrorMessage: "",
-		File:         data,
+		StatusCode: http.StatusOK,
+		File:       data,
 	}, nil
 }

@@ -29,13 +29,13 @@ func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoin
 		} else {
 			return &pb.MasterGoingDownResponse{
 				Success:      false,
-				ErrorMessage: "Master Already Down",
+				ErrorMessage: "master already down",
 			}, nil
 		}
 	default:
 		return &pb.MasterGoingDownResponse{
 			Success:      false,
-			ErrorMessage: "Unknown Reason For Going Down",
+			ErrorMessage: "unknown reason for going down",
 		}, nil
 	}
 

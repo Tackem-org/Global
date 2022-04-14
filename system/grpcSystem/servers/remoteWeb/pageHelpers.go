@@ -33,7 +33,7 @@ func MakePageResponse(in *pb.PageRequest, webReturn *structs.WebReturn, err erro
 		logging.Error("[GRPC Remote Web System Page Request] %s:%s", in.GetPath(), err.Error())
 		return &pb.PageResponse{
 			StatusCode:   http.StatusInternalServerError,
-			ErrorMessage: "ERROR WITH THE SYSTEM",
+			ErrorMessage: "error with the system",
 		}
 	}
 
@@ -52,7 +52,7 @@ func MakePageResponse(in *pb.PageRequest, webReturn *structs.WebReturn, err erro
 	logging.Error("[GRPC Remote Web System Page Request] %s: Function returned no html Data", in.GetPath())
 	return &pb.PageResponse{
 		StatusCode:   http.StatusInternalServerError,
-		ErrorMessage: "ERROR WITH THE SYSTEM",
+		ErrorMessage: "error with the system",
 	}
 }
 
@@ -75,7 +75,7 @@ func pageFile(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageRespons
 		logging.Error("[GRPC Remote Web System Page Request] %s:%s", in.Path, err.Error())
 		return &pb.PageResponse{
 			StatusCode:   http.StatusInternalServerError,
-			ErrorMessage: "ERROR WITH THE SYSTEM",
+			ErrorMessage: "error with the system",
 		}
 	}
 

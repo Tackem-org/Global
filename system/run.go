@@ -21,11 +21,20 @@ import (
 )
 
 var (
-	wg     *sync.WaitGroup = &sync.WaitGroup{}
-	server *grpc.Server
+	WG       *sync.WaitGroup = &sync.WaitGroup{}
+	Server   *grpc.Server
+	WaitTime time.Duration = time.Duration(5 * time.Second)
+
+	Run              = run
+	startup          = startupFunc
+	mainLoop         = mainLoopFunc
+	shutdown         = shutdownFunc
+	connect          = connectFunc
+	connectConnector = connectConnectorFunc
+	serverServe      = serverServeFunc
 )
 
-func Run(d *setupData.SetupData) {
+func run(d *setupData.SetupData) {
 	logging.Setup(d.LogFile, d.VerboseLog)
 	defer logging.Shutdown()
 	setupData.Data = d
@@ -45,49 +54,32 @@ func Run(d *setupData.SetupData) {
 	if setupData.Data.MainShutdown != nil {
 		setupData.Data.MainShutdown()
 	}
+	WG.Wait()
 	logging.Info("Stopped Tackem %s System", d.Name())
 }
 
-func startup() bool {
+func startupFunc() bool {
 	channels.Setup()
 	if !masterData.Setup(setupData.Data.MasterConf) {
 		logging.Fatal("NO REGISTRATION KEY TO USE UNABLE TO START")
-		return false
 	}
 
 	logging.Info("Setup GRPC Service")
-	server = grpc.NewServer()
-	pbrc.RegisterRegClientServer(server, &regClient.RegClientServer{})
+	Server = grpc.NewServer()
+	pbrc.RegisterRegClientServer(Server, &regClient.RegClientServer{})
 	if len(setupData.Data.AdminPaths)+len(setupData.Data.Paths)+len(setupData.Data.Sockets) > 0 {
-		pbrw.RegisterRemoteWebServer(server, &remoteWeb.RemoteWebServer{})
+		pbrw.RegisterRemoteWebServer(Server, &remoteWeb.RemoteWebServer{})
 	}
 
 	if setupData.Data.GRPCSystems != nil {
-		setupData.Data.GRPCSystems(server)
+		setupData.Data.GRPCSystems(Server)
 	}
 
-	wg.Add(1)
-	go func() {
-		if err := server.Serve(setupData.FreeTCPPort()); err != nil {
-			logging.Fatal("GRPC Error CANNOT SERVER ON LISTENER: %s", err.Error())
-		}
-	}()
+	WG.Add(1)
+	go serverServe()
 
-	waitTime := time.Duration(5)
-
-	for !connect(setupData.Data.RegisterProto()) {
-		select {
-		case <-channels.Root.TermChan:
-			fmt.Print("\n")
-			logging.Info("SIGTERM received. Shutdown process initiated")
-			return false
-		case <-channels.Root.Shutdown:
-			logging.Info("Shutdown Command received. Shutdown process initiated")
-			return false
-		default:
-			logging.Info("Master System Is Down Waiting for %d seconds before retrying", waitTime)
-			time.Sleep(waitTime * time.Second)
-		}
+	if !connect(setupData.Data.RegisterProto()) {
+		return false
 	}
 
 	masterData.UP.Up()
@@ -99,7 +91,11 @@ func startup() bool {
 	return true
 }
 
-func mainLoop() {
+func serverServeFunc() {
+	Server.Serve(setupData.FreeTCPPort())
+}
+
+func mainLoopFunc() {
 	if setupData.Data.MainSystem == nil {
 		select {
 		case <-channels.Root.TermChan:
@@ -114,9 +110,9 @@ func mainLoop() {
 		loopBool := true
 		for loopBool {
 			select {
-			case <-channels.Root.TermChan:
+			case x := <-channels.Root.TermChan:
 				fmt.Print("\n")
-				logging.Info("SIGTERM received. Shutdown process initiated")
+				logging.Info("%s received. Shutdown process initiated", x.String())
 				loopBool = false
 			case <-channels.Root.Shutdown:
 				logging.Info("Shutdown Command received. Shutdown process initiated")
@@ -131,28 +127,49 @@ func mainLoop() {
 
 }
 
-func shutdown(registered bool) {
-	server.Stop()
-	wg.Done()
+func shutdownFunc(registered bool) {
+	Server.Stop()
+	WG.Done()
 	logging.Info("Shutdown gRPC Server")
 
 	if registered && masterData.UP.Check() {
-		wg.Add(1)
+		WG.Add(1)
 		logging.Info("Disconnect: %t", masterData.UP.Check())
 		disconnectResponse, err := registration.Disconnect(&pbr.DisconnectRequest{})
 		if err != nil || !disconnectResponse.Success {
 			logging.Warning("failed to disconnect service from master: %s", disconnectResponse.ErrorMessage)
 		}
 		logging.Info("Disconnect Done")
-		wg.Done()
+		WG.Done()
 	}
-	wg.Wait()
+	// WG.Wait()
 }
 
-func connect(request *pbr.RegisterRequest) bool {
+func connectFunc(request *pbr.RegisterRequest) bool {
+
+	for !connectConnector(request) {
+		select {
+		case <-channels.Root.TermChan:
+			fmt.Print("\n")
+			logging.Info("SIGTERM received. Shutdown process initiated")
+			return false
+		case <-channels.Root.Shutdown:
+			logging.Info("Shutdown Command received. Shutdown process initiated")
+			return false
+		default:
+			logging.Info("Master System Is Down Waiting for %d seconds before retrying", WaitTime)
+			time.Sleep(WaitTime)
+		}
+	}
+
+	return true
+}
+
+func connectConnectorFunc(request *pbr.RegisterRequest) bool {
 	response, err := registration.Register(request)
 	if err != nil {
 		logging.Error(err.Error())
+		return false
 	}
 	if response.Success {
 		setupData.BaseID = response.BaseId

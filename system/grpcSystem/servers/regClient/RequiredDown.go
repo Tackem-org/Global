@@ -22,6 +22,6 @@ func (r *RegClientServer) RequiredDown(ctx context.Context, in *pb.RequiredDownR
 	}
 	return &pb.RequiredDownResponse{
 		Success:      false,
-		ErrorMessage: "Required Service Not Found",
+		ErrorMessage: "required service not found",
 	}, nil
 }

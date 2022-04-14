@@ -23,6 +23,6 @@ func (r *RegClientServer) RemoveDependent(ctx context.Context, in *pb.RemoveDepe
 	}
 	return &pb.RemoveDependentResponse{
 		Success:      false,
-		ErrorMessage: "Service Not Found",
+		ErrorMessage: "service not found",
 	}, nil
 }

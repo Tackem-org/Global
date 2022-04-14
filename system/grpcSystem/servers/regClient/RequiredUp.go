@@ -22,6 +22,6 @@ func (r *RegClientServer) RequiredUp(ctx context.Context, in *pb.RequiredUpReque
 	}
 	return &pb.RequiredUpResponse{
 		Success:      false,
-		ErrorMessage: "required Service Not Found",
+		ErrorMessage: "required service not found",
 	}, nil
 }

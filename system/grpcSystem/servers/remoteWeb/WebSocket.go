@@ -19,7 +19,7 @@ func (r *RemoteWebServer) WebSocket(ctx context.Context, in *pb.WebSocketRequest
 	}, "GRPC Add Dependent"); err != "" {
 		return &pb.WebSocketResponse{StatusCode: http.StatusInternalServerError, HideErrorFromUser: true, ErrorMessage: err}, nil
 	}
-	d, err := helpers.StringToStringMap(in.DataJson)
+	d, _ := helpers.StringToStringMap(in.DataJson)
 
 	webSocketRequest := structs.SocketRequest{
 		Command: in.Command,
@@ -31,7 +31,7 @@ func (r *RemoteWebServer) WebSocket(ctx context.Context, in *pb.WebSocketRequest
 	if socketItem == nil {
 		return &pb.WebSocketResponse{
 			StatusCode:   http.StatusNotFound,
-			ErrorMessage: "Web Socket Not Found",
+			ErrorMessage: "web socket not found",
 		}, nil
 	}
 	response, err := socketItem.Call(&webSocketRequest)
@@ -40,7 +40,7 @@ func (r *RemoteWebServer) WebSocket(ctx context.Context, in *pb.WebSocketRequest
 		logging.Error("[GRPC Remote Web Socket Request] %s:%s", in.Command, err.Error())
 		return &pb.WebSocketResponse{
 			StatusCode:   http.StatusInternalServerError,
-			ErrorMessage: "ERROR WITH THE SYSTEM",
+			ErrorMessage: "error with the system",
 		}, nil
 	}
 

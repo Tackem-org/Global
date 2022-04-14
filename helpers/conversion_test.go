@@ -157,7 +157,11 @@ func TestStringToStringMap(t *testing.T) {
 		expected map[string]interface{}
 		pass     bool
 	}{
-		{`{"int":1, "float":1.1, "string": "test"}`, map[string]interface{}{"int": 1, "float": 1.1, "string": "test"}, true},
+		{
+			input:    `{"int":1, "float":1.1, "string": "test"}`,
+			expected: map[string]interface{}{"int": 1, "float": 1.1, "string": "test"},
+			pass:     true,
+		},
 		{
 			input: `"Test": 1.1, "Test2": "test"}`,
 			pass:  false,
@@ -169,6 +173,11 @@ func TestStringToStringMap(t *testing.T) {
 		{
 			input: `[1.1, "test", 2.1, "test2"]`,
 			pass:  false,
+		},
+		{
+			input:    `{"test1": {"test2": {"test3": "data"}}}`,
+			expected: map[string]interface{}{"test1": map[string]interface{}{"test2": map[string]interface{}{"test3": "data"}}},
+			pass:     true,
 		},
 	}
 

@@ -23,7 +23,7 @@ func (r *RegClientServer) DependentUp(ctx context.Context, in *pb.DependentUpReq
 	}
 	return &pb.DependentUpResponse{
 		Success:      false,
-		ErrorMessage: "Dependent Service Not Found",
+		ErrorMessage: "dependent service not found",
 	}, nil
 
 }

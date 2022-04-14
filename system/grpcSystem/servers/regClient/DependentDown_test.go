@@ -40,7 +40,7 @@ func TestDependentDown(t *testing.T) {
 	assert.NotNil(t, r3)
 	assert.Nil(t, err3)
 	assert.False(t, r3.Success)
-	assert.Equal(t, "Dependent Service Not Found", r3.ErrorMessage)
+	assert.Equal(t, "dependent service not found", r3.ErrorMessage)
 
 	dependentServices.Remove(d.BaseID)
 }

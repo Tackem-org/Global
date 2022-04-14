@@ -14,14 +14,19 @@ var (
 	UP             helpers.Locker = helpers.Locker{Label: "Master"}
 	Info           Infostruct
 	ConnectionInfo ConnectionInfostruct
+	Setup          = setup
 )
+
+func ResetFuncs() {
+	Setup = setup
+}
 
 const (
 	DefaultURL  string = "127.0.0.1"
 	DefaultPort uint32 = 50000
 )
 
-func Setup(masterConf string) bool {
+func setup(masterConf string) bool {
 	setupOnce.Do(func() {
 		UP.Down()
 	})

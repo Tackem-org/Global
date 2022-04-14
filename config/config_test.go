@@ -35,6 +35,6 @@ func (mc *MockConfig) Set(request *pb.SetConfigRequest) (*pb.SetConfigResponse, 
 	}
 	return &pb.SetConfigResponse{
 		Success:      false,
-		ErrorMessage: "Not Found",
+		ErrorMessage: "not found",
 	}, nil
 }

@@ -80,3 +80,7 @@ func TestMasterDataSetup(t *testing.T) {
 
 	assert.Nil(t, os.Remove(goodFile))
 }
+
+func TestResetFuncs(t *testing.T) {
+	assert.NotPanics(t, func() { masterData.ResetFuncs() })
+}

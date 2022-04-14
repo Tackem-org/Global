@@ -23,6 +23,6 @@ func (r *RegClientServer) DependentDown(ctx context.Context, in *pb.DependentDow
 	}
 	return &pb.DependentDownResponse{
 		Success:      false,
-		ErrorMessage: "Dependent Service Not Found",
+		ErrorMessage: "dependent service not found",
 	}, nil
 }

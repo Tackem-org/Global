@@ -20,7 +20,7 @@ func (r *RegClientServer) MasterBackUp(ctx context.Context, in *pb.MasterBackUpR
 	if masterData.UP.Check() {
 		return &pb.MasterBackUpResponse{
 			Success:      false,
-			ErrorMessage: "Master Already Marked as Up",
+			ErrorMessage: "master already marked as up",
 			Active:       setupData.Active,
 			RegData:      setupData.Data.RegisterProto(),
 		}, nil

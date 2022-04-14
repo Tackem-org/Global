@@ -36,6 +36,8 @@ func InterfaceSliceToStringSlice(in []interface{}) []string {
 }
 
 func InterfaceSliceToIntSlice(in []interface{}) ([]int, error) {
+	//TODO make this see what each type is in the slice and deal with it from there
+	// instead of only accepting string get it to accept int too
 	out := make([]int, len(in))
 	for i, v := range in {
 		tmp, err := strconv.Atoi(v.(string))
