@@ -11,7 +11,7 @@ service Web {
 
 message TaskMessage {
   string task = 1;
-  string base_id = 2; //TODO remove requirement from Add Task Stuff and remove this
+  string base_id = 2;
   uint64 task_id = 3;
   string created_at = 4;
   string url = 5;

@@ -36,15 +36,42 @@ func InterfaceSliceToStringSlice(in []interface{}) []string {
 }
 
 func InterfaceSliceToIntSlice(in []interface{}) ([]int, error) {
-	//TODO make this see what each type is in the slice and deal with it from there
-	// instead of only accepting string get it to accept int too
 	out := make([]int, len(in))
+	var err error
 	for i, v := range in {
-		tmp, err := strconv.Atoi(v.(string))
-		if err != nil {
-			return nil, err
+		switch x := v.(type) {
+		case int:
+			out[i] = x
+		case int8:
+			out[i] = int(x)
+		case int16:
+			out[i] = int(x)
+		case int32:
+			out[i] = int(x)
+		case int64:
+			out[i] = int(x)
+		case uint:
+			out[i] = int(x)
+		case uint8:
+			out[i] = int(x)
+		case uint16:
+			out[i] = int(x)
+		case uint32:
+			out[i] = int(x)
+		case uint64:
+			out[i] = int(x)
+		case float32:
+			out[i] = int(x)
+		case float64:
+			out[i] = int(x)
+		case string:
+			out[i], err = strconv.Atoi(v.(string))
+			if err != nil {
+				return nil, err
+			}
+		default:
+			return nil, errors.New("Type Not a number")
 		}
-		out[i] = tmp
 	}
 	return out, nil
 }

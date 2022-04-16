@@ -68,23 +68,19 @@ func TestInterfaceSliceToIntSlice(t *testing.T) {
 		{[]interface{}{}, []int{}, true},
 		{[]interface{}{"1"}, []int{1}, true},
 		{[]interface{}{"1", "2"}, []int{1, 2}, true},
-		{
-			input: []interface{}{"string"},
-			pass:  false,
-		},
-		{
-			input: []interface{}{"2.2"},
-			pass:  false,
-		},
+		{[]interface{}{int(1), int8(2), int16(3), int32(4), int64(5), uint(6), uint8(7), uint16(8), uint32(9), uint64(10), float32(11.1), float64(12.1), "13"}, []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13}, true},
+		{input: []interface{}{"string"}, pass: false},
+		{input: []interface{}{"2.2"}, pass: false},
+		{input: []interface{}{false}, pass: false},
 	}
 
-	for _, test := range tests {
+	for i, test := range tests {
 		data, err := helpers.InterfaceSliceToIntSlice(test.input)
 		if test.pass {
 			assert.Equal(t, test.expected, data)
 		} else {
 			assert.Nil(t, data)
-			assert.NotNil(t, err)
+			assert.NotNil(t, err, i)
 		}
 	}
 
