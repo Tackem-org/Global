@@ -46,14 +46,15 @@ type SetupData struct {
 	VerboseLog  bool
 	GRPCSystems func(server *grpc.Server)
 
-	StaticFS     EmbedInterface
-	AdminPaths   []*AdminPathItem
-	Paths        []*PathItem
-	Sockets      []*SocketItem
-	TaskGrabber  func() []*pbw.TaskMessage
-	MainSetup    func()
-	MainSystem   func()
-	MainShutdown func()
+	StaticFS            EmbedInterface
+	AdminPaths          []*AdminPathItem
+	Paths               []*PathItem
+	Sockets             []*SocketItem
+	TaskGrabber         func() []*pbw.TaskMessage
+	NotificationGrabber func() []*pbw.NotificationMessage
+	MainSetup           func()
+	MainSystem          func()
+	MainShutdown        func()
 }
 
 type PageFunc = func(in *structs.WebRequest) (*structs.WebReturn, error)

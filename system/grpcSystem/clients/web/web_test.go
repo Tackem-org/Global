@@ -43,6 +43,13 @@ func (c *MockWebServer) SendTask(ctx context.Context, in *pb.TaskMessage) (*pb.S
 	return &pb.SendTaskResponse{}, nil
 }
 
+func (c *MockWebServer) SendNotification(ctx context.Context, in *pb.NotificationMessage) (*pb.SendNotificationResponse, error) {
+	if in.Notification == "FAIL" {
+		return nil, errors.New("FAIL")
+	}
+	return &pb.SendNotificationResponse{}, nil
+}
+
 func (c *MockWebServer) RemoveTask(ctx context.Context, in *pb.RemoveTaskRequest) (*pb.RemoveTaskResponse, error) {
 	if in.Task == "FAIL" {
 		return nil, errors.New("FAIL")
@@ -90,6 +97,19 @@ func TestWebServerAddTask(t *testing.T) {
 
 	assert.True(t, web.AddTask(&pb.TaskMessage{}))
 	assert.False(t, web.AddTask(&pb.TaskMessage{Task: "FAIL"}))
+}
+
+func TestWebServerAddNotification(t *testing.T) {
+	logging.I = &MockLogging{}
+	assert.False(t, web.AddNotification(&pb.NotificationMessage{}))
+
+	srv, listener := startGRPCServer()
+	assert.NotNil(t, srv, "Test GRPC SERVER not running")
+	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
+	defer srv.Stop()
+
+	assert.True(t, web.AddNotification(&pb.NotificationMessage{}))
+	assert.False(t, web.AddNotification(&pb.NotificationMessage{Notification: "FAIL"}))
 }
 
 func TestWebServerRemoveTask(t *testing.T) {

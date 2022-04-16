@@ -74,9 +74,10 @@ func (mrc *MockRegistrationClient) Register(request *pbr.RegisterRequest) (*pbr.
 }
 
 func TestRun(t *testing.T) {
+	system.ResetFunctions()
+	logging.I = &MockLogging{}
 	assert.Panics(t, func() { system.Run(nil) })
 	assert.Panics(t, func() { system.Run(&setupData.SetupData{}) })
-	logging.I = &MockLogging{}
 	system.SetupForRun(
 		func() bool { return true },
 		func() {},

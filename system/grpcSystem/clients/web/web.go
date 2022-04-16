@@ -10,6 +10,7 @@ import (
 
 type WebClientInterface interface {
 	AddTask(request *pb.TaskMessage) bool
+	AddNotification(request *pb.NotificationMessage) bool
 	RemoveTask(request *pb.RemoveTaskRequest) bool
 	WebSocketSend(request *pb.SendWebSocketRequest) bool
 }
@@ -18,6 +19,10 @@ var I WebClientInterface = &WebClient{}
 
 func AddTask(request *pb.TaskMessage) bool {
 	return I.AddTask(request)
+}
+
+func AddNotification(request *pb.NotificationMessage) bool {
+	return I.AddNotification(request)
 }
 
 func RemoveTask(request *pb.RemoveTaskRequest) bool {
@@ -42,6 +47,23 @@ func (wc *WebClient) AddTask(request *pb.TaskMessage) bool {
 	defer cancel()
 	if _, err := client.SendTask(ctx, request, grpc.Header(&header)); err != nil {
 		logging.Error("[Add Task] Error with the Server: %s", err.Error())
+		return false
+	}
+	return true
+}
+
+func (wc *WebClient) AddNotification(request *pb.NotificationMessage) bool {
+	conn, err := connections.Master()
+	if err != nil {
+		logging.Error("[Add Notification] Cannot Connect to Master: %s", err.Error())
+		return false
+	}
+	defer conn.Close()
+	client := pb.NewWebClient(conn)
+	header, ctx, cancel := headers.MasterHeader()
+	defer cancel()
+	if _, err := client.SendNotification(ctx, request, grpc.Header(&header)); err != nil {
+		logging.Error("[Add Notification] Error with the Server: %s", err.Error())
 		return false
 	}
 	return true
