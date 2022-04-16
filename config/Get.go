@@ -12,7 +12,6 @@ import (
 	str2duration "github.com/xhit/go-str2duration/v2"
 )
 
-//TODO FINISH THIS OFF WITH BAD DATA COMING IN TO GET ERROR DATA
 func GetBool(key string) (bool, error) {
 	response, err := configClient.Get(&pb.GetConfigRequest{Key: key})
 	if err != nil {
