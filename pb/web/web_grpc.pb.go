@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WebClient interface {
-	// rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse) {}
+	SendNotification(ctx context.Context, in *NotificationMessage, opts ...grpc.CallOption) (*SendNotificationResponse, error)
 	SendTask(ctx context.Context, in *TaskMessage, opts ...grpc.CallOption) (*SendTaskResponse, error)
 	RemoveTask(ctx context.Context, in *RemoveTaskRequest, opts ...grpc.CallOption) (*RemoveTaskResponse, error)
 	SendWebSocket(ctx context.Context, in *SendWebSocketRequest, opts ...grpc.CallOption) (*SendWebSocketResponse, error)
@@ -34,6 +34,15 @@ type webClient struct {
 
 func NewWebClient(cc grpc.ClientConnInterface) WebClient {
 	return &webClient{cc}
+}
+
+func (c *webClient) SendNotification(ctx context.Context, in *NotificationMessage, opts ...grpc.CallOption) (*SendNotificationResponse, error) {
+	out := new(SendNotificationResponse)
+	err := c.cc.Invoke(ctx, "/web.Web/SendNotification", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *webClient) SendTask(ctx context.Context, in *TaskMessage, opts ...grpc.CallOption) (*SendTaskResponse, error) {
@@ -67,7 +76,7 @@ func (c *webClient) SendWebSocket(ctx context.Context, in *SendWebSocketRequest,
 // All implementations must embed UnimplementedWebServer
 // for forward compatibility
 type WebServer interface {
-	// rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse) {}
+	SendNotification(context.Context, *NotificationMessage) (*SendNotificationResponse, error)
 	SendTask(context.Context, *TaskMessage) (*SendTaskResponse, error)
 	RemoveTask(context.Context, *RemoveTaskRequest) (*RemoveTaskResponse, error)
 	SendWebSocket(context.Context, *SendWebSocketRequest) (*SendWebSocketResponse, error)
@@ -78,6 +87,9 @@ type WebServer interface {
 type UnimplementedWebServer struct {
 }
 
+func (UnimplementedWebServer) SendNotification(context.Context, *NotificationMessage) (*SendNotificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendNotification not implemented")
+}
 func (UnimplementedWebServer) SendTask(context.Context, *TaskMessage) (*SendTaskResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendTask not implemented")
 }
@@ -98,6 +110,24 @@ type UnsafeWebServer interface {
 
 func RegisterWebServer(s grpc.ServiceRegistrar, srv WebServer) {
 	s.RegisterService(&Web_ServiceDesc, srv)
+}
+
+func _Web_SendNotification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NotificationMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WebServer).SendNotification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/web.Web/SendNotification",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WebServer).SendNotification(ctx, req.(*NotificationMessage))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Web_SendTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -161,6 +191,10 @@ var Web_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "web.Web",
 	HandlerType: (*WebServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "SendNotification",
+			Handler:    _Web_SendNotification_Handler,
+		},
 		{
 			MethodName: "SendTask",
 			Handler:    _Web_SendTask_Handler,

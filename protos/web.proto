@@ -3,7 +3,7 @@ option go_package = "github.com/Tackem-org/Global/pb/web";
 package web;
 
 service Web {
-  // rpc SendNotification(SendNotificationRequest) returns (SendNotificationResponse) {}
+  rpc SendNotification(NotificationMessage) returns (SendNotificationResponse) {}
   rpc SendTask(TaskMessage) returns (SendTaskResponse) {}
   rpc RemoveTask(RemoveTaskRequest) returns (RemoveTaskResponse) {}
   rpc SendWebSocket(SendWebSocketRequest) returns (SendWebSocketResponse) {}
@@ -56,4 +56,27 @@ message SendWebSocketRequest {
 }
 
 message SendWebSocketResponse {
+}
+
+
+message NotificationMessage {
+  string notification = 1;
+  string base_id = 2;
+  uint64 notification_id = 3;
+  string created_at = 4;
+  string url = 5;
+  string icon = 6;
+  string color = 7;
+  string title = 8;
+  string message = 9;
+  oneof who {
+    bool admin_only = 10;
+    string permission = 11;
+    uint64 user_id = 12;
+  }
+}
+
+message SendNotificationResponse {
+  bool success = 1;
+  string error_message = 2;
 }

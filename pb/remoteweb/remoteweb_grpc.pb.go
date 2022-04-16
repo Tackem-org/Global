@@ -27,6 +27,7 @@ type RemoteWebClient interface {
 	File(ctx context.Context, in *FileRequest, opts ...grpc.CallOption) (*FileResponse, error)
 	WebSocket(ctx context.Context, in *WebSocketRequest, opts ...grpc.CallOption) (*WebSocketResponse, error)
 	Tasks(ctx context.Context, in *TasksRequest, opts ...grpc.CallOption) (*TasksResponse, error)
+	Notifications(ctx context.Context, in *NotificationsRequest, opts ...grpc.CallOption) (*NotificationsResponse, error)
 }
 
 type remoteWebClient struct {
@@ -82,6 +83,15 @@ func (c *remoteWebClient) Tasks(ctx context.Context, in *TasksRequest, opts ...g
 	return out, nil
 }
 
+func (c *remoteWebClient) Notifications(ctx context.Context, in *NotificationsRequest, opts ...grpc.CallOption) (*NotificationsResponse, error) {
+	out := new(NotificationsResponse)
+	err := c.cc.Invoke(ctx, "/remoteweb.RemoteWeb/Notifications", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RemoteWebServer is the server API for RemoteWeb service.
 // All implementations must embed UnimplementedRemoteWebServer
 // for forward compatibility
@@ -91,6 +101,7 @@ type RemoteWebServer interface {
 	File(context.Context, *FileRequest) (*FileResponse, error)
 	WebSocket(context.Context, *WebSocketRequest) (*WebSocketResponse, error)
 	Tasks(context.Context, *TasksRequest) (*TasksResponse, error)
+	Notifications(context.Context, *NotificationsRequest) (*NotificationsResponse, error)
 	mustEmbedUnimplementedRemoteWebServer()
 }
 
@@ -112,6 +123,9 @@ func (UnimplementedRemoteWebServer) WebSocket(context.Context, *WebSocketRequest
 }
 func (UnimplementedRemoteWebServer) Tasks(context.Context, *TasksRequest) (*TasksResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Tasks not implemented")
+}
+func (UnimplementedRemoteWebServer) Notifications(context.Context, *NotificationsRequest) (*NotificationsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Notifications not implemented")
 }
 func (UnimplementedRemoteWebServer) mustEmbedUnimplementedRemoteWebServer() {}
 
@@ -216,6 +230,24 @@ func _RemoteWeb_Tasks_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteWeb_Notifications_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NotificationsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteWebServer).Notifications(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/remoteweb.RemoteWeb/Notifications",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteWebServer).Notifications(ctx, req.(*NotificationsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RemoteWeb_ServiceDesc is the grpc.ServiceDesc for RemoteWeb service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +274,10 @@ var RemoteWeb_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Tasks",
 			Handler:    _RemoteWeb_Tasks_Handler,
+		},
+		{
+			MethodName: "Notifications",
+			Handler:    _RemoteWeb_Notifications_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

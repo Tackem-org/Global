@@ -9,6 +9,7 @@ service RemoteWeb {
   rpc File(FileRequest) returns (FileResponse) {}
   rpc WebSocket(WebSocketRequest) returns (WebSocketResponse) {}
   rpc Tasks(TasksRequest) returns (TasksResponse) {}
+  rpc Notifications(NotificationsRequest) returns (NotificationsResponse) {}
 }
 
 message PageRequest {
@@ -73,4 +74,14 @@ message TasksResponse {
   bool success = 1;
   string error_message = 2;
   repeated web.TaskMessage tasks = 3;
+}
+
+message NotificationsRequest {
+
+}
+
+message NotificationsResponse {
+  bool success = 1;
+  string error_message = 2;
+  repeated web.NotificationMessage notifications = 3;
 }
