@@ -2,6 +2,7 @@ package system
 
 import (
 	"fmt"
+	"reflect"
 	"sync"
 	"time"
 
@@ -37,6 +38,9 @@ var (
 func run(d *setupData.SetupData) {
 	logging.Setup(d.LogFile, d.VerboseLog)
 	defer logging.Shutdown()
+	if d == nil || reflect.DeepEqual(d, &setupData.SetupData{}) {
+		logging.Fatal("BAD SYSTEM SETUP DATA NOT SETUP")
+	}
 	setupData.Data = d
 	logging.Info("Starting Tackem %s System", d.Name())
 	if setupData.Data.MainSetup != nil {
