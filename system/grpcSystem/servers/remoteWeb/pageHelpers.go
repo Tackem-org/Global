@@ -83,7 +83,7 @@ func pageFile(returnData *structs.WebReturn, in *pb.PageRequest) *pb.PageRespons
 	css, js := getBaseCSSandJS(returnData.FilePath)
 	return &pb.PageResponse{
 		StatusCode:        returnData.StatusCode,
-		TemplateHtml:      returnData.FilePath + ":" + string(templateHtml),
+		TemplateHtml:      string(templateHtml),
 		PageVariablesJson: string(pageData),
 		CustomPageName:    returnData.CustomPageName,
 		CustomCss:         append(css, returnData.CustomCss...),
