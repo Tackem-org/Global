@@ -2,7 +2,6 @@ package system
 
 import (
 	"fmt"
-	"reflect"
 	"sync"
 	"time"
 
@@ -36,9 +35,6 @@ var (
 )
 
 func run(d *setupData.SetupData) {
-	if d == nil || reflect.DeepEqual(d, &setupData.SetupData{}) {
-		logging.Fatal("BAD SYSTEM SETUP DATA NOT SETUP")
-	}
 	logging.Setup(d.LogFile, d.VerboseLog)
 	defer logging.Shutdown()
 	setupData.Data = d
@@ -82,6 +78,7 @@ func startupFunc() bool {
 	WG.Add(1)
 	go serverServe()
 
+	logging.Info("Registration Started")
 	if !connect(setupData.Data.RegisterProto()) {
 		return false
 	}

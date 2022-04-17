@@ -1,6 +1,7 @@
 package flags
 
 import (
+	"github.com/spf13/pflag"
 	flag "github.com/spf13/pflag"
 )
 
@@ -20,4 +21,8 @@ func LogFolder() string {
 
 func Verbose() bool {
 	return *verbose
+}
+
+func Parse() {
+	pflag.Parse()
 }

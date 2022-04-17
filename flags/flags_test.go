@@ -25,3 +25,7 @@ func TestVerbose(t *testing.T) {
 	pflag.Set("verbose", "true")
 	assert.True(t, flags.Verbose())
 }
+
+func TestParse(t *testing.T) {
+	assert.NotPanics(t, func() { flags.Parse() })
+}

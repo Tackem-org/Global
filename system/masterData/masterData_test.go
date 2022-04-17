@@ -13,9 +13,9 @@ func TestMasterDataSetup(t *testing.T) {
 	goodFile := "test.json"
 	missingFile := "some.json"
 	t2 := masterData.Infostruct{
-		URL:             "TestKey",
-		Port:            50001,
-		RegistrationKey: "localhost",
+		URL:             "localhost",
+		Port:            50000,
+		RegistrationKey: "testkey",
 	}
 
 	os.Remove(goodFile)
