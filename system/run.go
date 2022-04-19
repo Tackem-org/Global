@@ -147,8 +147,9 @@ func shutdownFunc(registered bool) {
 }
 
 func connectFunc(request *pbr.RegisterRequest) bool {
-
+	connectTimer := time.NewTimer(WaitTime)
 	for !connectConnector(request) {
+		logging.Info("Master System Is Down Waiting for %d seconds before retrying", WaitTime)
 		select {
 		case <-channels.Root.TermChan:
 			fmt.Print("\n")
@@ -157,9 +158,8 @@ func connectFunc(request *pbr.RegisterRequest) bool {
 		case <-channels.Root.Shutdown:
 			logging.Info("Shutdown Command received. Shutdown process initiated")
 			return false
-		default:
-			logging.Info("Master System Is Down Waiting for %d seconds before retrying", WaitTime)
-			time.Sleep(WaitTime)
+		case <-connectTimer.C:
+			logging.Info("retrying connection")
 		}
 	}
 

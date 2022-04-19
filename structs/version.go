@@ -2,6 +2,8 @@ package structs
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	pb "github.com/Tackem-org/Global/pb/registration"
 )
@@ -12,6 +14,17 @@ type Version struct {
 	Hotfix uint8
 }
 
+func StringToVersion(v string) Version {
+	splitv := strings.Split(strings.ReplaceAll(v, "v", ""), ".")
+	major, _ := strconv.Atoi(splitv[0])
+	minor, _ := strconv.Atoi(splitv[1])
+	hotfix, _ := strconv.Atoi(splitv[2])
+	return Version{
+		Major:  uint8(major),
+		Minor:  uint8(minor),
+		Hotfix: uint8(hotfix),
+	}
+}
 func (v Version) String() string {
 	return fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Hotfix)
 }

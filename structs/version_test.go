@@ -8,6 +8,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestStringToVersion(t *testing.T) {
+	assert.Equal(t, structs.Version{1, 2, 3}, structs.StringToVersion("v1.2.3"))
+}
+
 func TestVersionGreaterThan(t *testing.T) {
 	tests := []struct {
 		left   structs.Version
