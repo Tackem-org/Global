@@ -94,9 +94,9 @@ func StringToStringSlice(in string) []string {
 	return out
 }
 
-func StringToStringMap[T string | []byte](in T) (map[string]interface{}, error) {
+func StringToStringMap(in []byte) (map[string]interface{}, error) {
 	out := map[string]interface{}{}
-	err := json.Unmarshal([]byte(in), &out)
+	err := json.Unmarshal(in, &out)
 	if err != nil {
 		return nil, err
 	}

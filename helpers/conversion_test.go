@@ -178,7 +178,7 @@ func TestStringToStringMap(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		data, err := helpers.StringToStringMap(test.input)
+		data, err := helpers.StringToStringMap([]byte(test.input))
 		if test.pass {
 			assert.Nil(t, err)
 			assert.Equal(t, test.expected, data)

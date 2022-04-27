@@ -21,9 +21,9 @@ func MakeWebRequest(in *pb.PageRequest) *structs.WebRequest {
 		Method:   in.Method,
 	}
 
-	webRequest.QueryParams, _ = helpers.StringToStringMap(in.QueryParamsJson)
-	webRequest.Post, _ = helpers.StringToStringMap(in.PostJson)
-	webRequest.PathVariables, _ = helpers.StringToStringMap(in.PathParamsJson)
+	webRequest.QueryParams, _ = helpers.StringToStringMap([]byte(in.QueryParamsJson))
+	webRequest.Post, _ = helpers.StringToStringMap([]byte(in.PostJson))
+	webRequest.PathVariables, _ = helpers.StringToStringMap([]byte(in.PathParamsJson))
 
 	return &webRequest
 }
