@@ -2,7 +2,6 @@ package remoteWeb_test
 
 import (
 	"errors"
-	"io/fs"
 	iofs "io/fs"
 	"net/http"
 	"testing"
@@ -18,7 +17,7 @@ type MockEmbed struct {
 	Files map[string]*MockFile
 }
 
-func (me *MockEmbed) Open(name string) (fs.File, error) {
+func (me *MockEmbed) Open(name string) (iofs.File, error) {
 	if v, ok := me.Files[name]; ok {
 		return v, nil
 	}
@@ -43,7 +42,7 @@ type MockFile struct {
 	Data string
 }
 
-func (mf *MockFile) Stat() (fs.FileInfo, error) {
+func (mf *MockFile) Stat() (iofs.FileInfo, error) {
 	return nil, nil
 }
 func (mf *MockFile) Read([]byte) (int, error) {
