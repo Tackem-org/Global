@@ -131,6 +131,15 @@ func StringToDuration(in string) (time.Duration, error) {
 }
 
 func DurationToString(in time.Duration) string {
+	data := durationToString(in)
+	data = strings.ReplaceAll(data, "w0d0h0m0s", "w")
+	data = strings.ReplaceAll(data, "d0h0m0s", "d")
+	data = strings.ReplaceAll(data, "h0m0s", "h")
+	data = strings.ReplaceAll(data, "m0s", "m")
+	return data
+}
+
+func durationToString(in time.Duration) string {
 
 	f := in.String()
 	if !strings.Contains(f, "h") {
