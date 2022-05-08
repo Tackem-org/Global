@@ -235,10 +235,10 @@ func TestDurationToString(t *testing.T) {
 		{time.Duration(time.Microsecond), "1µs"},
 		{time.Duration(time.Millisecond), "1ms"},
 		{time.Duration(time.Second), "1s"},
-		{time.Duration(time.Minute), "1m0s"},
-		{time.Duration(time.Hour), "1h0m0s"},
-		{time.Duration(24 * time.Hour), "1d0h0m0s"},
-		{time.Duration(7 * 24 * time.Hour), "1w0d0h0m0s"},
+		{time.Duration(time.Minute), "1m"},
+		{time.Duration(time.Hour), "1h"},
+		{time.Duration(24 * time.Hour), "1d"},
+		{time.Duration(7 * 24 * time.Hour), "1w"},
 	}
 	for _, test := range tests {
 		data := helpers.DurationToString(test.input)

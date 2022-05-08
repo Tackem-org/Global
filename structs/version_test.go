@@ -10,6 +10,7 @@ import (
 
 func TestStringToVersion(t *testing.T) {
 	assert.Equal(t, structs.Version{1, 2, 3}, structs.StringToVersion("v1.2.3"))
+	assert.Equal(t, structs.Version{1, 2, 4}, structs.StringToVersion("V1.2.4"))
 }
 
 func TestVersionGreaterThan(t *testing.T) {

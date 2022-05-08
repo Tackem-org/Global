@@ -36,11 +36,8 @@ func setup(masterConf string) bool {
 	if grabFromFile(masterConf) {
 		return true
 	}
+	return grabFromEnv()
 
-	if grabFromEnv() {
-		return saveToFile(masterConf)
-	}
-	return false
 }
 
 func grabFromFile(masterConf string) bool {
@@ -49,10 +46,7 @@ func grabFromFile(masterConf string) bool {
 	}
 
 	if file, err := os.ReadFile(masterConf); err == nil {
-		err = json.Unmarshal([]byte(file), &Info)
-		if err == nil {
-			return true
-		}
+		return json.Unmarshal([]byte(file), &Info) == nil
 	}
 	return false
 }
@@ -61,32 +55,19 @@ func grabFromEnv() bool {
 	urlVal, urlPresent := os.LookupEnv("URL")
 	portVal, portPresent := os.LookupEnv("PORT")
 	keyVal, keyPresent := os.LookupEnv("REGKEY")
-
-	if !keyPresent {
-		return false
-	}
-	Info.RegistrationKey = keyVal
-
-	if urlPresent {
-		Info.URL = urlVal
-	}
-	if portPresent {
-		p, errp := strconv.Atoi(portVal)
-		if errp == nil {
-			Info.Port = uint32(p)
-		}
-	}
-
 	os.Unsetenv("REGKEY")
 	os.Unsetenv("URL")
 	os.Unsetenv("PORT")
-	return true
-}
 
-func saveToFile(masterConf string) bool {
-	if masterConf == "" {
+	if !keyPresent || !urlPresent || !portPresent {
 		return false
 	}
-	file, _ := json.MarshalIndent(Info, "", " ")
-	return os.WriteFile(masterConf, file, 0644) == nil
+	Info.RegistrationKey = keyVal
+	Info.URL = urlVal
+	p, errp := strconv.Atoi(portVal)
+	if errp == nil {
+		Info.Port = uint32(p)
+	}
+
+	return true
 }

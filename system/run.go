@@ -5,8 +5,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/Tackem-org/Global/flags"
 	"github.com/Tackem-org/Global/helpers"
 	"github.com/Tackem-org/Global/logging"
+	"github.com/Tackem-org/Global/structs"
 	"github.com/Tackem-org/Global/system/channels"
 	"github.com/Tackem-org/Global/system/grpcSystem/clients/registration"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/regClient"
@@ -21,9 +23,12 @@ import (
 )
 
 var (
-	WG       *sync.WaitGroup = &sync.WaitGroup{}
-	Server   *grpc.Server
-	WaitTime time.Duration = time.Duration(5 * time.Second)
+	Version    string
+	Commit     string
+	CommitDate string
+	WG         *sync.WaitGroup = &sync.WaitGroup{}
+	Server     *grpc.Server
+	WaitTime   time.Duration = time.Duration(5 * time.Second)
 
 	Run              = run
 	startup          = startupFunc
@@ -34,9 +39,19 @@ var (
 	serverServe      = serverServeFunc
 )
 
-func run(d *setupData.SetupData) {
+func run(d *setupData.SetupData, masterConfigFile string, logFile string) {
+	flags.Parse()
+	if flags.Version() {
+		fmt.Println(Version)
+		return
+	}
 	logging.Setup(d.LogFile, d.VerboseLog)
 	defer logging.Shutdown()
+	if d != nil {
+		d.Version = structs.StringToVersion(Version)
+		d.MasterConf = flags.ConfigFolder() + masterConfigFile
+		d.LogFile = flags.LogFolder() + logFile
+	}
 	setupData.Data = d
 	logging.Info("Starting Tackem %s System", d.Name())
 	if setupData.Data.MainSetup != nil {

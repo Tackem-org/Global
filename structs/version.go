@@ -15,7 +15,7 @@ type Version struct {
 }
 
 func StringToVersion(v string) Version {
-	splitv := strings.Split(strings.ReplaceAll(v, "v", ""), ".")
+	splitv := strings.Split(strings.ReplaceAll(strings.ToLower(v), "v", ""), ".")
 	major, _ := strconv.Atoi(splitv[0])
 	minor, _ := strconv.Atoi(splitv[1])
 	hotfix, _ := strconv.Atoi(splitv[2])

@@ -8,6 +8,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestRegistrationFile(t *testing.T) {
+	folder := "/config/test.json"
+	pflag.Set("regfile", folder)
+	assert.Equal(t, folder, flags.RegistrationFile())
+}
 func TestConfigFolder(t *testing.T) {
 	folder := "/config/"
 	pflag.Set("config", folder)
@@ -20,10 +25,10 @@ func TestLogFile(t *testing.T) {
 	assert.Equal(t, folder, flags.LogFolder())
 }
 
-func TestVerbose(t *testing.T) {
-	assert.False(t, flags.Verbose())
-	pflag.Set("verbose", "true")
-	assert.True(t, flags.Verbose())
+func TestVersion(t *testing.T) {
+	assert.False(t, flags.Version())
+	pflag.Set("version", "true")
+	assert.True(t, flags.Version())
 }
 
 func TestParse(t *testing.T) {

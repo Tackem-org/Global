@@ -25,6 +25,7 @@ func SetupForRun(startupF func() bool, mainLoopF func(), shutdownF func(register
 	startup = startupF
 	mainLoop = mainLoopF
 	shutdown = shutdownF
+	Version = "v1.0.0"
 }
 
 func SetupForStartup(connectF func(request *pbr.RegisterRequest) bool, serverServeF func()) {

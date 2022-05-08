@@ -16,6 +16,7 @@ import (
 	"github.com/Tackem-org/Global/system/grpcSystem/clients/registration"
 	"github.com/Tackem-org/Global/system/masterData"
 	"github.com/Tackem-org/Global/system/setupData"
+	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 )
@@ -88,8 +89,21 @@ func TestRun(t *testing.T) {
 				VerboseLog:   false,
 				MainSetup:    func() {},
 				MainShutdown: func() {},
-			})
+			}, "data.json", "log.log")
 		})
+
+	pflag.Set("version", "true")
+
+	assert.NotPanics(t,
+		func() {
+			system.Run(&setupData.SetupData{
+				LogFile:      "",
+				VerboseLog:   false,
+				MainSetup:    func() {},
+				MainShutdown: func() {},
+			}, "data.json", "log.log")
+		})
+
 	system.ResetFunctions()
 }
 

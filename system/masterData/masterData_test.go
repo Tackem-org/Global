@@ -1,6 +1,7 @@
 package masterData_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"testing"
@@ -18,7 +19,9 @@ func TestMasterDataSetup(t *testing.T) {
 		RegistrationKey: "testkey",
 	}
 
-	os.Remove(goodFile)
+	file, _ := json.MarshalIndent(t2, "", " ")
+	os.WriteFile(goodFile, file, 0644)
+
 	os.Unsetenv("REGKEY")
 	os.Unsetenv("URL")
 	os.Unsetenv("PORT")
@@ -37,16 +40,16 @@ func TestMasterDataSetup(t *testing.T) {
 
 	assert.False(t, masterData.Setup(""), "Second Setup Run With Env Var missing Reg Key Data Should Fail from lack of Reg Key")
 	_, urlPresent1 := os.LookupEnv("URL")
-	assert.True(t, urlPresent1)
+	assert.False(t, urlPresent1)
 	_, portPresent1 := os.LookupEnv("PORT")
-	assert.True(t, portPresent1)
+	assert.False(t, portPresent1)
 
 	//Third Run
 	assert.Nil(t, os.Setenv("REGKEY", t2.RegistrationKey))
 	_, keyPresent2a := os.LookupEnv("REGKEY")
 	assert.True(t, keyPresent2a)
 
-	assert.False(t, masterData.Setup(""), "Third Setup Run With Env Var Data Should Fail from not being able to save it")
+	assert.False(t, masterData.Setup(""), "Third Setup Run With Env Var Data Should Fail with missing data")
 
 	_, urlPresent2 := os.LookupEnv("URL")
 	assert.False(t, urlPresent2)
@@ -66,7 +69,7 @@ func TestMasterDataSetup(t *testing.T) {
 	_, keyPresent3a := os.LookupEnv("REGKEY")
 	assert.True(t, keyPresent3a)
 
-	assert.True(t, masterData.Setup(goodFile), "Forth Setup Run With Env Var Data Should Pass")
+	assert.True(t, masterData.Setup(""), "Forth Setup Run With Env Var Data Should Pass")
 
 	//Fifth Run
 	assert.True(t, masterData.Setup(goodFile), "Fifth Setup Run With Json Data should pass")

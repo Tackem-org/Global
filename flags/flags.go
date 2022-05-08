@@ -6,10 +6,15 @@ import (
 )
 
 var (
-	configFolder = flag.StringP("config", "c", "/config/", "Config Location")
-	logFolder    = flag.StringP("log", "l", "/logs/", "Log Location")
-	verbose      = flag.BoolP("verbose", "v", false, "Outputs the log to the screen")
+	registrationFile = pflag.StringP("regfile", "r", "data.json", "registration file")
+	configFolder     = flag.StringP("config", "c", "/config/", "config location")
+	logFolder        = flag.StringP("log", "l", "/logs/", "log location")
+	version          = flag.BoolP("version", "v", false, "outputs the current version")
 )
+
+func RegistrationFile() string {
+	return *registrationFile
+}
 
 func ConfigFolder() string {
 	return *configFolder
@@ -19,10 +24,11 @@ func LogFolder() string {
 	return *logFolder
 }
 
-func Verbose() bool {
-	return *verbose
+func Version() bool {
+	return *version
 }
 
 func Parse() {
 	pflag.Parse()
+
 }
