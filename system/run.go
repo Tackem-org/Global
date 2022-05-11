@@ -39,19 +39,22 @@ var (
 	serverServe      = serverServeFunc
 )
 
-func run(d *setupData.SetupData, masterConfigFile string, logFile string) {
+func run(d *setupData.SetupData, masterConfigFile string, logFile string, version string, commit string, commitDate string) {
+	Version = version
+	Commit = commit
+	commitDate = commitDate
 	flags.Parse()
 	if flags.Version() {
 		fmt.Println(Version)
 		return
 	}
-	logging.Setup(d.LogFile, d.VerboseLog)
-	defer logging.Shutdown()
 	if d != nil {
 		d.Version = structs.StringToVersion(Version)
 		d.MasterConf = flags.ConfigFolder() + masterConfigFile
 		d.LogFile = flags.LogFolder() + logFile
 	}
+	logging.Setup(d.LogFile, d.VerboseLog)
+	defer logging.Shutdown()
 	setupData.Data = d
 	logging.Info("Starting Tackem %s System", d.Name())
 	if setupData.Data.MainSetup != nil {
