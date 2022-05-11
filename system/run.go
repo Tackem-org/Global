@@ -23,7 +23,7 @@ import (
 )
 
 var (
-	Version    string
+	Version    string = "v0.0.0-devel"
 	Commit     string
 	CommitDate string
 	WG         *sync.WaitGroup = &sync.WaitGroup{}

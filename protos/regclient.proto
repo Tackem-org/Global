@@ -3,10 +3,11 @@ import "registration.proto";
 option go_package = "github.com/Tackem-org/Global/pb/regclient";
 package regClient;
 
-enum MasterGoingDownReason {
+enum Reason {
   Shutdown = 0;
   Reboot = 1;
   FullShutdown = 2;
+  Update = 3;
 }
 
 service RegClient {
@@ -16,6 +17,7 @@ service RegClient {
   rpc RemoveRequired(RemoveRequiredRequest) returns (RemoveRequiredResponse) {}
   rpc MasterGoingDown(MasterGoingDownRequest) returns (MasterGoingDownResponse) {}
   rpc MasterBackUp(MasterBackUpRequest) returns (MasterBackUpResponse) {}
+  rpc ShutdownService(ShutdownServiceRequest) returns (ShutdownServiceResponse) {}
 
   rpc DependentUp(DependentUpRequest) returns (DependentUpResponse) {}
   rpc DependentDown(DependentDownRequest) returns (DependentDownResponse) {}
@@ -70,7 +72,7 @@ message RemoveRequiredResponse {
 
 
 message MasterGoingDownRequest {
-  MasterGoingDownReason reason = 1;
+  Reason reason = 1;
 }
 
 message MasterGoingDownResponse {
@@ -86,6 +88,15 @@ message MasterBackUpResponse {
   string error_message = 2;
   bool active = 3;
   registration.RegisterRequest reg_data = 4;
+}
+
+message ShutdownServiceRequest {
+  Reason reason = 1;
+}
+
+message ShutdownServiceResponse {
+  bool success = 1;
+  string error_message = 2;
 }
 
 message DependentUpRequest {

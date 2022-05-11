@@ -1,12 +1,13 @@
 package logging
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"log"
 	"os"
 	"sync"
+
+	"github.com/Tackem-org/Global/file"
 )
 
 type Logging struct {
@@ -119,7 +120,7 @@ func checkLogSize(l *Logging) {
 }
 
 func moveBackupLogFiles(l *Logging, i uint8) {
-	if !fileExists(l, fmt.Sprintf("%s.%d.bak", l.filePath, i)) {
+	if !file.FileExists(fmt.Sprintf("%s.%d.bak", l.filePath, i)) {
 		return
 	}
 	if l.fileCountLimit > 0 && i >= l.fileCountLimit {
@@ -129,11 +130,6 @@ func moveBackupLogFiles(l *Logging, i uint8) {
 
 	moveBackupLogFiles(l, i+1)
 	os.Rename(fmt.Sprintf("%s.%d.bak", l.filePath, i), fmt.Sprintf("%s.%d.bak", l.filePath, i+1))
-}
-
-func fileExists(l *Logging, path string) bool {
-	_, err := os.Stat(path)
-	return !errors.Is(err, os.ErrNotExist)
 }
 
 func (l *Logging) CustomLogger(prefix string) *log.Logger {

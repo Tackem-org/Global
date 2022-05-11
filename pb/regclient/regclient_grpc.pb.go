@@ -28,6 +28,7 @@ type RegClientClient interface {
 	RemoveRequired(ctx context.Context, in *RemoveRequiredRequest, opts ...grpc.CallOption) (*RemoveRequiredResponse, error)
 	MasterGoingDown(ctx context.Context, in *MasterGoingDownRequest, opts ...grpc.CallOption) (*MasterGoingDownResponse, error)
 	MasterBackUp(ctx context.Context, in *MasterBackUpRequest, opts ...grpc.CallOption) (*MasterBackUpResponse, error)
+	ShutdownService(ctx context.Context, in *ShutdownServiceRequest, opts ...grpc.CallOption) (*ShutdownServiceResponse, error)
 	DependentUp(ctx context.Context, in *DependentUpRequest, opts ...grpc.CallOption) (*DependentUpResponse, error)
 	DependentDown(ctx context.Context, in *DependentDownRequest, opts ...grpc.CallOption) (*DependentDownResponse, error)
 	RequiredUp(ctx context.Context, in *RequiredUpRequest, opts ...grpc.CallOption) (*RequiredUpResponse, error)
@@ -96,6 +97,15 @@ func (c *regClientClient) MasterBackUp(ctx context.Context, in *MasterBackUpRequ
 	return out, nil
 }
 
+func (c *regClientClient) ShutdownService(ctx context.Context, in *ShutdownServiceRequest, opts ...grpc.CallOption) (*ShutdownServiceResponse, error) {
+	out := new(ShutdownServiceResponse)
+	err := c.cc.Invoke(ctx, "/regClient.RegClient/ShutdownService", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *regClientClient) DependentUp(ctx context.Context, in *DependentUpRequest, opts ...grpc.CallOption) (*DependentUpResponse, error) {
 	out := new(DependentUpResponse)
 	err := c.cc.Invoke(ctx, "/regClient.RegClient/DependentUp", in, out, opts...)
@@ -142,6 +152,7 @@ type RegClientServer interface {
 	RemoveRequired(context.Context, *RemoveRequiredRequest) (*RemoveRequiredResponse, error)
 	MasterGoingDown(context.Context, *MasterGoingDownRequest) (*MasterGoingDownResponse, error)
 	MasterBackUp(context.Context, *MasterBackUpRequest) (*MasterBackUpResponse, error)
+	ShutdownService(context.Context, *ShutdownServiceRequest) (*ShutdownServiceResponse, error)
 	DependentUp(context.Context, *DependentUpRequest) (*DependentUpResponse, error)
 	DependentDown(context.Context, *DependentDownRequest) (*DependentDownResponse, error)
 	RequiredUp(context.Context, *RequiredUpRequest) (*RequiredUpResponse, error)
@@ -170,6 +181,9 @@ func (UnimplementedRegClientServer) MasterGoingDown(context.Context, *MasterGoin
 }
 func (UnimplementedRegClientServer) MasterBackUp(context.Context, *MasterBackUpRequest) (*MasterBackUpResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MasterBackUp not implemented")
+}
+func (UnimplementedRegClientServer) ShutdownService(context.Context, *ShutdownServiceRequest) (*ShutdownServiceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ShutdownService not implemented")
 }
 func (UnimplementedRegClientServer) DependentUp(context.Context, *DependentUpRequest) (*DependentUpResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DependentUp not implemented")
@@ -304,6 +318,24 @@ func _RegClient_MasterBackUp_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RegClient_ShutdownService_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ShutdownServiceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RegClientServer).ShutdownService(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/regClient.RegClient/ShutdownService",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RegClientServer).ShutdownService(ctx, req.(*ShutdownServiceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RegClient_DependentUp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DependentUpRequest)
 	if err := dec(in); err != nil {
@@ -406,6 +438,10 @@ var RegClient_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MasterBackUp",
 			Handler:    _RegClient_MasterBackUp_Handler,
+		},
+		{
+			MethodName: "ShutdownService",
+			Handler:    _RegClient_ShutdownService_Handler,
 		},
 		{
 			MethodName: "DependentUp",

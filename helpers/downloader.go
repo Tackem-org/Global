@@ -37,3 +37,9 @@ func DownloadFile(filepath string, url string, counter *WriteCounter) error {
 
 	return nil
 }
+
+type UpdateProgress struct {
+	Step  int
+	Total int
+	Info  string
+}
