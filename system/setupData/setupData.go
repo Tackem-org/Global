@@ -40,11 +40,8 @@ type SetupData struct {
 	RequiredServices []*pb.RequiredService
 	Groups           []string
 	Permissions      []string
-
-	MasterConf  string
-	LogFile     string
-	VerboseLog  bool
-	GRPCSystems func(server *grpc.Server)
+	VerboseLog       bool
+	GRPCSystems      func(server *grpc.Server)
 
 	StaticFS            EmbedInterface
 	AdminPaths          []*AdminPathItem

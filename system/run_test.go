@@ -84,24 +84,22 @@ func TestRun(t *testing.T) {
 	)
 	assert.NotPanics(t,
 		func() {
-			system.Run(&setupData.SetupData{
-				LogFile:      "",
+			system.Run("v0.0.0-devel", &setupData.SetupData{
 				VerboseLog:   false,
 				MainSetup:    func() {},
 				MainShutdown: func() {},
-			}, "data.json", "log.log")
+			})
 		})
 
 	pflag.Set("version", "true")
 
 	assert.NotPanics(t,
 		func() {
-			system.Run(&setupData.SetupData{
-				LogFile:      "",
+			system.Run("v0.0.0-devel", &setupData.SetupData{
 				VerboseLog:   false,
 				MainSetup:    func() {},
 				MainShutdown: func() {},
-			}, "data.json", "log.log")
+			})
 		})
 
 	system.ResetFunctions()
@@ -110,7 +108,6 @@ func TestRun(t *testing.T) {
 func TestStartup(t *testing.T) {
 	setupData.Data = &setupData.SetupData{
 		StartActive: true,
-		MasterConf:  "/missing",
 		GRPCSystems: func(server *grpc.Server) {},
 		Paths: []*setupData.PathItem{
 			{

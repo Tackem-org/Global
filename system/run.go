@@ -23,12 +23,11 @@ import (
 )
 
 var (
-	Version    string = "v0.0.0-devel"
-	Commit     string
-	CommitDate string
-	WG         *sync.WaitGroup = &sync.WaitGroup{}
-	Server     *grpc.Server
-	WaitTime   time.Duration = time.Duration(5 * time.Second)
+	VersionString string
+	Version       structs.Version
+	WG            *sync.WaitGroup = &sync.WaitGroup{}
+	Server        *grpc.Server
+	WaitTime      time.Duration = time.Duration(5 * time.Second)
 
 	Run              = run
 	startup          = startupFunc
@@ -39,21 +38,15 @@ var (
 	serverServe      = serverServeFunc
 )
 
-func run(d *setupData.SetupData, masterConfigFile string, logFile string, version string, commit string, commitDate string) {
-	Version = version
-	Commit = commit
-	commitDate = commitDate
+func run(version string, d *setupData.SetupData) {
+	Version = structs.StringToVersion(version)
+	VersionString = version
 	flags.Parse()
 	if flags.Version() {
-		fmt.Println(Version)
+		fmt.Println(VersionString)
 		return
 	}
-	if d != nil {
-		d.Version = structs.StringToVersion(Version)
-		d.MasterConf = flags.ConfigFolder() + masterConfigFile
-		d.LogFile = flags.LogFolder() + logFile
-	}
-	logging.Setup(d.LogFile, d.VerboseLog)
+	logging.Setup(flags.LogFolder()+d.Filename("log"), d.VerboseLog)
 	defer logging.Shutdown()
 	setupData.Data = d
 	logging.Info("Starting Tackem %s System", d.Name())
@@ -78,7 +71,7 @@ func run(d *setupData.SetupData, masterConfigFile string, logFile string, versio
 
 func startupFunc() bool {
 	channels.Setup()
-	if !masterData.Setup(setupData.Data.MasterConf) {
+	if !masterData.Setup(flags.ConfigFolder() + setupData.Data.Filename("json")) {
 		logging.Fatal("NO REGISTRATION KEY TO USE UNABLE TO START")
 	}
 

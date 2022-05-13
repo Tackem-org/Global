@@ -65,6 +65,24 @@ func TestName(t *testing.T) {
 	assert.Equal(t, sn2, d2.Name())
 }
 
+func TestFilename(t *testing.T) {
+	sn1 := "testFilename"
+	st1 := "testService"
+	d1 := &setupData.SetupData{
+		ServiceType: st1,
+		ServiceName: sn1,
+	}
+	assert.Equal(t, fmt.Sprintf("%s-%s.json", st1, sn1), d1.Filename("json"))
+
+	sn2 := "testFilename2"
+	st2 := "system"
+	d2 := &setupData.SetupData{
+		ServiceType: st2,
+		ServiceName: sn2,
+	}
+	assert.Equal(t, fmt.Sprintf("%s.json", sn2), d2.Filename("json"))
+}
+
 func TestURL(t *testing.T) {
 	sn1 := "testName"
 	st1 := "testService"

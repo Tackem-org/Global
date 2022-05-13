@@ -1,6 +1,9 @@
 package system
 
-import pbr "github.com/Tackem-org/Global/pb/registration"
+import (
+	pbr "github.com/Tackem-org/Global/pb/registration"
+	"github.com/Tackem-org/Global/structs"
+)
 
 var (
 	StartupFunc      = startupFunc
@@ -25,7 +28,7 @@ func SetupForRun(startupF func() bool, mainLoopF func(), shutdownF func(register
 	startup = startupF
 	mainLoop = mainLoopF
 	shutdown = shutdownF
-	Version = "v1.0.0"
+	Version = structs.StringToVersion("v1.0.0")
 }
 
 func SetupForStartup(connectF func(request *pbr.RegisterRequest) bool, serverServeF func()) {

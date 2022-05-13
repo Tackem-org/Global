@@ -46,6 +46,15 @@ func (d *SetupData) Name() string {
 	return fmt.Sprintf("%s %s", d.ServiceType, d.ServiceName)
 }
 
+func (d *SetupData) Filename(extension string) string {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	if d.ServiceType == "system" {
+		return fmt.Sprintf("%s.%s", d.ServiceName, extension)
+	}
+	return fmt.Sprintf("%s-%s.%s", d.ServiceType, d.ServiceName, extension)
+}
+
 func (d *SetupData) URL() string {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
