@@ -3,7 +3,7 @@ import "registration.proto";
 option go_package = "github.com/Tackem-org/Global/pb/regclient";
 package regClient;
 
-enum Reason {
+enum MasterGoingDownReason {
   Shutdown = 0;
   Reboot = 1;
   FullShutdown = 2;
@@ -72,7 +72,7 @@ message RemoveRequiredResponse {
 
 
 message MasterGoingDownRequest {
-  Reason reason = 1;
+  MasterGoingDownReason reason = 1;
 }
 
 message MasterGoingDownResponse {
@@ -91,7 +91,6 @@ message MasterBackUpResponse {
 }
 
 message ShutdownServiceRequest {
-  Reason reason = 1;
 }
 
 message ShutdownServiceResponse {

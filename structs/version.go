@@ -32,6 +32,7 @@ func StringToVersion(v string) Version {
 func (v Version) String() string {
 	return fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Hotfix)
 }
+
 func (v Version) GreaterThan(c Version) bool {
 	if v.Major > c.Major {
 		return true
