@@ -2,6 +2,7 @@ package structs
 
 import (
 	"fmt"
+	"io/ioutil"
 	"strconv"
 	"strings"
 
@@ -29,6 +30,13 @@ func StringToVersion(v string) Version {
 		Hotfix: uint8(hotfix),
 	}
 }
+
+func FileToVersion(file string) Version {
+	content, _ := ioutil.ReadFile(file)
+	text := string(content)
+	return StringToVersion(text)
+}
+
 func (v Version) String() string {
 	return fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Hotfix)
 }

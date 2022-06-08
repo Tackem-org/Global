@@ -1,6 +1,7 @@
 package structs_test
 
 import (
+	"os"
 	"testing"
 
 	pb "github.com/Tackem-org/Global/pb/registration"
@@ -11,6 +12,19 @@ import (
 func TestStringToVersion(t *testing.T) {
 	assert.Equal(t, structs.Version{1, 2, 3}, structs.StringToVersion("v1.2.3"))
 	assert.Equal(t, structs.Version{1, 2, 4}, structs.StringToVersion("V1.2.4"))
+}
+
+func stringToFile(s string, filename string) {
+	file, _ := os.Create(filename)
+	defer file.Close()
+	file.WriteString(s)
+}
+
+func TestFileToVersion(t *testing.T) {
+	fileName := "test.version"
+	stringToFile("0.0.1", fileName)
+	assert.Equal(t, structs.Version{0, 0, 1}, structs.FileToVersion(fileName))
+	os.Remove(fileName)
 }
 
 func TestVersionGreaterThan(t *testing.T) {
