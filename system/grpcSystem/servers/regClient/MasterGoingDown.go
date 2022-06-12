@@ -20,7 +20,7 @@ func (r *RegClientServer) MasterGoingDown(ctx context.Context, in *pb.MasterGoin
 	switch in.GetReason() {
 	case pb.MasterGoingDownReason_FullShutdown:
 		logging.Info("Master Is Down, Shutting down this service")
-		channels.Root.Shutdown <- true
+		go channels.CallShutdown()
 
 	case pb.MasterGoingDownReason_Shutdown, pb.MasterGoingDownReason_Reboot, pb.MasterGoingDownReason_Update:
 		logging.Info("Master Is Down")

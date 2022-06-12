@@ -18,7 +18,7 @@ func (r *RegClientServer) ShutdownService(ctx context.Context, in *pb.ShutdownSe
 	}
 
 	logging.Info("Master Told Me To Shutdown")
-	channels.Root.Shutdown <- true
+	go channels.CallShutdown()
 
 	return &pb.ShutdownServiceResponse{
 		Success: true,

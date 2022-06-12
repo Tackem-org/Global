@@ -5,6 +5,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 )
 
 var (
@@ -23,4 +24,9 @@ func Setup() {
 		Root.TermChan = make(chan os.Signal, 1)
 		signal.Notify(Root.TermChan, syscall.SIGTERM, syscall.SIGINT)
 	})
+}
+
+func CallShutdown() {
+	time.Sleep(time.Millisecond * 50)
+	Root.Shutdown <- true
 }

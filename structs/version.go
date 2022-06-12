@@ -10,9 +10,9 @@ import (
 )
 
 type Version struct {
-	Major  uint8
-	Minor  uint8
-	Hotfix uint8
+	Major  uint8 `json:"major"`
+	Minor  uint8 `json:"minor"`
+	Hotfix uint8 `json:"hotfix"`
 }
 
 func StringToVersion(v string) Version {

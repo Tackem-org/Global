@@ -12,3 +12,10 @@ func TestSetup(t *testing.T) {
 	assert.NotNil(t, channels.Root.Shutdown)
 	assert.NotNil(t, channels.Root.TermChan)
 }
+
+func TestCallShutdown(t *testing.T) {
+	channels.Setup()
+	channels.CallShutdown()
+	assert.NotNil(t, channels.Root.Shutdown)
+
+}
