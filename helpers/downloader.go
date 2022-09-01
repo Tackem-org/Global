@@ -19,7 +19,9 @@ func (wc *WriteCounter) Write(p []byte) (int, error) {
 	return n, nil
 }
 
-func DownloadFile(filepath string, url string, counter *WriteCounter) error {
+var DownloadFile = downloadFile
+
+func downloadFile(filepath string, url string, counter *WriteCounter) error {
 	out, err := os.Create(filepath + ".tmp")
 	if err != nil {
 		return err
@@ -33,7 +35,8 @@ func DownloadFile(filepath string, url string, counter *WriteCounter) error {
 	defer resp.Body.Close()
 
 	io.Copy(out, io.TeeReader(resp.Body, counter))
-	defer os.Rename(filepath+".tmp", filepath)
+	os.Rename(filepath+".tmp", filepath)
+	os.Chmod(filepath, 0700)
 
 	return nil
 }
