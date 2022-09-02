@@ -10,8 +10,15 @@ import (
 )
 
 func TestStringToVersion(t *testing.T) {
-	assert.Equal(t, structs.Version{1, 2, 3}, structs.StringToVersion("v1.2.3"))
-	assert.Equal(t, structs.Version{1, 2, 4}, structs.StringToVersion("V1.2.4"))
+	v1, err1 := structs.StringToVersion("v1.2.3")
+	assert.Equal(t, structs.Version{1, 2, 3}, v1)
+	assert.Nil(t, err1)
+	v2, err2 := structs.StringToVersion("V1.2.4")
+	assert.Equal(t, structs.Version{1, 2, 4}, v2)
+	assert.Nil(t, err2)
+	v3, err3 := structs.StringToVersion("V1.2.4.5")
+	assert.Equal(t, structs.Version{0, 0, 0}, v3)
+	assert.ErrorIs(t, err3, structs.ErrBadVersion)
 }
 
 func stringToFile(s string, filename string) {
@@ -23,7 +30,8 @@ func stringToFile(s string, filename string) {
 func TestFileToVersion(t *testing.T) {
 	fileName := "test.version"
 	stringToFile("0.0.1", fileName)
-	assert.Equal(t, structs.Version{0, 0, 1}, structs.FileToVersion(fileName))
+	v1, _ := structs.FileToVersion(fileName)
+	assert.Equal(t, structs.Version{0, 0, 1}, v1)
 	os.Remove(fileName)
 }
 

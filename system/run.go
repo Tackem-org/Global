@@ -39,7 +39,7 @@ var (
 )
 
 func run(version string, d *setupData.SetupData) {
-	Version = structs.StringToVersion(version)
+	Version, _ = structs.StringToVersion(version)
 	VersionString = version
 	flags.Parse()
 	if flags.Version() {

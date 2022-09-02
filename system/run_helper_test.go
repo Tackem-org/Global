@@ -28,7 +28,7 @@ func SetupForRun(startupF func() bool, mainLoopF func(), shutdownF func(register
 	startup = startupF
 	mainLoop = mainLoopF
 	shutdown = shutdownF
-	Version = structs.StringToVersion("v1.0.0")
+	Version, _ = structs.StringToVersion("v1.0.0")
 }
 
 func SetupForStartup(connectF func(request *pbr.RegisterRequest) bool, serverServeF func()) {

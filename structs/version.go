@@ -1,12 +1,17 @@
 package structs
 
 import (
+	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strconv"
 	"strings"
 
 	pb "github.com/Tackem-org/Global/pb/registration"
+)
+
+var (
+	ErrBadVersion = errors.New("Bad Version Data")
 )
 
 type Version struct {
@@ -15,11 +20,14 @@ type Version struct {
 	Hotfix uint8 `json:"hotfix"`
 }
 
-func StringToVersion(v string) Version {
+func StringToVersion(v string) (Version, error) {
 	vLower := strings.ToLower(v)
 	vRemoveExtra := strings.Split(vLower, "-")
 	vRemovev := strings.ReplaceAll(vRemoveExtra[0], "v", "")
 	splitv := strings.Split(vRemovev, ".")
+	if len(splitv) != 3 {
+		return Version{}, ErrBadVersion
+	}
 	major, _ := strconv.Atoi(splitv[0])
 	minor, _ := strconv.Atoi(splitv[1])
 	hotfix, _ := strconv.Atoi(splitv[2])
@@ -28,11 +36,11 @@ func StringToVersion(v string) Version {
 		Major:  uint8(major),
 		Minor:  uint8(minor),
 		Hotfix: uint8(hotfix),
-	}
+	}, nil
 }
 
-func FileToVersion(file string) Version {
-	content, _ := ioutil.ReadFile(file)
+func FileToVersion(file string) (Version, error) {
+	content, _ := os.ReadFile(file)
 	text := string(content)
 	return StringToVersion(text)
 }

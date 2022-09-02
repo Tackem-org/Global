@@ -1,7 +1,6 @@
 package helpers
 
 import (
-	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -26,7 +25,7 @@ func hasEnv() bool {
 }
 
 func hasCGroup() bool {
-	f, _ := ioutil.ReadFile("/proc/self/cgroup")
+	f, _ := os.ReadFile("/proc/self/cgroup")
 	return strings.Contains(string(f), "docker")
 }
 
