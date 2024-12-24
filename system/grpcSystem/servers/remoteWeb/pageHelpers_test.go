@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/Tackem-org/Global/logging"
 	pb "github.com/Tackem-org/Global/pb/remoteweb"
 	"github.com/Tackem-org/Global/structs"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/remoteWeb"
@@ -110,6 +111,7 @@ func TestGetBaseCSSandJS(t *testing.T) {
 }
 
 func TestPageFile(t *testing.T) {
+	logging.I = &MockLogging{}
 	setupData.Data = &setupData.SetupData{
 		ServiceType: "service",
 		ServiceName: "test",
@@ -151,6 +153,7 @@ func TestPageString(t *testing.T) {
 }
 
 func TestMakePageResponse(t *testing.T) {
+	logging.I = &MockLogging{}
 	setupData.Data = &setupData.SetupData{
 		ServiceType: "service",
 		ServiceName: "test",

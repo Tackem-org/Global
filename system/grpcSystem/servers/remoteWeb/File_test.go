@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/Tackem-org/Global/logging"
 	pb "github.com/Tackem-org/Global/pb/remoteweb"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/remoteWeb"
 	"github.com/Tackem-org/Global/system/masterData"
@@ -12,6 +13,7 @@ import (
 )
 
 func TestFile(t *testing.T) {
+	logging.I = &MockLogging{}
 	s := remoteWeb.RemoteWebServer{}
 	ctx1 := MakeTestHeader("", "", "")
 	r1, err1 := s.File(ctx1, &pb.FileRequest{})

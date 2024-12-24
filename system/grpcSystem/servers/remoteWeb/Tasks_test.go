@@ -3,6 +3,7 @@ package remoteWeb_test
 import (
 	"testing"
 
+	"github.com/Tackem-org/Global/logging"
 	pb "github.com/Tackem-org/Global/pb/remoteweb"
 	"github.com/Tackem-org/Global/pb/web"
 	"github.com/Tackem-org/Global/system/grpcSystem/servers/remoteWeb"
@@ -14,6 +15,7 @@ import (
 var SendTasks bool
 
 func TestTasks(t *testing.T) {
+	logging.I = &MockLogging{}
 	s := remoteWeb.RemoteWebServer{}
 	ctx1 := MakeTestHeader("", "", "")
 	r1, err1 := s.Tasks(ctx1, &pb.TasksRequest{})
