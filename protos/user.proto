@@ -30,7 +30,7 @@ message GetUserDataRequest {
 message LoginResponse {
   bool success = 1;
   string error_message = 2;
-  string session_token = 4;
+  string session_token = 3;
 }
 
 message LogoutResponse {
