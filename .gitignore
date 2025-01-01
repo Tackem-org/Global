@@ -1,3 +1,2 @@
-*.out
-*.html
-*.log
+cover.out
+coverage.html
