@@ -9,6 +9,7 @@ import (
 	pb "github.com/Tackem-org/Global/pb/registration"
 	"github.com/Tackem-org/Global/system/grpcSystem/clients/registration"
 	"github.com/Tackem-org/Global/system/grpcSystem/connections"
+	"github.com/Tackem-org/Global/system/masterData"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
@@ -57,11 +58,15 @@ func startGRPCServer() (*grpc.Server, *bufconn.Listener) {
 		}
 	}
 
+	masterData.UP.Up()
 	connections.ExtraOptions = append(connections.ExtraOptions, grpc.WithContextDialer(getBufDialer(listener)))
 	return srv, listener
 }
 
 func TestRegistrationActivate(t *testing.T) {
+	masterData.Setup("")
+	masterData.Info.Port = 0
+	masterData.Info.URL = "passthrough://bufnet"
 	response1, err1 := registration.Activate(&pb.ActivateRequest{})
 	assert.IsType(t, &pb.ActivateResponse{}, response1)
 	assert.NotNil(t, err1)
@@ -70,6 +75,7 @@ func TestRegistrationActivate(t *testing.T) {
 	assert.NotNil(t, srv, "Test GRPC SERVER not running")
 	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
 	defer srv.Stop()
+	defer masterData.UP.Down()
 
 	response2, err2 := registration.Activate(&pb.ActivateRequest{})
 	assert.IsType(t, &pb.ActivateResponse{}, response2)
@@ -77,6 +83,9 @@ func TestRegistrationActivate(t *testing.T) {
 }
 
 func TestRegistrationDeactivate(t *testing.T) {
+	masterData.Setup("")
+	masterData.Info.Port = 0
+	masterData.Info.URL = "passthrough://bufnet"
 	response1, err1 := registration.Deactivate(&pb.DeactivateRequest{})
 	assert.IsType(t, &pb.DeactivateResponse{}, response1)
 	assert.NotNil(t, err1)
@@ -85,6 +94,7 @@ func TestRegistrationDeactivate(t *testing.T) {
 	assert.NotNil(t, srv, "Test GRPC SERVER not running")
 	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
 	defer srv.Stop()
+	defer masterData.UP.Down()
 
 	response2, err2 := registration.Deactivate(&pb.DeactivateRequest{})
 	assert.IsType(t, &pb.DeactivateResponse{}, response2)
@@ -92,6 +102,9 @@ func TestRegistrationDeactivate(t *testing.T) {
 }
 
 func TestRegistrationDeregister(t *testing.T) {
+	masterData.Setup("")
+	masterData.Info.Port = 0
+	masterData.Info.URL = "passthrough://bufnet"
 	response1, err1 := registration.Deregister(&pb.DeregisterRequest{})
 	assert.IsType(t, &pb.DeregisterResponse{}, response1)
 	assert.NotNil(t, err1)
@@ -100,6 +113,7 @@ func TestRegistrationDeregister(t *testing.T) {
 	assert.NotNil(t, srv, "Test GRPC SERVER not running")
 	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
 	defer srv.Stop()
+	defer masterData.UP.Down()
 
 	response2, err2 := registration.Deregister(&pb.DeregisterRequest{})
 	assert.IsType(t, &pb.DeregisterResponse{}, response2)
@@ -107,6 +121,9 @@ func TestRegistrationDeregister(t *testing.T) {
 }
 
 func TestRegistrationDisconnect(t *testing.T) {
+	masterData.Setup("")
+	masterData.Info.Port = 0
+	masterData.Info.URL = "passthrough://bufnet"
 	response1, err1 := registration.Disconnect(&pb.DisconnectRequest{})
 	assert.IsType(t, &pb.DisconnectResponse{}, response1)
 	assert.NotNil(t, err1)
@@ -115,6 +132,7 @@ func TestRegistrationDisconnect(t *testing.T) {
 	assert.NotNil(t, srv, "Test GRPC SERVER not running")
 	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
 	defer srv.Stop()
+	defer masterData.UP.Down()
 
 	response2, err2 := registration.Disconnect(&pb.DisconnectRequest{})
 	assert.IsType(t, &pb.DisconnectResponse{}, response2)
@@ -122,6 +140,9 @@ func TestRegistrationDisconnect(t *testing.T) {
 }
 
 func TestRegistrationRegister(t *testing.T) {
+	masterData.Setup("")
+	masterData.Info.Port = 0
+	masterData.Info.URL = "passthrough://bufnet"
 	response1, err1 := registration.Register(&pb.RegisterRequest{})
 	assert.IsType(t, &pb.RegisterResponse{}, response1)
 	assert.NotNil(t, err1)
@@ -130,6 +151,7 @@ func TestRegistrationRegister(t *testing.T) {
 	assert.NotNil(t, srv, "Test GRPC SERVER not running")
 	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
 	defer srv.Stop()
+	defer masterData.UP.Down()
 
 	response2, err2 := registration.Register(&pb.RegisterRequest{})
 	assert.IsType(t, &pb.RegisterResponse{}, response2)

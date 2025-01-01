@@ -100,7 +100,7 @@ func (rc *RegistrationClient) Disconnect(request *pb.DisconnectRequest) (*pb.Dis
 }
 
 func (rc *RegistrationClient) Register(request *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-	conn, err := connections.MasterForce()
+	conn, err := connections.Master()
 	if err != nil {
 		return &pb.RegisterResponse{
 			Success:      false,

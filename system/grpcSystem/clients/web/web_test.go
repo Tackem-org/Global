@@ -11,6 +11,7 @@ import (
 	"github.com/Tackem-org/Global/logging"
 	"github.com/Tackem-org/Global/system/grpcSystem/clients/web"
 	"github.com/Tackem-org/Global/system/grpcSystem/connections"
+	"github.com/Tackem-org/Global/system/masterData"
 
 	pb "github.com/Tackem-org/Global/pb/web"
 	"github.com/stretchr/testify/assert"
@@ -83,10 +84,14 @@ func startGRPCServer() (*grpc.Server, *bufconn.Listener) {
 		}
 	}
 
+	masterData.UP.Up()
 	connections.ExtraOptions = append(connections.ExtraOptions, grpc.WithContextDialer(getBufDialer(listener)))
 	return srv, listener
 }
 func TestWebServerAddTask(t *testing.T) {
+	masterData.Setup("")
+	masterData.Info.Port = 0
+	masterData.Info.URL = "passthrough://bufnet"
 	logging.I = &MockLogging{}
 	assert.False(t, web.AddTask(&pb.TaskMessage{}))
 
@@ -94,12 +99,16 @@ func TestWebServerAddTask(t *testing.T) {
 	assert.NotNil(t, srv, "Test GRPC SERVER not running")
 	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
 	defer srv.Stop()
+	defer masterData.UP.Down()
 
 	assert.True(t, web.AddTask(&pb.TaskMessage{}))
 	assert.False(t, web.AddTask(&pb.TaskMessage{Task: "FAIL"}))
 }
 
 func TestWebServerAddNotification(t *testing.T) {
+	masterData.Setup("")
+	masterData.Info.Port = 0
+	masterData.Info.URL = "passthrough://bufnet"
 	logging.I = &MockLogging{}
 	assert.False(t, web.AddNotification(&pb.NotificationMessage{}))
 
@@ -107,12 +116,16 @@ func TestWebServerAddNotification(t *testing.T) {
 	assert.NotNil(t, srv, "Test GRPC SERVER not running")
 	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
 	defer srv.Stop()
+	defer masterData.UP.Down()
 
 	assert.True(t, web.AddNotification(&pb.NotificationMessage{}))
 	assert.False(t, web.AddNotification(&pb.NotificationMessage{Notification: "FAIL"}))
 }
 
 func TestWebServerRemoveTask(t *testing.T) {
+	masterData.Setup("")
+	masterData.Info.Port = 0
+	masterData.Info.URL = "passthrough://bufnet"
 	logging.I = &MockLogging{}
 	assert.False(t, web.RemoveTask(&pb.RemoveTaskRequest{}))
 
@@ -120,12 +133,16 @@ func TestWebServerRemoveTask(t *testing.T) {
 	assert.NotNil(t, srv, "Test GRPC SERVER not running")
 	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
 	defer srv.Stop()
+	defer masterData.UP.Down()
 
 	assert.True(t, web.RemoveTask(&pb.RemoveTaskRequest{}))
 	assert.False(t, web.RemoveTask(&pb.RemoveTaskRequest{Task: "FAIL"}))
 }
 
 func TestWebServerWebSocketSend(t *testing.T) {
+	masterData.Setup("")
+	masterData.Info.Port = 0
+	masterData.Info.URL = "passthrough://bufnet"
 	logging.I = &MockLogging{}
 	assert.False(t, web.WebSocketSend(&pb.SendWebSocketRequest{}))
 
@@ -133,6 +150,7 @@ func TestWebServerWebSocketSend(t *testing.T) {
 	assert.NotNil(t, srv, "Test GRPC SERVER not running")
 	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
 	defer srv.Stop()
+	defer masterData.UP.Down()
 
 	assert.True(t, web.WebSocketSend(&pb.SendWebSocketRequest{}))
 	assert.False(t, web.WebSocketSend(&pb.SendWebSocketRequest{Command: "FAIL"}))

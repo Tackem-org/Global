@@ -1,9 +1,6 @@
 package connections
 
 import (
-	"context"
-	"time"
-
 	"github.com/Tackem-org/Global/sysErrors"
 	"github.com/Tackem-org/Global/system/dependentServices"
 	"github.com/Tackem-org/Global/system/masterData"
@@ -15,18 +12,16 @@ import (
 var ExtraOptions []grpc.DialOption
 
 func Get(address string) (*grpc.ClientConn, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	opts := append(ExtraOptions, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
-	return grpc.DialContext(ctx, address, opts...)
+	opts := append(ExtraOptions, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	return grpc.NewClient(address, opts...)
 }
 
-func MasterForce() (*grpc.ClientConn, error) {
-	return Get(masterData.Info.Address())
-}
+// func MasterForce() (*grpc.ClientConn, error) {
+// 	return Get(masterData.Info.Address())
+// }
 
 func Master() (*grpc.ClientConn, error) {
-	if masterData.UP.Wait(5) {
+	if masterData.UP.Check() {
 		return Get(masterData.Info.Address())
 	}
 	return nil, sysErrors.MasterDownError

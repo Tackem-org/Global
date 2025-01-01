@@ -8,6 +8,7 @@ import (
 
 	"github.com/Tackem-org/Global/system/grpcSystem/clients/config"
 	"github.com/Tackem-org/Global/system/grpcSystem/connections"
+	"github.com/Tackem-org/Global/system/masterData"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/test/bufconn"
@@ -44,13 +45,17 @@ func startGRPCServer() (*grpc.Server, *bufconn.Listener) {
 			return listener.Dial()
 		}
 	}
-
+	masterData.UP.Up()
 	connections.ExtraOptions = append(connections.ExtraOptions, grpc.WithContextDialer(getBufDialer(listener)))
 	return srv, listener
 }
 
 func TestConfigServerSet(t *testing.T) {
+	masterData.Setup("")
+	masterData.Info.Port = 0
+	masterData.Info.URL = "passthrough://bufnet"
 	cr, err1 := config.Set(&pb.SetConfigRequest{})
+	assert.NotNil(t, cr)
 	assert.IsType(t, &pb.SetConfigResponse{}, cr)
 	assert.False(t, cr.Success)
 	assert.NotEmpty(t, cr.ErrorMessage)
@@ -60,6 +65,7 @@ func TestConfigServerSet(t *testing.T) {
 	assert.NotNil(t, srv, "Test GRPC SERVER not running")
 	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
 	defer srv.Stop()
+	defer masterData.UP.Down()
 
 	scr, err2 := config.Set(&pb.SetConfigRequest{})
 	assert.IsType(t, &pb.SetConfigResponse{}, scr)
@@ -69,6 +75,9 @@ func TestConfigServerSet(t *testing.T) {
 }
 
 func TestConfigServerGet(t *testing.T) {
+	masterData.Setup("")
+	masterData.Info.Port = 0
+	masterData.Info.URL = "passthrough://bufnet"
 	cr, err := config.Get(&pb.GetConfigRequest{})
 	assert.IsType(t, &pb.GetConfigResponse{}, cr)
 	assert.NotNil(t, err)
@@ -77,6 +86,7 @@ func TestConfigServerGet(t *testing.T) {
 	assert.NotNil(t, srv, "Test GRPC SERVER not running")
 	assert.NotNil(t, listener, "Test GRPC SERVER Listner Not Running")
 	defer srv.Stop()
+	defer masterData.UP.Down()
 
 	scr, err2 := config.Get(&pb.GetConfigRequest{})
 	assert.IsType(t, &pb.GetConfigResponse{}, scr)
