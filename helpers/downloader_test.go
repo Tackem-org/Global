@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"runtime"
 	"testing"
 	"time"
 
@@ -55,8 +56,13 @@ func TestDownloadFile(t *testing.T) {
 	assert.Equal(t, uint64(4), counter.Total)
 	os.Remove("test.txt")
 
-	err1 := helpers.DownloadFile("/fail", "http://127.0.0.1:9999/test", counter)
-	assert.Error(t, err1)
+	if runtime.GOOS == "windows" {
+		err1 := helpers.DownloadFile("c:/windows/fail", "http://127.0.0.1:9999/test", counter)
+		assert.Error(t, err1)
+	} else {
+		err1 := helpers.DownloadFile("/fail", "http://127.0.0.1:9999/test", counter)
+		assert.Error(t, err1)
+	}
 
 	err2 := helpers.DownloadFile("test.txt", "", counter)
 	assert.Error(t, err2)
