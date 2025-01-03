@@ -20,6 +20,7 @@ func (d *SetupData) RegisterProto() *pb.RegisterRequest {
 		WebLinkItems:      d.PathsToProtos(),
 		AdminWebLinkItems: d.AdminPathsToProtos(),
 		WebSocketItems:    d.SocketsToProtos(),
+		Panels:            d.PanelsToProtos(),
 		Groups:            d.Groups,
 		Permissions:       d.Permissions,
 	}
@@ -31,9 +32,10 @@ func (d *SetupData) AdminPathsToProtos() []*pb.AdminWebLinkItem {
 	for _, p := range d.AdminPaths {
 		if helpers.CheckPath(p.Path) {
 			r = append(r, &pb.AdminWebLinkItem{
-				Path:        p.Path,
-				PostAllowed: p.PostAllowed,
-				GetDisabled: p.GetDisabled,
+				Path:          p.Path,
+				PostAllowed:   p.PostAllowed,
+				GetDisabled:   p.GetDisabled,
+				AllowedPanels: p.AllowedPanels,
 			})
 		}
 	}
@@ -47,10 +49,11 @@ func (d *SetupData) PathsToProtos() []*pb.WebLinkItem {
 	for _, p := range d.Paths {
 		if helpers.CheckPath(p.Path) {
 			r = append(r, &pb.WebLinkItem{
-				Path:        p.Path,
-				Permission:  p.Permission,
-				PostAllowed: p.PostAllowed,
-				GetDisabled: p.GetDisabled,
+				Path:          p.Path,
+				Permission:    p.Permission,
+				PostAllowed:   p.PostAllowed,
+				GetDisabled:   p.GetDisabled,
+				AllowedPanels: p.AllowedPanels,
 			})
 		}
 	}
@@ -71,4 +74,49 @@ func (d *SetupData) SocketsToProtos() []*pb.WebSocketItem {
 
 	}
 	return r
+}
+
+func (d *SetupData) PanelsToProtos() []*pb.PanelSetup {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	var r []*pb.PanelSetup
+	for _, p := range d.Panels {
+		var tempPL = pb.PanelLayout{
+			HorizontalAlign: pb.HorizontalAlign(p.Layout.HorizontalAlign),
+			VerticalAlign:   pb.VerticalAlign(p.Layout.VerticalAlign),
+			Width:           p.Layout.Width,
+			Height:          p.Layout.Height,
+			ScrollWidth:     p.Layout.ScrollWidth,
+			ScrollHeight:    p.Layout.ScrollHeight,
+			TitleBar:        p.Layout.TitleBar,
+			Minimise:        p.Layout.Minimise,
+			Close:           p.Layout.Close,
+		}
+		r = append(r, &pb.PanelSetup{
+			Name:              p.Name,
+			Label:             p.Label,
+			Description:       p.Description,
+			Layout:            &tempPL,
+			AdminOnly:         p.AdminOnly,
+			Permission:        p.Permission,
+			RequiredVariables: requiredVariablesToProto(p.RequiredVariables),
+		})
+
+	}
+	return r
+}
+
+func requiredVariablesToProto(rvs []RequiredVariable) []*pb.RequiredVariable {
+	var r []*pb.RequiredVariable
+	for _, v := range rvs {
+		r = append(r, requiredVariableToProto(&v))
+	}
+	return r
+}
+
+func requiredVariableToProto(rv *RequiredVariable) *pb.RequiredVariable {
+	return &pb.RequiredVariable{
+		Name:    rv.Name,
+		Options: rv.Options,
+	}
 }

@@ -47,6 +47,7 @@ type SetupData struct {
 	AdminPaths          []*AdminPathItem
 	Paths               []*PathItem
 	Sockets             []*SocketItem
+	Panels              []*PanelItem
 	TaskGrabber         func() []*pbw.TaskMessage
 	NotificationGrabber func() []*pbw.NotificationMessage
 	MainSetup           func()
@@ -56,20 +57,23 @@ type SetupData struct {
 
 type PageFunc = func(in *structs.WebRequest) (*structs.WebReturn, error)
 type SocketFunc = func(in *structs.SocketRequest) (*structs.SocketReturn, error)
+type PanelFunc = func(in *structs.PanelRequest) (*structs.PanelReturn, error)
 
 type AdminPathItem struct {
-	Path        string
-	PostAllowed bool
-	GetDisabled bool
-	Call        PageFunc
+	Path          string
+	PostAllowed   bool
+	GetDisabled   bool
+	AllowedPanels []string
+	Call          PageFunc
 }
 
 type PathItem struct {
-	Path        string
-	Permission  string
-	PostAllowed bool
-	GetDisabled bool
-	Call        PageFunc
+	Path          string
+	Permission    string
+	PostAllowed   bool
+	GetDisabled   bool
+	AllowedPanels []string
+	Call          PageFunc
 }
 
 type SocketItem struct {
@@ -78,6 +82,51 @@ type SocketItem struct {
 	AdminOnly         bool
 	RequiredVariables []string
 	Call              SocketFunc
+}
+
+type RequiredVariable struct {
+	Name    string
+	Options []string
+}
+
+type HorizontalAlignType int8
+type VerticalAlignType int8
+
+const (
+	HCenter HorizontalAlignType = iota
+	HLeft
+	HRight
+)
+
+const (
+	VCenter VerticalAlignType = iota
+	VTop
+	VBottom
+)
+
+type PanelLayout struct {
+	HorizontalAlign HorizontalAlignType
+	VerticalAlign   VerticalAlignType
+	Width           uint32
+	Height          uint32
+	ScrollWidth     bool
+	ScrollHeight    bool
+	TitleBar        bool
+	Minimise        bool
+	Close           bool
+}
+type PanelItem struct {
+	Name              string
+	Label             string
+	Description       string
+	Layout            PanelLayout
+	AdminOnly         bool
+	Permission        string
+	AllowedPaths      []string
+	RequiredVariables []RequiredVariable
+
+	HTMLCall   PanelFunc
+	SocketCall SocketFunc
 }
 
 func FreeTCPPort() net.Listener {

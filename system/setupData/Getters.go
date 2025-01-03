@@ -37,6 +37,17 @@ func (d *SetupData) GetSocket(command string) *SocketItem {
 	return nil
 }
 
+func (d *SetupData) GetPanel(name string) *PanelItem {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	for _, p := range d.Panels {
+		if p.Name == name {
+			return p
+		}
+	}
+	return nil
+}
+
 func (d *SetupData) Name() string {
 	d.mu.RLock()
 	defer d.mu.RUnlock()

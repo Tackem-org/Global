@@ -8,6 +8,7 @@ service RemoteWeb {
   rpc AdminPage(PageRequest) returns (PageResponse) {}
   rpc File(FileRequest) returns (FileResponse) {}
   rpc WebSocket(WebSocketRequest) returns (WebSocketResponse) {}
+  rpc Panel(PanelRequest) returns (PanelResponse) {}
   rpc Tasks(TasksRequest) returns (TasksResponse) {}
   rpc Notifications(NotificationsRequest) returns (NotificationsResponse) {}
 }
@@ -56,6 +57,19 @@ message WebSocketResponse {
   string error_message = 3;
   bool tell_all = 4;
   string data_json = 5;
+}
+
+message PanelRequest {
+  string name = 1;
+  UserData user = 2;
+  map<string, string> variables = 3;
+}
+
+message PanelResponse {
+  uint32 status_code = 1;
+  bool hide_error_from_user = 2;
+  string error_message = 3;
+  string html = 5;
 }
 
 message UserData {

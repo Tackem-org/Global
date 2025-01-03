@@ -23,6 +23,7 @@ const (
 	RemoteWeb_AdminPage_FullMethodName     = "/remoteweb.RemoteWeb/AdminPage"
 	RemoteWeb_File_FullMethodName          = "/remoteweb.RemoteWeb/File"
 	RemoteWeb_WebSocket_FullMethodName     = "/remoteweb.RemoteWeb/WebSocket"
+	RemoteWeb_Panel_FullMethodName         = "/remoteweb.RemoteWeb/Panel"
 	RemoteWeb_Tasks_FullMethodName         = "/remoteweb.RemoteWeb/Tasks"
 	RemoteWeb_Notifications_FullMethodName = "/remoteweb.RemoteWeb/Notifications"
 )
@@ -35,6 +36,7 @@ type RemoteWebClient interface {
 	AdminPage(ctx context.Context, in *PageRequest, opts ...grpc.CallOption) (*PageResponse, error)
 	File(ctx context.Context, in *FileRequest, opts ...grpc.CallOption) (*FileResponse, error)
 	WebSocket(ctx context.Context, in *WebSocketRequest, opts ...grpc.CallOption) (*WebSocketResponse, error)
+	Panel(ctx context.Context, in *PanelRequest, opts ...grpc.CallOption) (*PanelResponse, error)
 	Tasks(ctx context.Context, in *TasksRequest, opts ...grpc.CallOption) (*TasksResponse, error)
 	Notifications(ctx context.Context, in *NotificationsRequest, opts ...grpc.CallOption) (*NotificationsResponse, error)
 }
@@ -87,6 +89,16 @@ func (c *remoteWebClient) WebSocket(ctx context.Context, in *WebSocketRequest, o
 	return out, nil
 }
 
+func (c *remoteWebClient) Panel(ctx context.Context, in *PanelRequest, opts ...grpc.CallOption) (*PanelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PanelResponse)
+	err := c.cc.Invoke(ctx, RemoteWeb_Panel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *remoteWebClient) Tasks(ctx context.Context, in *TasksRequest, opts ...grpc.CallOption) (*TasksResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TasksResponse)
@@ -115,6 +127,7 @@ type RemoteWebServer interface {
 	AdminPage(context.Context, *PageRequest) (*PageResponse, error)
 	File(context.Context, *FileRequest) (*FileResponse, error)
 	WebSocket(context.Context, *WebSocketRequest) (*WebSocketResponse, error)
+	Panel(context.Context, *PanelRequest) (*PanelResponse, error)
 	Tasks(context.Context, *TasksRequest) (*TasksResponse, error)
 	Notifications(context.Context, *NotificationsRequest) (*NotificationsResponse, error)
 	mustEmbedUnimplementedRemoteWebServer()
@@ -138,6 +151,9 @@ func (UnimplementedRemoteWebServer) File(context.Context, *FileRequest) (*FileRe
 }
 func (UnimplementedRemoteWebServer) WebSocket(context.Context, *WebSocketRequest) (*WebSocketResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WebSocket not implemented")
+}
+func (UnimplementedRemoteWebServer) Panel(context.Context, *PanelRequest) (*PanelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Panel not implemented")
 }
 func (UnimplementedRemoteWebServer) Tasks(context.Context, *TasksRequest) (*TasksResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Tasks not implemented")
@@ -238,6 +254,24 @@ func _RemoteWeb_WebSocket_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RemoteWeb_Panel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PanelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RemoteWebServer).Panel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RemoteWeb_Panel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RemoteWebServer).Panel(ctx, req.(*PanelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RemoteWeb_Tasks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TasksRequest)
 	if err := dec(in); err != nil {
@@ -296,6 +330,10 @@ var RemoteWeb_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "WebSocket",
 			Handler:    _RemoteWeb_WebSocket_Handler,
+		},
+		{
+			MethodName: "Panel",
+			Handler:    _RemoteWeb_Panel_Handler,
 		},
 		{
 			MethodName: "Tasks",

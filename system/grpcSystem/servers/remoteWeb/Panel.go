@@ -19,16 +19,16 @@ func (r *RemoteWebServer) Panel(ctx context.Context, in *pb.PanelRequest) (*pb.P
 		return &pb.PanelResponse{StatusCode: http.StatusInternalServerError, HideErrorFromUser: true, ErrorMessage: err}, nil
 	}
 
-	panel := setupData.Data.GetPanel(in.Name)
+	Panel := setupData.Data.GetPanel(in.Name)
 
-	if panel == nil {
-		logging.Warning("[GRPC Remote Web System Panel Request] %s: Not found", in.Name)
+	if Panel == nil {
+		logging.Warning("[GRPC Remote Web System Pop Up Panel Request] %s: Not found", in.Name)
 		return &pb.PanelResponse{
 			StatusCode:   http.StatusNotFound,
 			ErrorMessage: "page not found",
 		}, nil
 	}
-	response, err := panel.HTMLCall(&structs.PanelRequest{
+	response, err := Panel.HTMLCall(&structs.PanelRequest{
 		Name:      in.Name,
 		User:      structs.GetUserData(in.User),
 		Variables: in.Variables,
@@ -38,9 +38,9 @@ func (r *RemoteWebServer) Panel(ctx context.Context, in *pb.PanelRequest) (*pb.P
 	return pageResponse, nil
 }
 
-func MakePanelResponse(in *pb.PanelRequest, panelReturn *structs.PanelReturn, err error) *pb.PanelResponse {
+func MakePanelResponse(in *pb.PanelRequest, PanelReturn *structs.PanelReturn, err error) *pb.PanelResponse {
 	if err != nil {
-		logging.Error("[GRPC Remote Web System Panel Request] %s:%s", in.GetName(), err.Error())
+		logging.Error("[GRPC Remote Web System Pop Up Panel Request] %s:%s", in.GetName(), err.Error())
 		return &pb.PanelResponse{
 			StatusCode:   http.StatusInternalServerError,
 			ErrorMessage: "error with the system",
@@ -48,9 +48,9 @@ func MakePanelResponse(in *pb.PanelRequest, panelReturn *structs.PanelReturn, er
 	}
 
 	return &pb.PanelResponse{
-		StatusCode:        panelReturn.StatusCode,
+		StatusCode:        PanelReturn.StatusCode,
 		HideErrorFromUser: false,
-		ErrorMessage:      panelReturn.ErrorMessage,
-		PanelHtml:         panelReturn.PanelHTML,
+		ErrorMessage:      PanelReturn.ErrorMessage,
+		Html:              PanelReturn.HTML,
 	}
 }

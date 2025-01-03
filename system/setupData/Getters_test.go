@@ -47,6 +47,19 @@ func TestGetSocket(t *testing.T) {
 	assert.Nil(t, d.GetSocket("SOME.Other.Path"))
 }
 
+func TestGePanel(t *testing.T) {
+	name := "testpanel"
+	d := &setupData.SetupData{
+		Panels: []*setupData.PanelItem{
+			{
+				Name: name,
+			},
+		},
+	}
+	assert.NotNil(t, d.GetPanel(name))
+	assert.Nil(t, d.GetPanel("someotherpanel"))
+}
+
 func TestName(t *testing.T) {
 	sn1 := "testName"
 	st1 := "testService"

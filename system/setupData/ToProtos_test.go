@@ -37,6 +37,7 @@ func TestAllToProtos(t *testing.T) {
 		RequiredServices: []*pb.RequiredService{},
 		Groups:           []string{"TestGroup"},
 		Permissions:      []string{"TestPermission"},
+
 		AdminPaths: []*setupData.AdminPathItem{{
 			Path: "testAdmin",
 		}},
@@ -46,6 +47,27 @@ func TestAllToProtos(t *testing.T) {
 		Sockets: []*setupData.SocketItem{{
 			Command: "test.test",
 		}},
+		Panels: []*setupData.PanelItem{
+			{
+				Name:        "test",
+				Label:       "test",
+				Description: "test pop up panel",
+				Layout: setupData.PanelLayout{
+					HorizontalAlign: setupData.HCenter,
+					VerticalAlign:   setupData.VCenter,
+					Width:           2,
+					Height:          1,
+					ScrollWidth:     false,
+					ScrollHeight:    false,
+					TitleBar:        true,
+					Minimise:        true,
+					Close:           true,
+				},
+				AdminOnly:         false,
+				Permission:        "",
+				RequiredVariables: []setupData.RequiredVariable{{Name: "userid", Options: []string{"[number]"}}},
+			},
+		},
 	}
 
 	expectedProto := &pb.RegisterRequest{
@@ -67,6 +89,25 @@ func TestAllToProtos(t *testing.T) {
 			},
 		},
 		RequiredServices: []*pb.RequiredService{},
+		Panels: []*pb.PanelSetup{
+			{
+				Name:        "test",
+				Label:       "test",
+				Description: "test pop up panel",
+				Layout: &pb.PanelLayout{
+					HorizontalAlign: pb.HorizontalAlign_hcenter,
+					VerticalAlign:   pb.VerticalAlign_vcenter,
+					Width:           2,
+					Height:          1,
+					ScrollWidth:     false,
+					ScrollHeight:    false,
+					TitleBar:        true,
+				},
+				AdminOnly:         false,
+				Permission:        "",
+				RequiredVariables: []*pb.RequiredVariable{{Name: "userid", Options: []string{"[number]"}}},
+			},
+		},
 		WebLinkItems: []*pb.WebLinkItem{{
 			Path: "test/",
 		}},

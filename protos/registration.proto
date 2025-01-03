@@ -54,6 +54,7 @@ message RegisterRequest {
   repeated WebSocketItem web_socket_items = 13;
   repeated string groups = 14;
   repeated string permissions = 15;
+  repeated PanelSetup panels = 16;
 }
 
 message Version {
@@ -77,12 +78,14 @@ message WebLinkItem {
   string permission = 2;
   bool post_allowed = 3;
   bool get_disabled = 4;
+  repeated string allowed_panels = 5;
 }
 
 message AdminWebLinkItem {
   string path = 1;
   bool post_allowed = 2;
   bool get_disabled = 3;
+  repeated string allowed_panels = 4;
 }
 
 message WebSocketItem {
@@ -145,6 +148,45 @@ message InputAttributes {
   map<string,string> other = 8;
 }
 
+message RequiredVariable {
+  string name = 1;
+  repeated string options = 2;
+}
+
+enum HorizontalAlign {
+  hcenter = 0;
+  left = 1;
+  right = 2;
+}
+
+enum VerticalAlign {
+  vcenter = 0;
+  top = 1;
+  bottom = 2;
+}
+
+message PanelLayout {
+  HorizontalAlign horizontal_align = 1;
+  VerticalAlign vertical_align = 2;
+  uint32 width = 3;
+  uint32 height = 4;
+  bool scroll_width = 5;
+  bool scroll_height = 6;
+  bool title_bar = 7;
+  bool minimise = 8;
+  bool close = 9;
+}
+
+message PanelSetup {
+  string name = 1;
+  string label = 2;
+  string description = 3;
+  PanelLayout layout = 4;
+  bool admin_only = 5;
+  string permission = 6;
+  repeated string allowed_paths = 7;
+  repeated RequiredVariable required_variables = 8;
+}
 
 message InputButton {
   string label = 1;

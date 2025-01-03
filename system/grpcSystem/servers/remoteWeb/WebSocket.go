@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/Tackem-org/Global/helpers"
 	"github.com/Tackem-org/Global/logging"
@@ -27,14 +28,29 @@ func (r *RemoteWebServer) WebSocket(ctx context.Context, in *pb.WebSocketRequest
 		Data:    d,
 	}
 
-	socketItem := setupData.Data.GetSocket(in.Command)
-	if socketItem == nil {
-		return &pb.WebSocketResponse{
-			StatusCode:   http.StatusNotFound,
-			ErrorMessage: "web socket not found",
-		}, nil
+	command := strings.Split(in.Command, ".")
+
+	var response *structs.SocketReturn
+	var err error
+	if command[0] == "panel" {
+		Panel := setupData.Data.GetPanel(command[1])
+		if Panel == nil {
+			return &pb.WebSocketResponse{
+				StatusCode:   http.StatusNotFound,
+				ErrorMessage: "web socket panel not found",
+			}, nil
+		}
+		response, err = Panel.SocketCall(&webSocketRequest)
+	} else {
+		socketItem := setupData.Data.GetSocket(in.Command)
+		if socketItem == nil {
+			return &pb.WebSocketResponse{
+				StatusCode:   http.StatusNotFound,
+				ErrorMessage: "web socket not found",
+			}, nil
+		}
+		response, err = socketItem.Call(&webSocketRequest)
 	}
-	response, err := socketItem.Call(&webSocketRequest)
 
 	if err != nil {
 		logging.Error("[GRPC Remote Web Socket Request] %s:%s", in.Command, err.Error())

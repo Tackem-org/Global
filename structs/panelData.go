@@ -9,5 +9,5 @@ type PanelRequest struct {
 type PanelReturn struct {
 	StatusCode   uint32
 	ErrorMessage string
-	PanelHTML    string
+	HTML         string
 }
