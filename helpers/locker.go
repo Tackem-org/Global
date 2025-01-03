@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"sync"
-	"time"
 
 	lock "github.com/viney-shih/go-lock"
 )
@@ -30,15 +29,6 @@ func (m *Locker) Up() {
 func (m *Locker) Check() bool {
 	m.setupOnce.Do(m.setup)
 	if m.l.TryLock() {
-		m.l.Unlock()
-		return true
-	}
-	return false
-}
-
-func (m *Locker) Wait(timeout time.Duration) bool {
-	m.setupOnce.Do(m.setup)
-	if m.l.TryLockWithTimeout(timeout) {
 		m.l.Unlock()
 		return true
 	}

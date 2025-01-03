@@ -102,6 +102,8 @@ func TestAllToProtos(t *testing.T) {
 					ScrollWidth:     false,
 					ScrollHeight:    false,
 					TitleBar:        true,
+					Minimise:        true,
+					Close:           true,
 				},
 				AdminOnly:         false,
 				Permission:        "",
