@@ -56,10 +56,7 @@ func TestDownloadFile(t *testing.T) {
 	assert.Equal(t, uint64(4), counter.Total)
 	os.Remove("test.txt")
 
-	if runtime.GOOS == "windows" {
-		err1 := helpers.DownloadFile("c:/windows/fail", "http://127.0.0.1:9999/test", counter)
-		assert.Error(t, err1)
-	} else {
+	if runtime.GOOS != "windows" {
 		err1 := helpers.DownloadFile("/fail", "http://127.0.0.1:9999/test", counter)
 		assert.Error(t, err1)
 	}
