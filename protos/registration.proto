@@ -153,28 +153,14 @@ message RequiredVariable {
   repeated string options = 2;
 }
 
-enum HorizontalAlign {
-  hcenter = 0;
-  left = 1;
-  right = 2;
-}
-
-enum VerticalAlign {
-  vcenter = 0;
-  top = 1;
-  bottom = 2;
-}
-
 message PanelLayout {
-  HorizontalAlign horizontal_align = 1;
-  VerticalAlign vertical_align = 2;
-  uint32 width = 3;
-  uint32 height = 4;
-  bool scroll_width = 5;
-  bool scroll_height = 6;
-  bool title_bar = 7;
-  bool minimise = 8;
-  bool close = 9;
+  uint32 width = 1;
+  uint32 height = 2;
+  bool scroll_width = 3;
+  bool scroll_height = 4;
+  bool title_bar = 5;
+  bool minimise = 6;
+  bool close = 7;
 }
 
 message PanelSetup {

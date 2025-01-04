@@ -82,15 +82,13 @@ func (d *SetupData) PanelsToProtos() []*pb.PanelSetup {
 	var r []*pb.PanelSetup
 	for _, p := range d.Panels {
 		var tempPL = pb.PanelLayout{
-			HorizontalAlign: pb.HorizontalAlign(p.Layout.HorizontalAlign),
-			VerticalAlign:   pb.VerticalAlign(p.Layout.VerticalAlign),
-			Width:           p.Layout.Width,
-			Height:          p.Layout.Height,
-			ScrollWidth:     p.Layout.ScrollWidth,
-			ScrollHeight:    p.Layout.ScrollHeight,
-			TitleBar:        p.Layout.TitleBar,
-			Minimise:        p.Layout.Minimise,
-			Close:           p.Layout.Close,
+			Width:        p.Layout.Width,
+			Height:       p.Layout.Height,
+			ScrollWidth:  p.Layout.ScrollWidth,
+			ScrollHeight: p.Layout.ScrollHeight,
+			TitleBar:     p.Layout.TitleBar,
+			Minimise:     p.Layout.Minimise,
+			Close:        p.Layout.Close,
 		}
 		r = append(r, &pb.PanelSetup{
 			Name:              p.Name,
